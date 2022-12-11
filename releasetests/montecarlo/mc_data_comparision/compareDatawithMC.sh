@@ -9,7 +9,7 @@ set -e
 
 if [[ $# < 2 ]]; then
 echo "
-  ./compareDatawithMC.sh <runparameter file> <SZE/MZE/LZE>
+  ./compareDatawithMC.sh <runparameter file> <SZE/MZE/LZE/WOBBLE>
   --> choose zenith angle range
   SZE: small zenith angles
   MZE: medium large zenith angles
@@ -41,6 +41,8 @@ MCWOFF=$(grep MC_WOFF ${1} | awk '{print $3}')
 CRABNSB=$(grep CRAB_NSB ${1} | awk '{print $3}')
 # Analysis type
 ANALYSISTYPE=$(grep ANALYSISTYPE ${1} | grep "*" | awk '{print $3}')
+# Direction reconstruction
+DIRRECOTYPE=$(grep DIRECTION ${1} | grep "*" | awk '{print $3}')
 ###########################
 
 # elevation range
@@ -68,7 +70,7 @@ if [[ ! -e ${DDIR} ]]; then
 fi
 
 # output directory
-BDIR="../../../${VERSION}/mc_data_comparision/${ANALYSISTYPE}/${SIMTYPE}/"
+BDIR="../../../../EventDisplay_ReleaseTests_${VERSION}/mc_data_comparision/${ANALYSISTYPE}/${SIMTYPE}/"
 mkdir -p ${BDIR}
 
 mkdir -p tmpdir/logdir
@@ -163,14 +165,20 @@ do
             REDHV="_redHV"
         fi
 
+        if [[ $DIRRECOTYPE == "DISP" ]]; then
+            SIMMSCW="MSCW_RECID0_DISP"
+        else
+            SIMMSCW="MSCW_RECID0"
+        fi
+
         # write run parameter file
         if [[ $SIMTYPE == "CARE_RedHV" ]]; then
-            echo "* SIMS $SIMDIR/${I}_ATM61_gamma/MSCW_RECID0/${simfile} 4 ${MCWOFF} 0. 110. 250. ${ZEMIN} ${ZEMAX}" > $ODIR/mcdatacomparison.runparameter
+            echo "* SIMS $SIMDIR/${I}_ATM61_gamma/${SIMMSCW}/${simfile} 4 ${MCWOFF} 0. 110. 250. ${ZEMIN} ${ZEMAX}" > $ODIR/mcdatacomparison.runparameter
         else
             if [[ $ELE == "WOBBLE" ]] && [[ ${I: -1} == "s" ]]; then
-                echo "* SIMS $SIMDIR/${I}_ATM62_gamma/MSCW_RECID0/${simfile} 4 ${MCWOFF} 0. 110. 250. ${ZEMIN} ${ZEMAX}" > $ODIR/mcdatacomparison.runparameter
+                echo "* SIMS $SIMDIR/${I}_ATM62_gamma/${SIMMSCW}/${simfile} 4 ${MCWOFF} 0. 110. 250. ${ZEMIN} ${ZEMAX}" > $ODIR/mcdatacomparison.runparameter
             else
-                echo "* SIMS $SIMDIR/${I}_ATM${atm}_gamma/MSCW_RECID0/${simfile} 4 ${MCWOFF} 0. 110. 250. ${ZEMIN} ${ZEMAX}" > $ODIR/mcdatacomparison.runparameter
+                echo "* SIMS $SIMDIR/${I}_ATM${atm}_gamma/${SIMMSCW}/${simfile} 4 ${MCWOFF} 0. 110. 250. ${ZEMIN} ${ZEMAX}" > $ODIR/mcdatacomparison.runparameter
             fi
         fi
         echo "* ON ${DMSCWDIR}/[0-9]*.mscw.root 4 -99. -99. 0. 360. ${ZEMIN} ${ZEMAX}" >> $ODIR/mcdatacomparison.runparameter
@@ -183,7 +191,9 @@ do
             -e "s|CURRENTDIR|$PWDIR|" compareDatawithMC_qsub.sh > ${FSCRIPT}.sh
 
         echo "Run script: $FSCRIPT"
+        chmod u+x $FSCRIPT
 
-        qsub -js 900 -P cta_high -V -terse -l h_cpu=10:29:00 -l h_rss=4000M -l tmpdir_size=10G -o ${PWDIR}/tmpdir/logdir -e ${PWDIR}/tmpdir/logdir ${FSCRIPT}.sh
+        $EVNDISPSCRIPTS/helper_scripts/UTILITY.condorSubmission.sh ${FSCRIPT}.sh 4000M 10G 
+        condor_submit ${FSCRIPT}.sh.condor
     done
 done
