@@ -13,9 +13,9 @@ fi
 RPARA=${1}
 COM=${2}
   
-for N in SZE MZE LZE
+for N in SZE MZE LZE WOBBLE
 do
-   for R in RE
+   for R in IGNOREACCEPTANCE
    do 
       ./anasum_yearly.sh ${RPARA} ${COM} ${N} ${R}
    done
