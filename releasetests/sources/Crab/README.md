@@ -7,8 +7,8 @@ The following steps need to be done in the described sequence.
 Directory structure expected:
 
 - Crab evndisp analysis files in in `$VERITAS_USER_DATA_DIR/analysis/Results/<version>/Crab/evndisp`
-- Crab mscw_energy analysis files in `$VERITAS_USER_DATA_DIR/analysis/Results/<version>/Crab/mscw_energy`
-- all data files and products from this analysis will be written to ../../../<version>/sources/Crab/
+- Crab mscw_energy analysis files in `$VERITAS_USER_DATA_DIR/analysis/Results/<version>/Crab/mscw`
+- all data files and products from this analysis will be written to ../../../EventDisplay_ReleaseTests_<version>/sources/Crab/
 
 ## Runparameter files
 
@@ -20,7 +20,7 @@ Parameters required for the analysis are all listed in parameter files. This inc
 - object to be analysed
 - ...
 
-see example for [v487](../../../v487/V6.runparameter.dat)
+see example for [EventDisplay_ReleaseTests_v490/](https://github.com/VERITAS-Observatory/EventDisplay_ReleaseTests_v490/V6.runparameter.dat)
 
 ## Analysis of Crab data
 
@@ -95,8 +95,6 @@ Make spectral comparision plots:
 ./anasum_yearly.sh <runparameter file> VALIDATION_PLOT SZE RE V2DL3_DIR GAMMAPY_SCRIPT_DIR
 ```
 It will plot a spectral comparision plot (as shown [here](https://github.com/VERITAS-Observatory/Eventdisplay_ReleaseTests/tree/main/v487e/Crab/DL3_results) ) in anasum directoy.
-
-
 
 
 **(Text below only for Eventdisplay)**
