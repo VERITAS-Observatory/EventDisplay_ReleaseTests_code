@@ -35,6 +35,8 @@ echo "
   ./anasum_yearly.sh <runparameter file> FFF <SZE/MZE/LZE/WOBBLE> <RE/RB/IGNOREACCEPTANCE> [V2DL3_PATH]
   --> Step 2 to combine anasum file
 
+  To compare DL3 / gammapy results, continue with the following steps:
+
   ./anasum_yearly.sh <runparameter file> V2DL3 <SZE/MZE/LZE/WOBBLE> <RE/RB/IGNOREACCEPTANCE> <V2DL3_PATH>
   --> Step 3 to convert anasum files to V2DL3 
   (or use UTILITY.condorSubmission.sh script for cluster submission)
