@@ -1,0 +1,21 @@
+# MC / data comparision
+
+Scripts and tools to compare MC distributions with 
+results from the Crab nebula.
+
+Fill and plot distributions with
+
+```
+./compareDatawithMC.sh <runparameter file> <SZE/MZE/LZE>
+```
+
+Requires as input:
+- MC files for each minor epoch
+- Crab results for each minor epoch 
+
+**important:**
+first run linking of epochs from `../../sources/Crab/`: `./runlist_generator.sh V6`
+(or for any other epoch)
+
+Output and plots are written as pdfs into the `../../../<version>/mc_data_comparision/` directories
+

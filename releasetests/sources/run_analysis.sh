@@ -1,0 +1,138 @@
+# run release testing analysis
+#
+# requires run list (simple format) as
+# ${SOURCE}/runlist_releaseTesting.dat
+#
+# for anasum:
+# ${SOURCE}/ANASUM.runparameter
+# ${SOURCE}/ANASUM.timemask.dat
+#
+# is exected to be in DDIR
+#
+
+if [[ $# < 2 ]]; then
+echo "
+  ./run_analysis.sh <runparameter file> <SOURCE> <TYPE> <CUT> <V2DL3_PATH> <GAMMAPY_SCRIPT>
+
+   EVNDISP
+   MSCW
+   ANASUM_SUB
+   ANASUM_FFF
+   V2DL3
+   GAMMAPY
+   VALIDATION_PLOT
+"
+exit
+fi
+
+SOURCE=${2}
+ANATYPE=${3}
+CUT=${4}
+V2DL3_PATH=${5}
+GAMMAPY_SCRIPT=${6}
+
+###########################
+# read runparameter file
+if [[ ! -e ${1} ]]; then
+   echo "Error, runparameter file not found: ${1}"
+   exit
+fi
+# Eventdisplay version
+EDVERSION=$(grep VERSION ${1} | awk '{print $3}')
+# Bright star catalog
+CATALOG=($(grep BRIGHTSTARCATALOGUE ${1} | grep "*" | awk '{print $3}'))
+
+echo "${EDVERSION}"
+echo "${SOURCE}"
+echo "${CATALOG}"
+echo "${GAMMAPY_SCRIPT}"
+
+DDIR=${VERITAS_USER_DATA_DIR}/analysis/Results/${EDVERSION}/${SOURCE}/
+SDIR=`pwd`
+
+cd ${EVNDISPSCRIPTS}
+
+if [[ ${ANATYPE} == "EVNDISP" ]]; then
+   ./ANALYSIS.evndisp.sh ${SDIR}/${SOURCE}/runlist_releaseTesting.dat ${DDIR}/evndisp
+
+elif [[ ${ANATYPE} == "MSCW" ]]; then
+   ./ANALYSIS.mscw_energy.sh ${SDIR}/${SOURCE}/runlist_releaseTesting.dat ${DDIR}/evndisp ${DDIR}
+
+elif [ ${ANATYPE} == "ANASUM_SUB" ]; then
+       ./ANALYSIS.anasum_parallel_from_runlist.sh \
+           ${SDIR}/${SOURCE}/runlist_releaseTesting.dat \
+           ${DDIR}/${CUT} \
+           ${CUT} RE \
+           ${SDIR}/${SOURCE}/ANASUM.runparameter \
+           ${DDIR} ${V2DL3_PATH}
+
+elif [ ${ANATYPE} == "ANASUM_FFF" ] ; then
+       ./ANALYSIS.anasum_combine.sh \
+           ${DDIR}/${CUT}/${CUT}.anasum.dat \
+           ${DDIR}/${CUT} \
+           anasum.combined.root \
+           ${SDIR}/${SOURCE}/ANASUM.runparameter
+
+elif [ ${ANATYPE} == "V2DL3" ] ; then
+    if [[ -d ${V2DL3_PATH} ]]; then
+        export PYTHONPATH=$PYTHONPATH:"${V2DL3_PATH}"
+        ${DDIR}/${CUT}/v2dl3_from_runlist_${CUT}.sh
+    else
+        echo "error: V2DL3 path not given"
+        exit
+    fi
+
+elif [ "$ANATYPE" == "INDEX" ]; then
+    if [[ -d ${V2DL3_PATH} ]]; then
+        export PYTHONPATH=$PYTHONPATH:"${V2DL3_PATH}"
+        source activate base
+        conda activate v2dl3Eventdisplay
+        python ${V2DL3_PATH}/pyV2DL3/script/generate_index_file.py \
+             -f ${DDIR}/${CUT} \
+             -i ${DDIR}/${CUT} -r
+        conda deactivate
+    else
+        echo "error: V2DL3 path not given"
+        exit 
+    fi
+
+elif [ ${ANATYPE} == "GAMMAPY" ] ; then
+     if [[ -d ${GAMMAPY_SCRIPT} ]]; then
+         source activate base
+         conda activate gammapy-0.20.1
+         python ${GAMMAPY_SCRIPT}/compare_spectra.py \
+             -d ${DDIR}/${CUT} \
+             -t release_test_${SOURCE}_${CUT} \
+             -r ${DDIR}/${CUT}/Eventdisplay_${SOURCE}_${CUT}_SpecPoints.csv \
+             -o ${DDIR}/${CUT} \
+             -c ${VERITAS_EVNDISP_AUX_DIR}/AstroData/Catalogues/${CATALOG} \
+             -p ${SDIR}/${SOURCE}/gammapy_analysis_parameter.yaml \
+             -z NONE \
+             -s ${CUT}
+         conda deactivate
+      else
+          echo "error: GAMMAPY script path not given"
+      fi
+
+elif [ ${ANATYPE} == "VALIDATION_PLOT" ] ; then
+     if [[ -d ${GAMMAPY_SCRIPT} ]]; then
+        source activate base
+        conda activate gammapy-0.20.1
+        python ${GAMMAPY_SCRIPT}/plot_all_spec_comparison.py \
+              ${DDIR}/${CUT}/Eventdisplay_${SOURCE}_${CUT} \
+              ${DDIR}/${CUT}/release_test_${SOURCE}_${CUT} \
+              release_test_${SOURCE}_${CUT} \
+              ${DDIR}/${CUT} \
+              ${SDIR}/${SOURCE}/gammapy_analysis_parameter.yaml \
+              NONE \
+              ${CUT} \
+              ${EDVERSION}
+       conda deactivate
+     else
+         echo "error: GAMMAPY script path not given"
+     fi
+else
+        echo "error: ANALYSIS type not given"
+fi
+
+cd ${SDIR}

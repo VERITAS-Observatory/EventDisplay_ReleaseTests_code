@@ -1,0 +1,52 @@
+* VERSION v490
+* SIMTYPE CARE_June2020
+
+Atmosphere (CORSIKA ID)
+* ATMOSPHERE 61
+ ATMOSPHERE 62
+
+Epoch (Major or Major_Minor)
+* MAJOREPOCH V6
+ EPOCH V6 300
+ EPOCH V6_2012_2013a 200
+ EPOCH V6_2012_2013b 200
+ EPOCH V6_2013_2014a 250
+ EPOCH V6_2013_2014b 250
+ EPOCH V6_2014_2015 300
+ EPOCH V6_2015_2016 300
+ EPOCH V6_2016_2017 350
+ EPOCH V6_2017_2018 350
+ EPOCH V6_2018_2019 400
+ EPOCH V6_2019_2019s 400
+ EPOCH V6_2019_2020w 400
+ EPOCH V6_2020_2020s 400
+ EPOCH V6_2020_2021w 400
+ EPOCH V6_2021_2021s 400
+* EPOCH V6_2021_2022w 400
+
+Telescope Combinations
+* TELCOMBO 1234
+
+Gamma hadron cuts (two cut names! (inconsistent))
+ CUT NTel2-PointSource-Moderate-TMVA-BDT-GEO moderate2tel
+ CUT NTel2-PointSource-Soft-TMVA-BDT-GEO soft2tel
+ CUT NTel2-PointSource-Hard-TMVA-BDT-GEO hard2tel
+ CUT NTel3-PointSource-Hard-TMVA-BDT-GEO hard3tel
+* CUT NTel2-PointSource-Moderate moderatebox
+
+MC File related
+Note that scripts are tested for the application of a single
+wobble offset
+* MC_AZ 16
+* MC_INDEX 2.4
+* MC_WOFF 0.0 0.25 0.5 0.75 1.0 1.25 1.5 1.75
+* MC_ZE 20 30 35 40 45 50 55 60
+* MC_NSB 50 75 100 130 160 200 250 300 350 400 450
+ MC_NSB 200
+
+Night sky background rate equivalent for Crab field
+(used for MC-Data comparison)
+* CRAB_NSB NOTSET
+
+Sources / Objects to be analysed
+* SOURCE Crab

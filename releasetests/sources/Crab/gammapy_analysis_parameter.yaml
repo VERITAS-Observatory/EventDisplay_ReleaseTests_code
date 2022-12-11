@@ -1,0 +1,32 @@
+source: Crab
+
+min_magnitude: 6
+
+theta2_cut: 0.008
+
+source_fit_para:
+    emin: 0.2
+    emax: 10.0
+    eref: 1.0
+
+sze_fit_para:
+    moderate2tel: {emin: 0.190 , emax: 10.0, eref: 1.0}
+    soft2tel: {emin: 0.140, emax: 10.0, eref: 1.0}
+    hard2tel: {emin: 0.330, emax: 10.0, eref: 1.0}
+ 
+mze_fit_para:
+    moderate2tel: {emin: 0.75 , emax: 10.0, eref: 1.0}
+    soft2tel: {emin: 0.35, emax: 10.0, eref: 1.0}
+    hard2tel: {emin: 0.8, emax: 10.0, eref: 1.0}    
+
+lze_fit_para:
+    moderate2tel: {emin: 1.0 , emax: 10.0, eref: 1.0}
+    soft2tel: {emin: 1.0, emax: 10.0, eref: 1.0}
+    hard2tel: {emin: 1.0, emax: 10.0, eref: 1.0}     
+
+plotting:
+    xmin: 0.1
+    xmax: 30.0
+    ymin: 4.0e-12
+    ymax: 3.0e-10
+
