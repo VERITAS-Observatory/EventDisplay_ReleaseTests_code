@@ -6,8 +6,8 @@ The following steps need to be done in the described sequence.
 
 Directory structure expected:
 
-- Crab evndisp analysis files in in `$VERITAS_USER_DATA_DIR/analysis/Results/<version>/Crab/evndisp`
-- Crab mscw_energy analysis files in `$VERITAS_USER_DATA_DIR/analysis/Results/<version>/Crab/mscw`
+- Crab evndisp analysis files in in `$VERITAS_USER_DATA_DIR/analysis/Results/<version>/<anatype>/Crab/evndisp`
+- Crab mscw_energy analysis files in `$VERITAS_USER_DATA_DIR/analysis/Results/<version>/<anatype>/Crab/mscw`
 - all data files and products from this analysis will be written to ../../../EventDisplay_ReleaseTests_<version>/sources/Crab/
 
 ## Runparameter files
