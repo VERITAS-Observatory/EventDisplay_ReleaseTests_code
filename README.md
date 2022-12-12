@@ -1,6 +1,6 @@
 # Eventdisplay Release Tests
 
-**For versions before v490: see https://github.com/VERITAS-Observatory/Eventdisplay_ReleaseTests**
+**Release tests for versions before v490: see https://github.com/VERITAS-Observatory/Eventdisplay_ReleaseTests**
 
 ## Introduction
 
@@ -9,7 +9,7 @@ Releases of Eventdisplay are required to pass a list of testing procedures befor
 Testing a release needs time and should cover large parts of the parameter space (zenith angle, epochs and atmospheres, NSB range, ...).
 Note that it is impossible to test every single IRF function and every single possible science case.
 
-This repository containes code and macros for release testing. Results of release tests are saved in separate repositories (see e.g., for [v490](https://github.com/VERITAS-Observatory/EventDisplay_ReleaseTests_v490)).
+This repository contains code and macros for release testing. Results of release tests are saved in separate repositories (see e.g., for [v490](https://github.com/VERITAS-Observatory/EventDisplay_ReleaseTests_v490)).
 
 Simplified overview of the testing (somewhat outdated): 
 
