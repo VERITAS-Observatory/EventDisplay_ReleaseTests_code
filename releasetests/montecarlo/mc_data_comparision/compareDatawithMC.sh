@@ -47,29 +47,26 @@ DIRRECOTYPE=$(grep DIRECTION ${1} | grep "*" | awk '{print $3}')
 # elevation range
 [[ "$2" ]] && ELE=$2 || ELE="SZE"
 # Directory for simulations
-#SIMDIR=$VERITAS_USER_DATA_DIR/analysis/Results/${VERSION}/$SIMTYPE/
 SIMDIR=${VERITAS_IRFPRODUCTION_DIR}/${VERSION}/${ANALYSISTYPE}/$SIMTYPE/
-# SIMDIR=${VERITAS_IRFPRODUCTION_DIR}/v486/${ANALYSISTYPE}/$SIMTYPE/
 if [[ ! -e ${SIMDIR} ]]; then
-   # remove patch version and try again
-   if [ ${#VERSION} -eq 5 ]; then
-       TVERSION=${VERSION::-1}
-       SIMDIR=${VERITAS_IRFPRODUCTION_DIR}/${TVERSION}/${ANALYSISTYPE}/$SIMTYPE/
-   fi
    if [[ ! -e ${SIMDIR} ]]; then
        echo "Error: simulation directory not found: $SIMDIR"
        exit
    fi
 fi
 # Directory for data files
-DDIR="$VERITAS_USER_DATA_DIR/analysis/Results/${VERSION}/${ANALYSISTYPE}/Crab/"
+if [[ $DIRRECOTYPE == "DISP" ]]; then
+    DDIR="$VERITAS_USER_DATA_DIR/analysis/Results/${VERSION}/${ANALYSISTYPE}/Crab_DISP/"
+else
+    DDIR="$VERITAS_USER_DATA_DIR/analysis/Results/${VERSION}/${ANALYSISTYPE}/Crab/"
+fi
 if [[ ! -e ${DDIR} ]]; then
    echo "Error: data directory not found: $DDIR"
    exit
 fi
 
 # output directory
-BDIR="../../../../EventDisplay_ReleaseTests_${VERSION}/mc_data_comparision/${ANALYSISTYPE}/${SIMTYPE}/"
+BDIR="../../../../EventDisplay_ReleaseTests_${VERSION}/mc_data_comparision/${ANALYSISTYPE}_${DIRRECOTYPE}/${SIMTYPE}/"
 mkdir -p ${BDIR}
 
 mkdir -p tmpdir/logdir
