@@ -10,12 +10,11 @@ set -e
 if [[ $# < 2 ]]; then
 echo "
   ./compareDatawithMC.sh <runparameter file> <SZE/MZE/LZE/WOBBLE>
-  --> choose zenith angle range
-  SZE: small zenith angles
-  MZE: medium large zenith angles
-  LZE: large zenith angles
-
-  this script needs some adjust dependent on the atmosphere or epoch to be studied
+  --> choose zenith angle / wobble range
+  SZE: small zenith angles (0.5 wobble)
+  MZE: medium large zenith angles (0.5 wobble)
+  LZE: large zenith angles (0.5 wobble)
+  WOBBLE: large wobble offsets
 
 "
 exit
@@ -191,9 +190,10 @@ do
             -e "s|CURRENTDIR|$PWDIR|" compareDatawithMC_qsub.sh > ${FSCRIPT}.sh
 
         echo "Run script: $FSCRIPT"
-        chmod u+x $FSCRIPT
+        chmod u+x $FSCRIPT.sh
 
-        $EVNDISPSCRIPTS/helper_scripts/UTILITY.condorSubmission.sh ${FSCRIPT}.sh 4000M 10G 
-        condor_submit ${FSCRIPT}.sh.condor
+        qsub -js 900 -P cta_high -V -terse -l h_cpu=10:29:00 -l h_rss=4000M -l tmpdir_size=10G -o ${PWDIR}/tmpdir/logdir -e ${PWDIR}/tmpdir/logdir ${FSCRIPT}.sh
+        # $EVNDISPSCRIPTS/helper_scripts/UTILITY.condorSubmission.sh ${FSCRIPT}.sh 4000M 10G 
+        # condor_submit ${FSCRIPT}.sh.condor
     done
 done
