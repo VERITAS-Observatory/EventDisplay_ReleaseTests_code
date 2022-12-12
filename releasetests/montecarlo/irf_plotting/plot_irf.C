@@ -9,9 +9,7 @@
 #include <string>
 #include <vector>
 
-#if ROOT_VERSION_CODE >= ROOT_VERSION(6,00,0)
-  R__LOAD_LIBRARY($EVNDISPSYS/lib/libVAnaSum.so);
-#endif
+R__LOAD_LIBRARY($EVNDISPSYS/lib/libVAnaSum.so);
 
 void printCanvas( TCanvas *c, string iName, string oDir )
 {
@@ -36,6 +34,7 @@ void plot_irf(
         string woff = "0.5",
         string nsb = "200",
         string odir = "./figures/",
+        string dir_suff_1 = "",
         string dir_suff_2 = "_DISP"
         )
 {
@@ -57,7 +56,7 @@ void plot_irf(
 
     VPlotInstrumentResponseFunction a;
     a.addInstrumentResponseData(
-            (IRFDirectory+"/"+IRFFile+".root").c_str(),
+            (IRFDirectory+dir_suff_1+"/"+IRFFile+".root").c_str(),
             atoi(ze.c_str()), atof(woff.c_str()), 0, 1.6, atoi(nsb.c_str()), "A_MC",
             -99, -99, -99, 1.5 );
     if( dir_suff_2.size() > 0 )
