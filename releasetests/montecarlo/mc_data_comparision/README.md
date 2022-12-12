@@ -1,7 +1,7 @@
 # MC / data comparision
 
 Scripts and tools to compare MC distributions with 
-results from the Crab nebula.
+results from the Crab Nebula.
 
 Fill and plot distributions with
 
