@@ -66,6 +66,7 @@ void plot_irf(
                 atoi(ze.c_str()), atof(woff.c_str()), 0, 1.6, atoi(nsb.c_str()), "A_MC",
                 -99, -99, -99, 1.5 );
     }
+    a.setPlottingAxis( "energy_Lin", "X", false, 0.05, 80., "energy [TeV]" );
     // energies for theta2 plot
     vector< double > iE;
     if( atof(ze.c_str()) < 45. )
@@ -104,16 +105,16 @@ void plot_irf(
     printCanvas( c, "AngRes_"+IRFFile, odir);
 
     a.setPlottingAxis( "energy", "X", true, 1.5, 2. );
-    c = a.plotAngularResolution("energy", "80", 0.25 );
-    printCanvas( c, "AngRes80p_"+IRFFile, odir);
+    c = a.plotAngularResolution("energy", "95", 0.45 );
+    printCanvas( c, "AngRes95p_"+IRFFile, odir);
 
-    c = a.plotEffectiveArea( 1.e2, 8.e5 );
+    c = a.plotEffectiveArea( 1.e3, 3.e5 );
     printCanvas( c, "EffArea_"+IRFFile, odir);
 
     c = a.plotEffectiveAreaRatio( 0, 0., 2. );
     printCanvas( c, "EffAreaRatio_"+IRFFile, odir);
 
-    c = a.plotEnergyResolution();
+    c = a.plotEnergyResolution( 0.5 );
     printCanvas( c, "ERes_"+IRFFile, odir);
 
     c = a.plotCoreResolution();
