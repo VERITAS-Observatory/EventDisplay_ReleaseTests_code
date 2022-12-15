@@ -108,7 +108,7 @@ void plot_irf(
     c = a.plotAngularResolution("energy", "95", 0.45 );
     printCanvas( c, "AngRes95p_"+IRFFile, odir);
 
-    c = a.plotEffectiveArea( 1.e3, 3.e5 );
+    c = a.plotEffectiveArea( 1.e3, 5.e5 );
     printCanvas( c, "EffArea_"+IRFFile, odir);
 
     c = a.plotEffectiveAreaRatio( 0, 0., 2. );
