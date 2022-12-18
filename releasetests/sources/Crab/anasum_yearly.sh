@@ -67,12 +67,6 @@ ANALYSISTYPE=$(grep ANALYSISTYPE ${1} | grep "*" | awk '{print $3}')
 EDVERSION=$($EVNDISPSYS/bin/evndisp --version | tr -d .)
 EDVERSION=${EDVERSION:1}
 echo ${EDVERSION}
-# directory with scripts and cuts
-if [[ $EDVERSION -lt "485" ]]; then
-  SCRIPTDIR=$EVNDISPSYS/scripts/VTS/
-else
-  SCRIPTDIR=${EVNDISPSCRIPTS}
-fi
 # Epochs
 MEPOCH=$(grep MAJOREPOCH ${1} | grep "*" | awk '{print $3}')
 EPOCH=($(grep EPOCH ${1} | grep "*" | grep -v MAJOR | awk '{print $3}'))
@@ -86,12 +80,16 @@ OBJECT=($(grep SOURCE ${1} | grep "*" | awk '{print $3}'))
 CATALOG=($(grep BRIGHTSTARCATALOGUE ${1} | grep "*" | awk '{print $3}'))
 # Minimum brightness of stars
 BRIGHTSTARSETTINGS=($(grep BRIGHTSTARSETTINGS ${1} | grep "*" | awk '{print $3}'))
-
+# DIRECTION RECONSTRUCTION
+DIRRECOTYPE=$(grep DIRECTION ${1} | grep "*" | awk '{print $3}')
+if [[ ! -z ${DIRRECOTYPE} ]]; then
+    DIRRECOTYPE="_${DIRRECOTYPE}"
+fi
 #########################
 # run mode
 MODE=$2
 # Directory for data files
-DDIR="$VERITAS_USER_DATA_DIR/analysis/Results/${VERSION}/${ANALYSISTYPE}/${OBJECT}/"
+DDIR="$VERITAS_USER_DATA_DIR/analysis/Results/${VERSION}/${ANALYSISTYPE}/${OBJECT}${DIRRECOTYPE}/"
 echo $DDIR
 SDIR=`pwd`
 
@@ -107,7 +105,7 @@ RDIR=`pwd`
 
 # mscw_energy subdirectory
 # (old style scripts: "evndisp/RecID0")
-MSCWSDIR="mscw_energy"
+MSCWSDIR="mscw"
 FORCEDATMO=""
 # forced for redHV (only available for ATM61)
 if [[ ${MEPOCH} == *"redHV"* ]]
@@ -139,12 +137,9 @@ do
 
         MDIR="$DDIR/${MSCWSDIR}_${I}${ATM}_${ELE}"
         if [[ ! -d ${MDIR} ]]; then
-           MDIR=${MDIR/mscw_energy/mscw}
-           if [[ ! -d ${MDIR} ]]; then
-              echo "error: data directory not found: ${MDIR}"
-              echo "continuing..."
-              continue
-           fi
+           echo "error: data directory not found: ${MDIR}"
+           echo "continuing..."
+           continue
         fi
         RLIST=${MDIR}/runlist.dat
         rm -f $RLIST
