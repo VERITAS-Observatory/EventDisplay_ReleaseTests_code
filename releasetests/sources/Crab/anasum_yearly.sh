@@ -66,7 +66,6 @@ ANALYSISTYPE=$(grep ANALYSISTYPE ${1} | grep "*" | awk '{print $3}')
 # eventdisplay version --> defines script directory
 EDVERSION=$($EVNDISPSYS/bin/evndisp --version | tr -d .)
 EDVERSION=${EDVERSION:1}
-echo ${EDVERSION}
 # Epochs
 MEPOCH=$(grep MAJOREPOCH ${1} | grep "*" | awk '{print $3}')
 EPOCH=($(grep EPOCH ${1} | grep "*" | grep -v MAJOR | awk '{print $3}'))
@@ -141,6 +140,7 @@ do
            echo "continuing..."
            continue
         fi
+        echo ${MDIR}
         RLIST=${MDIR}/runlist.dat
         rm -f $RLIST
         find ${MDIR} -name "*.root" -exec basename {} .mscw.root \; | sort > $RLIST
