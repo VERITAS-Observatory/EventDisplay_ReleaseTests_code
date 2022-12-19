@@ -65,7 +65,7 @@ if [[ ! -e ${DDIR} ]]; then
 fi
 
 # output directory
-BDIR="../../../../EventDisplay_ReleaseTests_${VERSION}/mc_data_comparision/${ANALYSISTYPE}_${DIRRECOTYPE}/${SIMTYPE}/"
+BDIR="../../../../EventDisplay_ReleaseTests_${VERSION}/mc_data_comparision/${ANALYSISTYPE}${DIRRECOTYPE}/${SIMTYPE}/"
 mkdir -p ${BDIR}
 
 mkdir -p tmpdir/logdir
