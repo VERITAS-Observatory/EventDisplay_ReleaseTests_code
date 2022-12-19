@@ -42,6 +42,9 @@ CRABNSB=$(grep CRAB_NSB ${1} | awk '{print $3}')
 ANALYSISTYPE=$(grep ANALYSISTYPE ${1} | grep "*" | awk '{print $3}')
 # Direction reconstruction
 DIRRECOTYPE=$(grep DIRECTION ${1} | grep "*" | awk '{print $3}')
+if [[ ! -z ${DIRRECOTYPE} ]]; then
+    DIRRECOTYPE="_${DIRRECOTYPE}"
+fi
 ###########################
 
 # elevation range
@@ -55,11 +58,7 @@ if [[ ! -e ${SIMDIR} ]]; then
    fi
 fi
 # Directory for data files
-if [[ $DIRRECOTYPE == "DISP" ]]; then
-    DDIR="$VERITAS_USER_DATA_DIR/analysis/Results/${VERSION}/${ANALYSISTYPE}/Crab_DISP/"
-else
-    DDIR="$VERITAS_USER_DATA_DIR/analysis/Results/${VERSION}/${ANALYSISTYPE}/Crab/"
-fi
+DDIR="$VERITAS_USER_DATA_DIR/analysis/Results/${VERSION}/${ANALYSISTYPE}/Crab${DIRRECOTYPE}/"
 if [[ ! -e ${DDIR} ]]; then
    echo "Error: data directory not found: $DDIR"
    exit
@@ -160,12 +159,7 @@ do
         if [[ $SIMTYPE == "CARE_RedHV" ]]; then
             REDHV="_redHV"
         fi
-
-        if [[ $DIRRECOTYPE == "DISP" ]]; then
-            SIMMSCW="MSCW_RECID0_DISP"
-        else
-            SIMMSCW="MSCW_RECID0"
-        fi
+        SIMMSCW="MSCW_RECID0${DIRRECOTYPE}"
 
         # write run parameter file
         if [[ $SIMTYPE == "CARE_RedHV" ]]; then

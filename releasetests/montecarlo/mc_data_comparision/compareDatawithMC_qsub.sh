@@ -19,5 +19,5 @@ $EVNDISPSYS/bin/compareDatawithMC \
 # prepare all plots
 root -l -q -b "plot_compare.C(\"$ODIR\")"
 # remove results root file
-rm -f -v $ODIR/mcdatacomparison.root
+# rm -f -v $ODIR/mcdatacomparison.root
 cd ${PP}
