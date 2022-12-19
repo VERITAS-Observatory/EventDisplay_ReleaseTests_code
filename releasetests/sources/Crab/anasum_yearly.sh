@@ -103,7 +103,6 @@ RDIR=`pwd`
 [[ "$6" ]] && GAMMAPY_SCRIPT=$6 || GAMMAPY_SCRIPT="$(pwd)"
 
 # mscw_energy subdirectory
-# (old style scripts: "evndisp/RecID0")
 MSCWSDIR="mscw"
 FORCEDATMO=""
 # forced for redHV (only available for ATM61)
