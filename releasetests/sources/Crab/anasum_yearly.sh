@@ -130,6 +130,9 @@ do
         fi
         if [[ ! -z ${ATM} ]]; then
            ATM="_ATM${ATM}"
+           if [[ $MODE == "WOBBLE" ]]; then
+             continue
+           fi
         fi
         echo "Processing $I ($ELE $ATM $BCK $FORCEDATMO)"
 
