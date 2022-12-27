@@ -174,6 +174,12 @@ do
           LNAME="${E}_ATM${ATM}_${EL}_0.5deg"
           fill_run
           link_run ${MSCWSDIR}
+          LNAME="${E}_${EL}_0.5deg"
+          fill_run
+          link_run ${MSCWSDIR}
+          LNAME="${E}_0.5deg"
+          fill_run
+          link_run ${MSCWSDIR}
        fi
    done
 done
