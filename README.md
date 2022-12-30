@@ -1,7 +1,5 @@
 # Eventdisplay Release Tests
 
-**Release tests for versions before v490: see https://github.com/VERITAS-Observatory/Eventdisplay_ReleaseTests**
-
 ## Introduction
 
 Releases of Eventdisplay are required to pass a list of testing procedures before being tagged for science analysis.
@@ -10,6 +8,7 @@ Testing a release needs time and should cover large parts of the parameter space
 Note that it is impossible to test every single IRF function and every single possible science case.
 
 This repository contains code and macros for release testing. Results of release tests are saved in separate repositories (see e.g., for [v490](https://github.com/VERITAS-Observatory/EventDisplay_ReleaseTests_v490)).
+**Release tests for versions before v490: see https://github.com/VERITAS-Observatory/Eventdisplay_ReleaseTests**
 
 Simplified overview of the testing (somewhat outdated): 
 
@@ -23,11 +22,11 @@ Simplified overview of the testing (somewhat outdated):
 
 ## Directory structure
 
-- directory contains topical macros / scripts: [./releasetests/](./releasetests)
-- most important comparisons are:
-   - data/mc comparision in [./releasetests/montecarlo/mc_data_comparision](./releasetests/montecarlo/mc_data_comparision)
+- macros and scripts: [./releasetests/](./releasetests)
+- most important scripts area:
+   - data-MC comparision in [./releasetests/montecarlo/mc_data_comparision](./releasetests/montecarlo/mc_data_comparision)
    - Crab analysis in [releasetests/sources/Crab](releasetests/sources/Crab)
-- steering of macros/scripts with run parameter files (see example [./v487/V6.runparameter.dat](./v487/V6.runparameter.dat)
+- steering of macros and scripts is done using run parameter files (see example [v490/V6.runparameter.dat](https://github.com/VERITAS-Observatory/EventDisplay_ReleaseTests_v490/blob/main/V6.runparameter.dat))
 
 
 # Testing the release of a new Eventdisplay version
@@ -69,12 +68,6 @@ Input:
 Code:
 - [releasetests/montecarlo/mc_data_comparision](releasetests/montecarlo/mc_data_comparision)
 
-Examples e.g., in [./v483b/montecarlo/mc_data_comparision](./v483b/montecarlo/mc_data_comparision)
-
-- [ ] SZE and LZE comparison
-- [ ] per major epoch (V4, V5, V6)
-- [ ] per V6 minor epoch (V6_2013, V6_2014, ...)
-
 ## Completeness of IRFs
 
 Check for successful lookup table mergine:
@@ -94,9 +87,6 @@ Input:
 Code:
 - [releasetests/nsb](releasetests/nsb)
 
-Examples, e.g., in [./v483b/nsb/](./v483b/nsb/)
-
-- [ ] correction factors vs pedvars
 
 ## Instrument response functions 
 
@@ -111,11 +101,6 @@ Examples e.g., in [./v483b/energytresholds/](./v483b/energytresholds/)
 Compare effective areas between different epochs.
 (not completely implemented yet)
 
-Examples e.g., in v483/montecarlo/irf_plotting
-
-- [ ] effective areas
-- [ ] angular / energy resolution plots
-
 ## Crab Nebula
 
 - [ ] light curves (flux vs MJD)
@@ -128,6 +113,3 @@ Examples e.g., in v483/montecarlo/irf_plotting
 ## Radial acceptances
 
 Calculate and test radial acceptance files.
-
-Examples in e.g., [./v483b/radialAcceptances](./v483b/radialAcceptances)
-
