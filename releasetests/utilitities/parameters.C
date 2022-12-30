@@ -20,6 +20,7 @@ class RunParameterData
     string fVersion;
     string fSimType;
     string fAnaType;
+    string fDirectionType;
     string fEpoch;
     string fAtmosphere;
     string fCut;
@@ -28,7 +29,8 @@ class RunParameterData
 
     RunParameterData( string iVersion = "unset",
                       string iSimType = "unset",
-                      string iAnaType = "unset" );
+                      string iAnaType = "unset",
+                      string iDirectionType = "unset" );
    ~RunParameterData() {}
     string getEffectiveAreaFileName();
     string getFigureDirectory();
@@ -37,11 +39,13 @@ class RunParameterData
 
 RunParameterData::RunParameterData( string iVersion, 
                                     string iSimType,
-                                    string iAnaType )
+                                    string iAnaType,
+                                    string iDirectionType )
 {
    fVersion = iVersion;
    fSimType = iSimType;
    fAnaType = iAnaType;
+   fDirectionType = iDirectionType;
 }
 
 void RunParameterData::print()
@@ -61,6 +65,10 @@ string RunParameterData::getEffectiveAreaFileName()
     i_name += fSimType + "-Cut-";
     i_name += fCut + "-";
     i_name += fAnaType + "-";
+    if( fDirectionType.size() > 0 && fDirectionType != "unset" )
+    {
+        i_name += fDirectionType + "-";
+    }
     i_name += fEpoch + "-ATM" + fAtmosphere;
     i_name += "-T" + fTelCombo;
     i_name += ".root";
@@ -73,7 +81,11 @@ string RunParameterData::RunParameterData::getFigureDirectory()
    string i_name;
    i_name += fSimType + "-Cut-";
    i_name += fCut + "-";
-    i_name += fAnaType + "-";
+   i_name += fAnaType + "-";
+   if( fDirectionType.size() > 0 && fDirectionType != "unset" )
+   {
+        i_name += fDirectionType + "-";
+   }
    i_name += fEpoch + "-ATM" + fAtmosphere;
    i_name += "-T" + fTelCombo;
    return i_name;
@@ -90,6 +102,7 @@ class RunParameters
     string fVersion;
     string fSimType;
     string fAnaType;
+    string fDirectionType;
     string fMajorEpoch;
     string fSource;
 
@@ -161,6 +174,10 @@ bool RunParameters::readParameters( string iRunParameterFile )
              else if( temp1 == "ANALYSISTYPE" )
              {
                   fAnaType = temp2;
+             }
+             else if( temp1 == "DIRECTION" )
+             {
+                 fDirectionType = temp2;
              }
              else if( temp1 == "MAJOREPOCH" )
              {
@@ -241,7 +258,7 @@ bool RunParameters::readParameters( string iRunParameterFile )
            {
                for( unsigned int c = 0; c < iCut.size(); c++ )
                {
-                   RunParameterData* iData = new RunParameterData( fVersion, fSimType, fAnaType );
+                   RunParameterData* iData = new RunParameterData( fVersion, fSimType, fAnaType, fDirectionType );
                    iData->fEpoch = iEpoch[e];
                    iData->fAtmosphere = iAtmosphere[a];
                    iData->fTelCombo = iTelCombo[t];
