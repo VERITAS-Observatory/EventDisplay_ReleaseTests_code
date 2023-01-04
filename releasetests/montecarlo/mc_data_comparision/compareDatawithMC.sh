@@ -183,8 +183,7 @@ do
         echo "Run script: $FSCRIPT"
         chmod u+x $FSCRIPT.sh
 
-        qsub -js 900 -P cta_high -V -terse -l h_cpu=10:29:00 -l h_rss=4000M -l tmpdir_size=10G -o ${PWDIR}/tmpdir/logdir -e ${PWDIR}/tmpdir/logdir ${FSCRIPT}.sh
-        # $EVNDISPSCRIPTS/helper_scripts/UTILITY.condorSubmission.sh ${FSCRIPT}.sh 4000M 10G 
-        # condor_submit ${FSCRIPT}.sh.condor
+        $EVNDISPSCRIPTS/helper_scripts/UTILITY.condorSubmission.sh ${FSCRIPT}.sh 4000M 10G 
+        condor_submit ${FSCRIPT}.sh.condor
     done
 done
