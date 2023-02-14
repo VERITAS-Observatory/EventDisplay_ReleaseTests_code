@@ -13,10 +13,10 @@ fi
 RPARA=${1}
 COM=${2}
   
-for N in SZE MZE LZE
+for N in "0.5deg" ""  LZE_0.5deg MZE_0.5deg SZE_0.5deg SZE MZE LZE WOBBLE
 do
-   for R in RE
+   for R in IGNOREACCEPTANCE
    do 
-      ./anasum_yearly.sh ${RPARA} ${COM} ${N} ${R}
+      ./anasum_yearly.sh ${RPARA} ${COM} "${N}" "${R}"
    done
 done

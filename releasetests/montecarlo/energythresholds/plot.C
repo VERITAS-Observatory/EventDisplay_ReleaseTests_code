@@ -10,9 +10,7 @@
 
 #include "../../utilitities/parameters.C"
 
-#if ROOT_VERSION_CODE >= ROOT_VERSION(6,00,0)
-  R__LOAD_LIBRARY($EVNDISPSYS/lib/libVAnaSum.so);
-#endif
+R__LOAD_LIBRARY($EVNDISPSYS/lib/libVAnaSum.so);
 
 void printCanvas( TCanvas *c,
                   string iName,
@@ -145,16 +143,7 @@ void plot( string runparameterfile )
     fPar->print();
 
     string e_dir = "$VERITAS_EVNDISP_AUX_DIR/EffectiveAreas/";
-    string oDir = "../../../" + fPar->fVersion + "/energythresholds/";
-    if( gROOT->GetVersionInt()/10000 == 5 )
-    {
-        int i_load = gSystem->Load( "$EVNDISPSYS/lib/libVAnaSum.so" );
-        if( i_load < 0 )
-        {
-            cout << "Error loading shared library" << endl;
-            return;
-        }
-    }
+    string oDir = "../../../../EventDisplay_ReleaseTests_" + fPar->fVersion + "/energythresholds/";
 
     // NSB axis depend on HV
     int min_nsb = 45;

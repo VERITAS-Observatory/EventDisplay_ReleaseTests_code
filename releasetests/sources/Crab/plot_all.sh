@@ -6,11 +6,12 @@ if [[ $# < 1 ]]; then
    exit
 fi
 
-# for Z in SZE MZE LZE WOBBLE
-for Z in SZE
+BCKMODEL="IGNOREACCEPTANCE"
+
+for Z in SZE MZE LZE WOBBLE LZE_0.5deg MZE_0.5deg SZE_0.5deg
 do
-   root -q -l -b "plot_energy_spectra.C(\"${1}\", \"$Z\" )"
-   root -q -l -b "plot_lightcurves.C(\"${1}\", \"$Z\" )"
-   root -q -l -b "plot_skymaps.C(\"${1}\", \"$Z\", \"RE\" )"
+   root -q -l -b "plot_energy_spectra.C(\"${1}\", \"$Z\", \"$BCKMODEL\" )"
+   root -q -l -b "plot_lightcurves.C(\"${1}\", \"$Z\", \"$BCKMODEL\" )"
+   root -q -l -b "plot_skymaps.C(\"${1}\", \"$Z\", \"$BCKMODEL\" )"
 #   root -q -l -b "plot_skymaps.C(\"${1}\", \"$Z\", \"RB\" )"
 done

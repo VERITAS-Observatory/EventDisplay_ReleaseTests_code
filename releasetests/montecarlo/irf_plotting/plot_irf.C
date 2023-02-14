@@ -9,9 +9,7 @@
 #include <string>
 #include <vector>
 
-#if ROOT_VERSION_CODE >= ROOT_VERSION(6,00,0)
-  R__LOAD_LIBRARY($EVNDISPSYS/lib/libVAnaSum.so);
-#endif
+R__LOAD_LIBRARY($EVNDISPSYS/lib/libVAnaSum.so);
 
 void printCanvas( TCanvas *c, string iName, string oDir )
 {
@@ -36,6 +34,7 @@ void plot_irf(
         string woff = "0.5",
         string nsb = "200",
         string odir = "./figures/",
+        string dir_suff_1 = "",
         string dir_suff_2 = "_DISP"
         )
 {
@@ -57,7 +56,7 @@ void plot_irf(
 
     VPlotInstrumentResponseFunction a;
     a.addInstrumentResponseData(
-            (IRFDirectory+"/"+IRFFile+".root").c_str(),
+            (IRFDirectory+dir_suff_1+"/"+IRFFile+".root").c_str(),
             atoi(ze.c_str()), atof(woff.c_str()), 0, 1.6, atoi(nsb.c_str()), "A_MC",
             -99, -99, -99, 1.5 );
     if( dir_suff_2.size() > 0 )
@@ -67,6 +66,7 @@ void plot_irf(
                 atoi(ze.c_str()), atof(woff.c_str()), 0, 1.6, atoi(nsb.c_str()), "A_MC",
                 -99, -99, -99, 1.5 );
     }
+    a.setPlottingAxis( "energy_Lin", "X", false, 0.05, 80., "energy [TeV]" );
     // energies for theta2 plot
     vector< double > iE;
     if( atof(ze.c_str()) < 45. )
@@ -104,13 +104,17 @@ void plot_irf(
     c = a.plotAngularResolution("energy", "68", 0.25 );
     printCanvas( c, "AngRes_"+IRFFile, odir);
 
-    c = a.plotEffectiveArea( 1.e2, 8.e5 );
+    a.setPlottingAxis( "energy", "X", true, 1.5, 2. );
+    c = a.plotAngularResolution("energy", "95", 0.45 );
+    printCanvas( c, "AngRes95p_"+IRFFile, odir);
+
+    c = a.plotEffectiveArea( 1.e3, 5.e5 );
     printCanvas( c, "EffArea_"+IRFFile, odir);
 
     c = a.plotEffectiveAreaRatio( 0, 0., 2. );
     printCanvas( c, "EffAreaRatio_"+IRFFile, odir);
 
-    c = a.plotEnergyResolution();
+    c = a.plotEnergyResolution( 0.5 );
     printCanvas( c, "ERes_"+IRFFile, odir);
 
     c = a.plotCoreResolution();

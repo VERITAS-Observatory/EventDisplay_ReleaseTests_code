@@ -91,7 +91,7 @@ Energy reconstruction method (should be 1)
 (note: this has to match what has been used in the effective
 area calculations. Do not change unless you know better.)
 * ENERGYRECONSTRUCTIONMETHOD 1
-Dead time calculation
+Dead time calculation (0=scalar=default; 1=timediff)
 * DEADTIMECALCULATIONMETHOD 0
 ========================================================
 

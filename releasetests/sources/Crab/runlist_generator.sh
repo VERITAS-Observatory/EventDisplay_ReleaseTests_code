@@ -34,9 +34,14 @@ MEPOCH=$(grep MAJOREPOCH ${1} | awk '{print $3}')
 OBJECT=$(grep SOURCE ${1} | awk '{print $3}')
 # Analysis type
 ANATYPE=$(grep ANALYSISTYPE ${1} | awk '{print $3}')
+# DIRECTION RECONSTRUCTION
+DIRRECOTYPE=$(grep DIRECTION ${1} | grep "*" | awk '{print $3}')
+if [[ ! -z ${DIRRECOTYPE} ]]; then
+    DIRRECOTYPE="_${DIRRECOTYPE}"
+fi
 ##############################################
 # output directory for all data productions
-VDIR="../../../../EventDisplay_ReleaseTests_${VERSION}/${OBJECT}/"
+VDIR="../../../../EventDisplay_ReleaseTests_${VERSION}/${OBJECT}${DIRRECOTYPE}/"
 mkdir -p ${VDIR}
 
 ##############################################
@@ -47,18 +52,13 @@ if [[ ! -e ${MLIST} ]]; then
    exit
 fi
 # 'master' directory with all mscw file 
-MSCWSDIR="mscw_energy-redHV"
-MSCWSDIR="mscw_energy"
-MSCWDDIR="$VERITAS_USER_DATA_DIR/analysis/Results/${VERSION}/${ANATYPE}/${OBJECT}/${MSCWSDIR}"
+MSCWSDIR="mscw-redHV"
+MSCWSDIR="mscw"
+MSCWDDIR="$VERITAS_USER_DATA_DIR/analysis/Results/${VERSION}/${ANATYPE}/${OBJECT}${DIRRECOTYPE}/${MSCWSDIR}"
 if [[ ! -e ${MSCWDDIR} ]]; then
-   echo "Warning: directory with MSCW files not found; trying a variation" 
-    MSCWSDIR=${MSCWSDIR/mscw_energy/mscw}
-    MSCWDDIR="$VERITAS_USER_DATA_DIR/analysis/Results/${VERSION}/${ANATYPE}/${OBJECT}/${MSCWSDIR}"
-    if [[ ! -e ${MSCWDDIR} ]]; then
-       echo "Error: directory with MSCW files not found" 
-       echo ${MSCWDDIR}
-       exit
-   fi
+   echo "Error: directory with MSCW files not found" 
+   echo ${MSCWDDIR}
+   exit
 fi
 echo "READING mscw files from ${MSCWDDIR}"
 LL=`cat ${MLIST}`
@@ -172,6 +172,12 @@ do
            link_run ${MSCWSDIR}
        else
           LNAME="${E}_ATM${ATM}_${EL}_0.5deg"
+          fill_run
+          link_run ${MSCWSDIR}
+          LNAME="${E}_${EL}_0.5deg"
+          fill_run
+          link_run ${MSCWSDIR}
+          LNAME="${E}_0.5deg"
           fill_run
           link_run ${MSCWSDIR}
        fi

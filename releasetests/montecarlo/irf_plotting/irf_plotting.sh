@@ -14,7 +14,8 @@ fi
 CUT="NTel2-PointSource-Moderate"
 MCAZ="16"
 ANATYPE="AP"
-COMPAREANA="_DISP"
+COMPAREANA_1=""
+COMPAREANA_2="_DISP"
 #### (END TEMP FIXED VALUES)
 
 # Eventdisplay version
@@ -31,8 +32,12 @@ MCZE=($(grep MC_ZE ${1} | grep '*' | awk '{for(i=3;i<=NF;++i)print $i}'))
 MCWOFF=($(grep MC_WOFF ${1} | grep '*' | awk '{for(i=3;i<=NF;++i)print $i}'))
 # MC NSB
 MCNSB=($(grep MC_NSB ${1} | grep '*' | awk '{for(i=3;i<=NF;++i)print $i}'))
+# ANALYSIS TYPE
+ANALYSISTYPE=$(grep ANALYSISTYPE ${1} | grep "*" | awk '{print $3}')
+# DIRECTION RECONSTRUCTION
+DIRRECOTYPE=$(grep DIRECTION ${1} | grep "*" | awk '{print $3}')
 
-ODIR="../../../${VERSION}/irf_plotting/${SIMTYPE}/${CUT}_ATM${ATMO}"
+ODIR="../../../../EventDisplay_ReleaseTests_${VERSION}/irf_plotting/${ANALYSISTYPE}_${DIRRECOTYPE}/${SIMTYPE}/${CUT}_ATM${ATMO}"
 mkdir -p ${ODIR}
 
 DDIR="$VERITAS_IRFPRODUCTION_DIR/${VERSION}/${ANATYPE}/${SIMTYPE}/"
@@ -47,7 +52,7 @@ do
             do
                 for A in "${ATMO[@]}"
                 do
-                    root -l -q -b "plot_irf.C(\"${DDIR}\",\"${E}\",\"${A}\",\"${CUT}\",\"${Z}\",\"${W}\",\"${N}\",\"${ODIR}\", \"${COMPAREANA}\")"
+                    root -l -q -b "plot_irf.C(\"${DDIR}\",\"${E}\",\"${A}\",\"${CUT}\",\"${Z}\",\"${W}\",\"${N}\",\"${ODIR}\", \"${COMPAREANA_1}\",  \"${COMPAREANA_2}\")"
                 done
             done
         done

@@ -269,10 +269,6 @@ void plot_lightcurves( string runparameterfile, string fElevation = "SZE",
     RunParameters *fPar = new RunParameters( runparameterfile );
     if( fPar->IsZombie() ) return;
 
-    if( gROOT->GetVersionInt()/10000 == 5 )
-    {
-        gSystem->Load( "$EVNDISPSYS/lib/libVAnaSum.so" );
-    }
     cout << "Plotting light curves" << endl;
 
     vector< string > fAtmosphere = fPar->getAtmosphereVector( "ATM" );
@@ -280,7 +276,7 @@ void plot_lightcurves( string runparameterfile, string fElevation = "SZE",
     vector< string > fCuts = fPar->getCutsVector();
 
     // output directory
-    string oDir = "../../../" + fPar->fVersion + "/" + fPar->fSource + "/figures/";
+    string oDir = "../../../../EventDisplay_ReleaseTests_" + fPar->fVersion + "/" + fPar->fSource + "/figures/";
     gSystem->mkdir( oDir.c_str(), true );
     cout << "figures will be written to " << oDir << endl;
 

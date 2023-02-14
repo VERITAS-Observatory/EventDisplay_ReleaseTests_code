@@ -5,23 +5,10 @@
  *
  */
 
-#if ROOT_VERSION_CODE >= ROOT_VERSION(6,00,0)
-  R__LOAD_LIBRARY($EVNDISPSYS/lib/libVAnaSum.so);
-#endif
-
+R__LOAD_LIBRARY($EVNDISPSYS/lib/libVAnaSum.so);
 
 void plot_compare( string oDir )
 {
-    if( gROOT->GetVersionInt()/10000 == 5 )
-    {
-        int i_load = gSystem->Load( "$EVNDISPSYS/lib/libVAnaSum.so" );
-        if( i_load < 0 )
-        {
-            cout << "Error loading shared library" << endl;
-            return;
-        }
-    }
-
     string i_name = oDir + "/mcdatacomparison";
 
     cout << "Running " << i_name << endl;
