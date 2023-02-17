@@ -178,6 +178,7 @@ do
         FSCRIPT="tmpdir/compareDatawithMC_qsub_${SIMTYPE}_${I}${A}_${ELE}_${MCWOFF}_${NSB}"
         rm -f ${FSCRIPT}.sh
         sed -e "s|OUTDIR|$ODIR|" \
+            -e "s|EEPOCHTM|${I}_ATM${atm}|" \
             -e "s|CURRENTDIR|$PWDIR|" compareDatawithMC_qsub.sh > ${FSCRIPT}.sh
 
         echo "Run script: $FSCRIPT"
