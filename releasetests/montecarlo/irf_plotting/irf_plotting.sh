@@ -11,11 +11,14 @@ if [ ! -n "$1" ]; then
 fi
 
 #### TEMP FIXED VALUES
+# Box cut
 CUT="NTel2-PointSource-Moderate"
+# BDT cuts
+CUT="NTel2-PointSource-Moderate-TMVA-BDT"
 MCAZ="16"
 ANATYPE="AP"
-COMPAREANA_1=""
-COMPAREANA_2="_DISP"
+COMPAREANA_1="_DISP"
+COMPAREANA_2=""
 #### (END TEMP FIXED VALUES)
 
 # Eventdisplay version
@@ -50,6 +53,9 @@ do
         do
             for E in "${EPOCH[@]}"
             do
+                if [[ ${E} == "V6" ]]; then
+                    continue
+                fi
                 for A in "${ATMO[@]}"
                 do
                     root -l -q -b "plot_irf.C(\"${DDIR}\",\"${E}\",\"${A}\",\"${CUT}\",\"${Z}\",\"${W}\",\"${N}\",\"${ODIR}\", \"${COMPAREANA_1}\",  \"${COMPAREANA_2}\")"
