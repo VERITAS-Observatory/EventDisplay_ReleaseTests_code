@@ -14,9 +14,9 @@ if [ $# -ne 1 ]; then
     echo ""
     echo "  generates run lists for minor epochs, zenith angle ranges, different atmospheres"
     echo "  generates links of mscw_energy files for anasum analysis"
-    echo " (minor epochs are read from mscw_energy files)"
+    echo "  (minor epochs are read from mscw_energy files)"
     echo ""
-    echo " reads runs from master list (e.g., runlist_releaseTestingV6.dat)"
+    echo "  reads runs from master list (e.g., runlist_releaseTestingV6.dat)"
     exit
 fi
 
