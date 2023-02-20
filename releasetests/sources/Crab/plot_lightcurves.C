@@ -223,7 +223,9 @@ void plot( RunParameters* fPar,
              }
              cout << "\t" << i_flux_min << "\t" << i_flux_max << endl;
              TH1D *h = new TH1D( "hfl", "", 100, 0.75*i_flux_min, 1.25*i_flux_max );
-             h->SetStats( 0 );
+             h->SetStats( 1 );
+             gStyle->SetOptStat( 200 );
+             gStyle->SetOptFit( 0 );
              char hname[200];
              sprintf( hname, "Fluxes (E > %.2f TeV) [cm^{-2} s^{-1}]", iEnergy_TeV );
              h->SetXTitle( hname );
