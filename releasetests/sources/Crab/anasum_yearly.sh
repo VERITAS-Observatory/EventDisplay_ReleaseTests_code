@@ -184,7 +184,7 @@ do
                  fi
                  echo "  combining files from ${ANASUMDIR}/${C}.anasum.dat"
                  ./ANALYSIS.anasum_combine.sh \
-                            ${ANASUMDIR}/${C}.anasum.dat \
+                            $RLIST \
                             $ANASUMDIR \
                             anasum.combined.root \
                             $RDIR/runparameter.dat
