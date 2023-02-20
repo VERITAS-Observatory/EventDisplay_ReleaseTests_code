@@ -39,11 +39,15 @@ MCWOFF=$(grep MC_WOFF ${1} | awk '{print $3}')
 # Crab NSB level
 CRABNSB=$(grep CRAB_NSB ${1} | awk '{print $3}')
 # Analysis type
-ANALYSISTYPE=$(grep ANALYSISTYPE ${1} | grep "*" | awk '{print $3}')
-# Direction reconstruction
-DIRRECOTYPE=$(grep DIRECTION ${1} | grep "*" | awk '{print $3}')
-if [[ ! -z ${DIRRECOTYPE} ]]; then
-    DIRRECOTYPE="_${DIRRECOTYPE}"
+ANALYSISTYPE="AP"
+DIRRECOTYPE="_DISP"
+if [[ ! -z  $VERITAS_ANALYSIS_TYPE ]]; then
+    ANALYSISTYPE="${VERITAS_ANALYSIS_TYPE:0:2}"
+    if [[ ${VERITAS_ANALYSIS_TYPE} == *"DISP"* ]]; then
+        DIRRECOTYPE="_DISP"
+    else
+        DIRRECOTYPE=""
+    fi
 fi
 ###########################
 
@@ -122,7 +126,7 @@ do
         echo "Processing $I $A ${atm}"
         
         # check if data files are availabe
-        MSCWS="mscw_energy"
+        MSCWS="mscw"
         DMSCWDIR="${DDIR}/${MSCWS}_${I}${REDHV}${A}_${ELE}_0.5deg"
         if [[ $ELE = "WOBBLE" ]]; then
             DMSCWDIR="${DDIR}/${MSCWS}_${I}${REDHV}${A}_${ELE}"
@@ -130,12 +134,8 @@ do
         # make sure that files are available for the given 
         # epoch (not all epochs have Crab runs available)
         if [[ ! -d ${DMSCWDIR} ]]; then
-           echo "Directory ${DMSCWDIR} not found, trying mscw directory"
-           DMSCWDIR=${DMSCWDIR/mscw_energy/mscw}
-            if [[ ! -d ${DMSCWDIR} ]]; then
-               echo "Directory ${DMSCWDIR} not found; skipping"
-               continue
-            fi
+           echo "Directory ${DMSCWDIR} not found; skipping"
+           continue
         fi
         NMSWC=$(ls -1 ${DMSCWDIR}/*.mscw.root | wc -l)
         # require at least 3 runs
