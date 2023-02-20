@@ -62,7 +62,16 @@ fi
 # Eventdisplay version
 VERSION=$(grep VERSION ${1} | awk '{print $3}')
 # Analysis type
-ANALYSISTYPE=$(grep ANALYSISTYPE ${1} | grep "*" | awk '{print $3}')
+ANALYSISTYPE="AP"
+DIRRECOTYPE="_DISP"
+if [[ ! -z  $VERITAS_ANALYSIS_TYPE ]]; then
+    ANALYSISTYPE="${VERITAS_ANALYSIS_TYPE:0:2}"
+    if [[ ${VERITAS_ANALYSIS_TYPE} == *"DISP"* ]]; then
+        DIRRECOTYPE="_DISP"
+    else
+        DIRRECOTYPE=""
+    fi
+fi
 # eventdisplay version --> defines script directory
 EDVERSION=$($EVNDISPSYS/bin/evndisp --version | tr -d .)
 EDVERSION=${EDVERSION:1}
@@ -79,11 +88,6 @@ OBJECT=($(grep SOURCE ${1} | grep "*" | awk '{print $3}'))
 CATALOG=($(grep BRIGHTSTARCATALOGUE ${1} | grep "*" | awk '{print $3}'))
 # Minimum brightness of stars
 BRIGHTSTARSETTINGS=($(grep BRIGHTSTARSETTINGS ${1} | grep "*" | awk '{print $3}'))
-# DIRECTION RECONSTRUCTION
-DIRRECOTYPE=$(grep DIRECTION ${1} | grep "*" | awk '{print $3}')
-if [[ ! -z ${DIRRECOTYPE} ]]; then
-    DIRRECOTYPE="_${DIRRECOTYPE}"
-fi
 #########################
 # run mode
 MODE=$2
@@ -171,7 +175,6 @@ do
                             $C ${BCK} \
                             $RDIR/runparameter.dat \
                             ${MDIR} \
-                            ${V2DL3_PATH} \
                             DEFAULT 0 $FORCEDATMO
              elif [ "$MODE" == "FFF" ] ; then
                  if [[ ! -e ${ANASUMDIR} ]]; then
