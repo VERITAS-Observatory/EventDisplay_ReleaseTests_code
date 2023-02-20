@@ -29,8 +29,8 @@ class RunParameterData
 
     RunParameterData( string iVersion = "unset",
                       string iSimType = "unset",
-                      string iAnaType = "unset",
-                      string iDirectionType = "unset" );
+                      string iAnaType = "AP",
+                      string iDirectionType = "DISP" );
    ~RunParameterData() {}
     string getEffectiveAreaFileName();
     string getFigureDirectory();
@@ -139,6 +139,23 @@ RunParameters::RunParameters( string iRunParameterFile )
 
 bool RunParameters::readParameters( string iRunParameterFile )
 {
+     // analysis and direction reconstruction are read from environmental variable
+     // fAnaType, fDirectionType
+     const char* ana_type = gSystem->Getenv( "VERITAS_ANALYSIS_TYPE" );
+     if( ana_type )
+     {
+         string itemp = ana_type;
+         if( itemp.size() > 1 )
+         {
+             fAnaType = itemp.substr( 0, 2 );
+             if( itemp.find( "DISP" ) != string::npos )
+             {
+                 fDirectionType = "DISP";
+             }
+         }
+     }
+
+     // all other parameters are read from parameter file
      ifstream is;
      is.open( iRunParameterFile.c_str(), ifstream::in );
      if( !is )
@@ -170,14 +187,6 @@ bool RunParameters::readParameters( string iRunParameterFile )
              else if( temp1 == "SIMTYPE" )
              {
                   fSimType = temp2;
-             }
-             else if( temp1 == "ANALYSISTYPE" )
-             {
-                  fAnaType = temp2;
-             }
-             else if( temp1 == "DIRECTION" )
-             {
-                 fDirectionType = temp2;
              }
              else if( temp1 == "MAJOREPOCH" )
              {
@@ -301,7 +310,12 @@ string RunParameters::getDataDir()
 
     iDataDir = "$VERITAS_USER_DATA_DIR/analysis/Results/"
                     + fVersion + "/" + fAnaType + "/"
-                    + fSource + "/anasum/";
+                    + fSource;
+    if( fDirectionType.size() > 0 )
+    {
+        iDataDir += "_" + fDirectionType;
+    }
+    iDataDir += "/anasum/";
 
     return iDataDir;
 }

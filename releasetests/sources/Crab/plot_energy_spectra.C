@@ -271,7 +271,12 @@ void plot_energy_spectra( string runparameterfile, string fElevation = "SZE",
     vector< string > fCuts = fPar->getCutsVector();
 
     // output directory
-    string oDir = "../../../../EventDisplay_ReleaseTests_" + fPar->fVersion + "/" + fPar->fSource + "/figures/";
+    string oDir = "../../../../EventDisplay_ReleaseTests_" + fPar->fVersion + "/" + fPar->fSource;
+    if( fPar->fDirectionType.size() > 0 )
+    {
+        oDir += "_" + fPar->fDirectionType;
+    }
+    oDir += "/figures/";
     gSystem->mkdir( oDir.c_str(), true );
     cout << "figures will be written to " << oDir << endl;
 
