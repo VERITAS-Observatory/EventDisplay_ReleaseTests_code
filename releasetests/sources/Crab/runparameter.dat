@@ -79,7 +79,7 @@ ex:12 24 15 52 18 04 0.5
 Additional regions:
  REGIONTOEXCLUDE_RADECJ2000_DEG 345.004 59.4042 0.12
 Zeta Tau
- REGIONTOEXCLUDE_RADECJ2000_HOUR 05 37 38.686 +21 08 33.18 0.25
+* REGIONTOEXCLUDE_RADECJ2000_HOUR 05 37 38.686 +21 08 33.18 0.5
 ========================================================
 Energy spectra 
 
