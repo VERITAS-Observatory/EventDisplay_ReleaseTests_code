@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # run script for data - MC comparision
 # 
 # requires:

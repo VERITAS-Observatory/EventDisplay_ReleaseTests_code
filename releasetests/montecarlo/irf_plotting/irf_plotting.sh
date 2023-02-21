@@ -1,4 +1,5 @@
-# 
+#!/bin/bash
+#
 # IRF plotting
 #
 #
@@ -35,10 +36,17 @@ MCZE=($(grep MC_ZE ${1} | grep '*' | awk '{for(i=3;i<=NF;++i)print $i}'))
 MCWOFF=($(grep MC_WOFF ${1} | grep '*' | awk '{for(i=3;i<=NF;++i)print $i}'))
 # MC NSB
 MCNSB=($(grep MC_NSB ${1} | grep '*' | awk '{for(i=3;i<=NF;++i)print $i}'))
-# ANALYSIS TYPE
-ANALYSISTYPE=$(grep ANALYSISTYPE ${1} | grep "*" | awk '{print $3}')
-# DIRECTION RECONSTRUCTION
-DIRRECOTYPE=$(grep DIRECTION ${1} | grep "*" | awk '{print $3}')
+# Analysis type
+ANALYSISTYPE="AP"
+DIRRECOTYPE="_DISP"
+if [[ ! -z  $VERITAS_ANALYSIS_TYPE ]]; then
+    ANALYSISTYPE="${VERITAS_ANALYSIS_TYPE:0:2}"
+    if [[ ${VERITAS_ANALYSIS_TYPE} == *"DISP"* ]]; then
+        DIRRECOTYPE="_DISP"
+    else
+        DIRRECOTYPE=""
+    fi
+fi
 
 ODIR="../../../../EventDisplay_ReleaseTests_${VERSION}/irf_plotting/${ANALYSISTYPE}_${DIRRECOTYPE}/${SIMTYPE}/${CUT}_ATM${ATMO}"
 mkdir -p ${ODIR}
