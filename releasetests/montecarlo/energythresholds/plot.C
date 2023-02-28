@@ -47,12 +47,13 @@ void plot_energy_thresholds( TTree *t,
 {
     if( !t ) return;
     TCanvas *c = new TCanvas("c1", "", 10, 10, 400, 400 );
+    c->SetLeftMargin( 0.15 );
     c->SetGridx( 0 );
     c->SetGridy( 0 );
 
     TH1D *h = new TH1D("h", "", 1000., xmin, xmax );
     h->SetXTitle( xtitle.c_str() );
-    h->SetYTitle( "energy threshold (GeV)" );
+    h->SetYTitle( "energy threshold (TeV)" );
     h->SetStats( 0 );
     h->SetMinimum( 0.05 );
     h->SetMaximum( 2. );
@@ -100,15 +101,17 @@ void plot_effectiveAreas( TTree *t,
 
      // effective areas
      TCanvas *cA = new TCanvas("c1A", "", 10, 10, 400, 400 );
+     cA->SetLeftMargin( 0.15 );
      cA->SetGridx( 0 );
      cA->SetGridy( 0 );
 
      TH1D *hA = new TH1D("hA", "", 1000., xmin, xmax );
      hA->SetXTitle( xtitle.c_str() );
      hA->SetYTitle( "effective area (m^{2})" );
+     hA->GetYaxis()->SetTitleOffset( 1.2 );
      hA->SetStats( 0 );
      hA->SetMinimum( 0.05 );
-     hA->SetMaximum( 1.5e5 );
+     hA->SetMaximum( 1.8e5 );
      hA->Draw();
 
      TLegend *iLA = new TLegend( 0.70, 0.70, 0.85, 0.85 );
@@ -158,6 +161,7 @@ void plot( string runparameterfile )
     for( unsigned int i = 0; i < fPar->fData.size(); i++ )
     {
         if( !fPar->fData[i] ) continue;
+        if( fPar->fData[i]->fEpoch == "V6" ) continue;
 
         string figure_directory = oDir + fPar->fData[i]->getFigureDirectory();
         gSystem->mkdir( figure_directory.c_str(), kTRUE );
@@ -193,7 +197,6 @@ void plot( string runparameterfile )
        for( unsigned int n = 0; n < fPar->MC_nsb.size(); n++ )
        {
            stringstream cutstr;
-           cutstr << "TMath::Abs(index-" << fPar->MC_index << ")<0.01&&";
            cutstr << "az==" << fPar->MC_az << "&&";
            cutstr << "noise==" << fPar->MC_nsb[n] << "&&";
            if( fPar->MC_woff.size() > 0 ) cutstr << "TMath::Abs(Woff-" << fPar->MC_woff[0] << ")<0.1";
@@ -211,7 +214,7 @@ void plot( string runparameterfile )
                                    figure_directory );
 
            figname.str( "" );
-           figname << "Aeff-FixedNSB" << int(fPar->MC_ze[n]) << iWoffString.str();
+           figname << "Aeff-FixedNSB" << fPar->MC_nsb[n] << iWoffString.str();
 
            plot_effectiveAreas( t,
                                 "zenith angle (deg)",
@@ -226,7 +229,6 @@ void plot( string runparameterfile )
        for( unsigned int n = 0; n < fPar->MC_ze.size(); n++ )
        {
            stringstream cutstr;
-           cutstr << "TMath::Abs(index-" << fPar->MC_index << ")<0.01&&";
            cutstr << "az==" << fPar->MC_az << "&&";
            cutstr << "TMath::Abs(ze-" << fPar->MC_ze[n] << ")<0.1&&";
            if( fPar->MC_woff.size() > 0 ) cutstr << "TMath::Abs(Woff-" << fPar->MC_woff[0] << ")<0.1";
