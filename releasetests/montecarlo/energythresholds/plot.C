@@ -60,6 +60,7 @@ void plot_energy_thresholds( TTree *t,
     h->Draw();
 
     TLegend *iLN = new TLegend( 0.70, 0.70, 0.85, 0.85 );
+    iLN->SetFillStyle(0);
 
     t->SetMarkerStyle( 20 );
     t->SetLineColor(12);
@@ -115,6 +116,7 @@ void plot_effectiveAreas( TTree *t,
      hA->Draw();
 
      TLegend *iLA = new TLegend( 0.70, 0.70, 0.85, 0.85 );
+     iLA->SetFillStyle(0);
 
      t->SetMarkerStyle( 20 );
      t->SetLineColor(12);
