@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # run script for data - MC comparision
 # 
 # requires:
@@ -39,11 +41,15 @@ MCWOFF=$(grep MC_WOFF ${1} | awk '{print $3}')
 # Crab NSB level
 CRABNSB=$(grep CRAB_NSB ${1} | awk '{print $3}')
 # Analysis type
-ANALYSISTYPE=$(grep ANALYSISTYPE ${1} | grep "*" | awk '{print $3}')
-# Direction reconstruction
-DIRRECOTYPE=$(grep DIRECTION ${1} | grep "*" | awk '{print $3}')
-if [[ ! -z ${DIRRECOTYPE} ]]; then
-    DIRRECOTYPE="_${DIRRECOTYPE}"
+ANALYSISTYPE="AP"
+DIRRECOTYPE="_DISP"
+if [[ ! -z  $VERITAS_ANALYSIS_TYPE ]]; then
+    ANALYSISTYPE="${VERITAS_ANALYSIS_TYPE:0:2}"
+    if [[ ${VERITAS_ANALYSIS_TYPE} == *"DISP"* ]]; then
+        DIRRECOTYPE="_DISP"
+    else
+        DIRRECOTYPE=""
+    fi
 fi
 ###########################
 
@@ -122,7 +128,7 @@ do
         echo "Processing $I $A ${atm}"
         
         # check if data files are availabe
-        MSCWS="mscw_energy"
+        MSCWS="mscw"
         DMSCWDIR="${DDIR}/${MSCWS}_${I}${REDHV}${A}_${ELE}_0.5deg"
         if [[ $ELE = "WOBBLE" ]]; then
             DMSCWDIR="${DDIR}/${MSCWS}_${I}${REDHV}${A}_${ELE}"
@@ -130,12 +136,8 @@ do
         # make sure that files are available for the given 
         # epoch (not all epochs have Crab runs available)
         if [[ ! -d ${DMSCWDIR} ]]; then
-           echo "Directory ${DMSCWDIR} not found, trying mscw directory"
-           DMSCWDIR=${DMSCWDIR/mscw_energy/mscw}
-            if [[ ! -d ${DMSCWDIR} ]]; then
-               echo "Directory ${DMSCWDIR} not found; skipping"
-               continue
-            fi
+           echo "Directory ${DMSCWDIR} not found; skipping"
+           continue
         fi
         NMSWC=$(ls -1 ${DMSCWDIR}/*.mscw.root | wc -l)
         # require at least 3 runs
@@ -163,12 +165,12 @@ do
 
         # write run parameter file
         if [[ $SIMTYPE == "CARE_RedHV" ]]; then
-            echo "* SIMS $SIMDIR/${I}_ATM61_gamma/${SIMMSCW}/${simfile} 4 ${MCWOFF} 0. 110. 250. ${ZEMIN} ${ZEMAX}" > $ODIR/mcdatacomparison.runparameter
+            echo "* SIMS $SIMDIR/${I}_ATM61_gamma/${SIMMSCW}/${simfile} 4 ${MCWOFF} 0. 0. 0. ${ZEMIN} ${ZEMAX}" > $ODIR/mcdatacomparison.runparameter
         else
             if [[ $ELE == "WOBBLE" ]] && [[ ${I: -1} == "s" ]]; then
-                echo "* SIMS $SIMDIR/${I}_ATM62_gamma/${SIMMSCW}/${simfile} 4 ${MCWOFF} 0. 110. 250. ${ZEMIN} ${ZEMAX}" > $ODIR/mcdatacomparison.runparameter
+                echo "* SIMS $SIMDIR/${I}_ATM62_gamma/${SIMMSCW}/${simfile} 4 ${MCWOFF} 0. 0. 0. ${ZEMIN} ${ZEMAX}" > $ODIR/mcdatacomparison.runparameter
             else
-                echo "* SIMS $SIMDIR/${I}_ATM${atm}_gamma/${SIMMSCW}/${simfile} 4 ${MCWOFF} 0. 110. 250. ${ZEMIN} ${ZEMAX}" > $ODIR/mcdatacomparison.runparameter
+                echo "* SIMS $SIMDIR/${I}_ATM${atm}_gamma/${SIMMSCW}/${simfile} 4 ${MCWOFF} 0. 0. 0. ${ZEMIN} ${ZEMAX}" > $ODIR/mcdatacomparison.runparameter
             fi
         fi
         echo "* ON ${DMSCWDIR}/[0-9]*.mscw.root 4 -99. -99. 0. 360. ${ZEMIN} ${ZEMAX}" >> $ODIR/mcdatacomparison.runparameter
@@ -178,6 +180,7 @@ do
         FSCRIPT="tmpdir/compareDatawithMC_qsub_${SIMTYPE}_${I}${A}_${ELE}_${MCWOFF}_${NSB}"
         rm -f ${FSCRIPT}.sh
         sed -e "s|OUTDIR|$ODIR|" \
+            -e "s|EEPOCHTM|${I}_ATM${atm}|" \
             -e "s|CURRENTDIR|$PWDIR|" compareDatawithMC_qsub.sh > ${FSCRIPT}.sh
 
         echo "Run script: $FSCRIPT"

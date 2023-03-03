@@ -1,4 +1,5 @@
-# 
+#!/bin/bash
+#
 # IRF plotting
 #
 #
@@ -11,11 +12,14 @@ if [ ! -n "$1" ]; then
 fi
 
 #### TEMP FIXED VALUES
+# Box cut
 CUT="NTel2-PointSource-Moderate"
+# BDT cuts
+CUT="NTel2-PointSource-Moderate-TMVA-BDT"
 MCAZ="16"
 ANATYPE="AP"
-COMPAREANA_1=""
-COMPAREANA_2="_DISP"
+COMPAREANA_1="_DISP"
+COMPAREANA_2=""
 #### (END TEMP FIXED VALUES)
 
 # Eventdisplay version
@@ -32,10 +36,17 @@ MCZE=($(grep MC_ZE ${1} | grep '*' | awk '{for(i=3;i<=NF;++i)print $i}'))
 MCWOFF=($(grep MC_WOFF ${1} | grep '*' | awk '{for(i=3;i<=NF;++i)print $i}'))
 # MC NSB
 MCNSB=($(grep MC_NSB ${1} | grep '*' | awk '{for(i=3;i<=NF;++i)print $i}'))
-# ANALYSIS TYPE
-ANALYSISTYPE=$(grep ANALYSISTYPE ${1} | grep "*" | awk '{print $3}')
-# DIRECTION RECONSTRUCTION
-DIRRECOTYPE=$(grep DIRECTION ${1} | grep "*" | awk '{print $3}')
+# Analysis type
+ANALYSISTYPE="AP"
+DIRRECOTYPE="_DISP"
+if [[ ! -z  $VERITAS_ANALYSIS_TYPE ]]; then
+    ANALYSISTYPE="${VERITAS_ANALYSIS_TYPE:0:2}"
+    if [[ ${VERITAS_ANALYSIS_TYPE} == *"DISP"* ]]; then
+        DIRRECOTYPE="_DISP"
+    else
+        DIRRECOTYPE=""
+    fi
+fi
 
 ODIR="../../../../EventDisplay_ReleaseTests_${VERSION}/irf_plotting/${ANALYSISTYPE}_${DIRRECOTYPE}/${SIMTYPE}/${CUT}_ATM${ATMO}"
 mkdir -p ${ODIR}
@@ -50,6 +61,9 @@ do
         do
             for E in "${EPOCH[@]}"
             do
+                if [[ ${E} == "V6" ]]; then
+                    continue
+                fi
                 for A in "${ATMO[@]}"
                 do
                     root -l -q -b "plot_irf.C(\"${DDIR}\",\"${E}\",\"${A}\",\"${CUT}\",\"${Z}\",\"${W}\",\"${N}\",\"${ODIR}\", \"${COMPAREANA_1}\",  \"${COMPAREANA_2}\")"

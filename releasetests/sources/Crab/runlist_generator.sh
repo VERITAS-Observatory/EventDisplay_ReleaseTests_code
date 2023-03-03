@@ -14,9 +14,9 @@ if [ $# -ne 1 ]; then
     echo ""
     echo "  generates run lists for minor epochs, zenith angle ranges, different atmospheres"
     echo "  generates links of mscw_energy files for anasum analysis"
-    echo " (minor epochs are read from mscw_energy files)"
+    echo "  (minor epochs are read from mscw_energy files)"
     echo ""
-    echo " reads runs from master list (e.g., runlist_releaseTestingV6.dat)"
+    echo "  reads runs from master list (e.g., runlist_releaseTestingV6.dat)"
     exit
 fi
 
@@ -33,11 +33,15 @@ MEPOCH=$(grep MAJOREPOCH ${1} | awk '{print $3}')
 # Source name
 OBJECT=$(grep SOURCE ${1} | awk '{print $3}')
 # Analysis type
-ANATYPE=$(grep ANALYSISTYPE ${1} | awk '{print $3}')
-# DIRECTION RECONSTRUCTION
-DIRRECOTYPE=$(grep DIRECTION ${1} | grep "*" | awk '{print $3}')
-if [[ ! -z ${DIRRECOTYPE} ]]; then
-    DIRRECOTYPE="_${DIRRECOTYPE}"
+ANALYSISTYPE="AP"
+DIRRECOTYPE="_DISP"
+if [[ ! -z  $VERITAS_ANALYSIS_TYPE ]]; then
+    ANALYSISTYPE="${VERITAS_ANALYSIS_TYPE:0:2}"
+    if [[ ${VERITAS_ANALYSIS_TYPE} == *"DISP"* ]]; then
+        DIRRECOTYPE="_DISP"
+    else
+        DIRRECOTYPE=""
+    fi
 fi
 ##############################################
 # output directory for all data productions
@@ -54,7 +58,7 @@ fi
 # 'master' directory with all mscw file 
 MSCWSDIR="mscw-redHV"
 MSCWSDIR="mscw"
-MSCWDDIR="$VERITAS_USER_DATA_DIR/analysis/Results/${VERSION}/${ANATYPE}/${OBJECT}${DIRRECOTYPE}/${MSCWSDIR}"
+MSCWDDIR="$VERITAS_USER_DATA_DIR/analysis/Results/${VERSION}/${ANALYSISTYPE}/${OBJECT}${DIRRECOTYPE}/${MSCWSDIR}"
 if [[ ! -e ${MSCWDDIR} ]]; then
    echo "Error: directory with MSCW files not found" 
    echo ${MSCWDDIR}
