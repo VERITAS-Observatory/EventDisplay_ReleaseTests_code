@@ -12,15 +12,18 @@
 
 if [[ $# < 2 ]]; then
 echo "
-  ./run_analysis.sh <runparameter file> <SOURCE> <TYPE> <CUT> <V2DL3_PATH> <GAMMAPY_SCRIPT>
+  ./run_analysis.sh <runparameter file> <SOURCE> <TYPE> <CUT> [V2DL3_PATH] [GAMMAPY_SCRIPT]
 
-   EVNDISP
-   MSCW
-   ANASUM_SUB
-   ANASUM_FFF
-   V2DL3
-   GAMMAPY
-   VALIDATION_PLOT
+   analysis types:
+       EVNDISP
+       MSCW
+       ANASUM_SUB
+       ANASUM_FFF
+       V2DL3
+       GAMMAPY
+       VALIDATION_PLOT
+
+   for cuts: (i.e., moderate2tel, soft2tel, hard3tel)
 "
 exit
 fi
@@ -28,8 +31,11 @@ fi
 SOURCE=${2}
 ANATYPE=${3}
 CUT=${4}
-V2DL3_PATH=${5}
-GAMMAPY_SCRIPT=${6}
+[[ "$5" ]] && V2DL3_PATH=$5 || V2DL3_PATH=""
+[[ "$6" ]] && GAMMAPY_SCRIPT=$6 || GAMMAPY_SCRIPT=""
+
+BCKMODEL="RE"
+BCKMODEL="IGNOREACCEPTANCE"
 
 ###########################
 # read runparameter file
@@ -38,16 +44,26 @@ if [[ ! -e ${1} ]]; then
    exit
 fi
 # Eventdisplay version
-EDVERSION=$(grep VERSION ${1} | awk '{print $3}')
+VERSION=$(grep VERSION ${1} | awk '{print $3}')
+# Analysis type
+ANALYSISTYPE="AP"
+DIRRECOTYPE="_DISP"
+if [[ ! -z  $VERITAS_ANALYSIS_TYPE ]]; then
+    ANALYSISTYPE="${VERITAS_ANALYSIS_TYPE:0:2}"
+    if [[ ${VERITAS_ANALYSIS_TYPE} == *"DISP"* ]]; then
+        DIRRECOTYPE="_DISP"
+    else
+        DIRRECOTYPE=""
+    fi
+fi
 # Bright star catalog
 CATALOG=($(grep BRIGHTSTARCATALOGUE ${1} | grep "*" | awk '{print $3}'))
 
-echo "${EDVERSION}"
-echo "${SOURCE}"
-echo "${CATALOG}"
-echo "${GAMMAPY_SCRIPT}"
-
-DDIR=${VERITAS_USER_DATA_DIR}/analysis/Results/${EDVERSION}/${SOURCE}/
+echo "Analysis of ${SOURCE} for Eventdisplay Version ${VERSION}"
+DDIR=${VERITAS_USER_DATA_DIR}/analysis/Results/${VERSION}/${ANALYSISTYPE}/SourceTests/${SOURCE}/
+echo "Results are written to ${DDIR}"
+MSCWDIR=${DDIR}
+MSCWDIR="${VERITAS_USER_DATA_DIR}/analysis/Results/${VERSION}/${ANALYSISTYPE}/mscw_DISP/"
 SDIR=`pwd`
 
 cd ${EVNDISPSCRIPTS}
@@ -56,22 +72,22 @@ if [[ ${ANATYPE} == "EVNDISP" ]]; then
    ./ANALYSIS.evndisp.sh ${SDIR}/${SOURCE}/runlist_releaseTesting.dat ${DDIR}/evndisp
 
 elif [[ ${ANATYPE} == "MSCW" ]]; then
-   ./ANALYSIS.mscw_energy.sh ${SDIR}/${SOURCE}/runlist_releaseTesting.dat ${DDIR}/evndisp ${DDIR}
+   ./ANALYSIS.mscw_energy.sh ${SDIR}/${SOURCE}/runlist_releaseTesting.dat ${DDIR}/evndisp ${MSCWDIR}
 
 elif [ ${ANATYPE} == "ANASUM_SUB" ]; then
        ./ANALYSIS.anasum_parallel_from_runlist.sh \
            ${SDIR}/${SOURCE}/runlist_releaseTesting.dat \
            ${DDIR}/${CUT} \
-           ${CUT} RE \
-           ${SDIR}/${SOURCE}/ANASUM.runparameter \
-           ${DDIR} ${V2DL3_PATH}
+           ${CUT} ${BCKMODEL} \
+           ${SDIR}/${SOURCE}/runparameter.dat \
+           ${MSCWDIR} ${V2DL3_PATH}
 
 elif [ ${ANATYPE} == "ANASUM_FFF" ] ; then
        ./ANALYSIS.anasum_combine.sh \
-           ${DDIR}/${CUT}/${CUT}.anasum.dat \
+           ${SDIR}/${SOURCE}/runlist_releaseTesting.dat \
            ${DDIR}/${CUT} \
            anasum.combined.root \
-           ${SDIR}/${SOURCE}/ANASUM.runparameter
+           ${SDIR}/${SOURCE}/runparameter.dat
 
 elif [ ${ANATYPE} == "V2DL3" ] ; then
     if [[ -d ${V2DL3_PATH} ]]; then
@@ -126,7 +142,7 @@ elif [ ${ANATYPE} == "VALIDATION_PLOT" ] ; then
               ${SDIR}/${SOURCE}/gammapy_analysis_parameter.yaml \
               NONE \
               ${CUT} \
-              ${EDVERSION}
+              ${VERSION}
        conda deactivate
      else
          echo "error: GAMMAPY script path not given"
