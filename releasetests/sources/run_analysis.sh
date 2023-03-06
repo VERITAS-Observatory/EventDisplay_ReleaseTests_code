@@ -36,6 +36,7 @@ CUT=${4}
 
 BCKMODEL="RE"
 BCKMODEL="IGNOREACCEPTANCE"
+EPOCH="V6"
 
 ###########################
 # read runparameter file
@@ -69,14 +70,14 @@ SDIR=`pwd`
 cd ${EVNDISPSCRIPTS}
 
 if [[ ${ANATYPE} == "EVNDISP" ]]; then
-   ./ANALYSIS.evndisp.sh ${SDIR}/${SOURCE}/runlist_releaseTesting.dat ${DDIR}/evndisp
+   ./ANALYSIS.evndisp.sh ${SDIR}/${SOURCE}/runlist_releaseTesting_${EPOCH}.dat ${DDIR}/evndisp
 
 elif [[ ${ANATYPE} == "MSCW" ]]; then
-   ./ANALYSIS.mscw_energy.sh ${SDIR}/${SOURCE}/runlist_releaseTesting.dat ${DDIR}/evndisp ${MSCWDIR}
+   ./ANALYSIS.mscw_energy.sh ${SDIR}/${SOURCE}/runlist_releaseTesting_${EPOCH}.dat ${DDIR}/evndisp ${MSCWDIR}
 
 elif [ ${ANATYPE} == "ANASUM_SUB" ]; then
        ./ANALYSIS.anasum_parallel_from_runlist.sh \
-           ${SDIR}/${SOURCE}/runlist_releaseTesting.dat \
+           ${SDIR}/${SOURCE}/runlist_releaseTesting_${EPOCH}.dat \
            ${DDIR}/${CUT} \
            ${CUT} ${BCKMODEL} \
            ${SDIR}/${SOURCE}/runparameter.dat \
@@ -84,7 +85,7 @@ elif [ ${ANATYPE} == "ANASUM_SUB" ]; then
 
 elif [ ${ANATYPE} == "ANASUM_FFF" ] ; then
        ./ANALYSIS.anasum_combine.sh \
-           ${SDIR}/${SOURCE}/runlist_releaseTesting.dat \
+           ${SDIR}/${SOURCE}/runlist_releaseTesting_${EPOCH}.dat \
            ${DDIR}/${CUT} \
            anasum.combined.root \
            ${SDIR}/${SOURCE}/runparameter.dat
