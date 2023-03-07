@@ -17,6 +17,8 @@ if [ $# -ne 1 ]; then
     echo "  (minor epochs are read from mscw_energy files)"
     echo ""
     echo "  reads runs from master list (e.g., runlist_releaseTestingV6.dat)"
+    echo ""
+    echo "IMPORTANT: requires files an a directory like $VERITAS_USER_DATA_DIR/analysis/Results/v490/AP/Crab_DISP/mscw"
     exit
 fi
 
@@ -119,16 +121,14 @@ link_run()
 
 for R in $LL
 do
-   if [ ! -e ${MSCWDDIR}/$R.mscw.root ]
-   then
-        echo "Run $R - file not found: ${MSCWDDIR}/$R.mscw.root"
-        continue
+   if [ ! -e ${MSCWDDIR}/$R.mscw.root ]; then
+      echo "Run $R - file not found: ${MSCWDDIR}/$R.mscw.root"
+      continue
    fi
-   # get run info from files
+   # read and extract run info from files
    RUNINFO="$($EVNDISPSYS/bin/printRunParameter ${MSCWDDIR}/$R.mscw.root -runinfo)"
    ELEVATION="$($EVNDISPSYS/bin/printRunParameter ${MSCWDDIR}/$R.mscw.root -elevation)"
    WOBBLE="$($EVNDISPSYS/bin/printRunParameter ${MSCWDDIR}/$R.mscw.root -wobbleInt)"
-   # extract run info
    EPOCH=$(echo $RUNINFO | awk '{print $1}')
    MAJOREPOCH=$(echo $RUNINFO | awk '{print $2}')
    ATM=$(echo $RUNINFO | awk '{print $3}')
@@ -143,9 +143,6 @@ do
    # print run info
    echo "${R}: ${RUNINFO}   ${ELEV}   ${EL}  $ATM   $WOBB"
 
-   # check and fill run lists
-
-   #####
    # files per major/minor epoch
    for E in ${MAJOREPOCH} ${EPOCH}
    do
