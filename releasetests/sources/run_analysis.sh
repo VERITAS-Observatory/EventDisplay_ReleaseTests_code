@@ -23,7 +23,7 @@ echo "
        GAMMAPY
        VALIDATION_PLOT
 
-   for cuts: (i.e., moderate2tel, soft2tel, hard3tel)
+   cuts: (i.e., moderate2tel, soft2tel, hard3tel)
 "
 exit
 fi
@@ -34,8 +34,9 @@ CUT=${4}
 [[ "$5" ]] && V2DL3_PATH=$5 || V2DL3_PATH=""
 [[ "$6" ]] && GAMMAPY_SCRIPT=$6 || GAMMAPY_SCRIPT=""
 
-BCKMODEL="RE"
 BCKMODEL="IGNOREACCEPTANCE"
+BCKMODEL="RE"
+BCKMODEL="IGNOREIRF"
 EPOCH="V6"
 
 ###########################
