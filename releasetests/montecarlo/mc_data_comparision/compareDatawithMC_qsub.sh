@@ -8,6 +8,11 @@ ODIR=OUTDIR
 CDIR=CURRENTDIR
 EPOCHATM=EEPOCHTM
 
+BDT="1"
+if [[ ${ODIR} == *"CARE_RedHV"* ]]; then
+    BDT="0"
+fi
+
 PP=$(pwd)
 cd ${CDIR}
 
@@ -15,7 +20,7 @@ $EVNDISPSYS/bin/compareDatawithMC \
           $ODIR/mcdatacomparison.runparameter \
           -3 \
           $ODIR/mcdatacomparison.root \
-          1 $EPOCHATM \
+          ${BDT} $EPOCHATM \
           > $ODIR/mcdatacomparison.log
 
 # prepare all plots

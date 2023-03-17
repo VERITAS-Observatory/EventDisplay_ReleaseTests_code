@@ -125,7 +125,11 @@ do
         if [[ $ELE == "WOBBLE" ]]; then
            A=""
         fi
-        echo "Processing $I $A ${atm}"
+        REDHV=""
+        if [[ $SIMTYPE == "CARE_RedHV" ]]; then
+            REDHV="_redHV"
+        fi
+        echo "Processing $I $A ${atm} $REDHV"
         
         # check if data files are availabe
         MSCWS="mscw"
@@ -157,10 +161,7 @@ do
         then
             rm -f $ODIR/mcdatacomparison.runparameter
         fi 
-        REDHV=""
-        if [[ $SIMTYPE == "CARE_RedHV" ]]; then
-            REDHV="_redHV"
-        fi
+        echo "Runparameter file $ODIR/mcdatacomparison.runparameter"
         SIMMSCW="MSCW_RECID0${DIRRECOTYPE}"
 
         # write run parameter file
