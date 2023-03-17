@@ -63,9 +63,11 @@ CATALOG=($(grep BRIGHTSTARCATALOGUE ${1} | grep "*" | awk '{print $3}'))
 
 echo "Analysis of ${SOURCE} for Eventdisplay Version ${VERSION}"
 DDIR=${VERITAS_USER_DATA_DIR}/analysis/Results/${VERSION}/${ANALYSISTYPE}/SourceTests/${SOURCE}/
+EVDIR=${VERITAS_USER_DATA_DIR}/analysis/Results/${VERSION}/${ANALYSISTYPE}/
 echo "Results are written to ${DDIR}"
 MSCWDIR=${DDIR}
 MSCWDIR="${VERITAS_USER_DATA_DIR}/analysis/Results/${VERSION}/${ANALYSISTYPE}/mscw_DISP/"
+# MSCWDIR="${VERITAS_USER_DATA_DIR}/analysis/Results/${VERSION}/${ANALYSISTYPE}/tmp_mscw/"
 SDIR=`pwd`
 
 cd ${EVNDISPSCRIPTS}
@@ -74,7 +76,7 @@ if [[ ${ANATYPE} == "EVNDISP" ]]; then
    ./ANALYSIS.evndisp.sh ${SDIR}/${SOURCE}/runlist_releaseTesting_${EPOCH}.dat ${DDIR}/evndisp
 
 elif [[ ${ANATYPE} == "MSCW" ]]; then
-   ./ANALYSIS.mscw_energy.sh ${SDIR}/${SOURCE}/runlist_releaseTesting_${EPOCH}.dat ${DDIR}/evndisp ${MSCWDIR}
+   ./ANALYSIS.mscw_energy.sh ${SDIR}/${SOURCE}/runlist_releaseTesting_${EPOCH}.dat ${EVDIR}/evndisp ${MSCWDIR}
 
 elif [ ${ANATYPE} == "ANASUM_SUB" ]; then
        ./ANALYSIS.anasum_parallel_from_runlist.sh \
