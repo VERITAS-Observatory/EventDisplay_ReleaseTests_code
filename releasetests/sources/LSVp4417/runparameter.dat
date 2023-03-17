@@ -1,0 +1,39 @@
+========================================================
+Run parameters for the anasum stage
+========================================================
+
+========================================================
+All lines without a '*' in the first column are ignored!
+--------------------------------------------------------
+
+Time mask
+---------
+* TIMEMASKFILE timemask.dat
+
+Exclusion regions
+-----------------
+* REGIONTOEXCLUDE 0. 0. 0.40
+* BRIGHTSTARCATALOGUE Hipparcos_MAG8_1997.dat
+* BRIGHTSTARSETTINGS 8 0.25 B
+
+Sky maps
+--------
+binning of sky map (correlated plots) [deg]
+* SKYMAPBINSIZE 0.01
+binning of sky map (uncorrelated plots) [deg]
+* SKYMAPBINSIZEUC 0.05
+size of sky map (x-axis/declination axis) [deg]
+* SKYMAPSIZEX 2.
+size of sky map (y-axis/RA axis) [deg]
+* SKYMAPSIZEY 2.
+sky map centre
+* SKYMAPCENTRE_RADECJ2000_HOUR 04 40 59.33 44 31 49.3
+target position
+* TARGETPOSITION_RADECJ2000_HOUR 04 40 59.33 44 31 49.3
+
+Spectral reconstruction
+-----------------------
+* ENERGYSPECTRALINDEX 4.0
+Energy spectra binning (logarithmic axis)
+* ENERGYBINSIZE 0.05
+* DEADTIMECALCULATIONMETHOD 0

@@ -126,6 +126,10 @@ void plot( RunParameters* fPar,
     if( !iT.IsZombie() )
     {
         VFluxCalculation f( anasum_dir+"/anasum.combined.root" );
+        if( f.IsZombie() )
+        {
+            return;
+        }
         f.calculateIntegralFlux(iEnergy_TeV);
         double dummy = 0.;
         f.getFlux( -1, fAverageFlux, fAverageFluxErr, dummy );

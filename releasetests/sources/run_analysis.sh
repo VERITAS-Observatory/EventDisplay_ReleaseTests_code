@@ -23,7 +23,7 @@ echo "
        GAMMAPY
        VALIDATION_PLOT
 
-   for cuts: (i.e., moderate2tel, soft2tel, hard3tel)
+   cuts: (i.e., moderate2tel, soft2tel, hard3tel)
 "
 exit
 fi
@@ -34,8 +34,10 @@ CUT=${4}
 [[ "$5" ]] && V2DL3_PATH=$5 || V2DL3_PATH=""
 [[ "$6" ]] && GAMMAPY_SCRIPT=$6 || GAMMAPY_SCRIPT=""
 
-BCKMODEL="RE"
 BCKMODEL="IGNOREACCEPTANCE"
+BCKMODEL="RE"
+BCKMODEL="IGNOREIRF"
+EPOCH="V6"
 
 ###########################
 # read runparameter file
@@ -61,22 +63,24 @@ CATALOG=($(grep BRIGHTSTARCATALOGUE ${1} | grep "*" | awk '{print $3}'))
 
 echo "Analysis of ${SOURCE} for Eventdisplay Version ${VERSION}"
 DDIR=${VERITAS_USER_DATA_DIR}/analysis/Results/${VERSION}/${ANALYSISTYPE}/SourceTests/${SOURCE}/
+EVDIR=${VERITAS_USER_DATA_DIR}/analysis/Results/${VERSION}/${ANALYSISTYPE}/
 echo "Results are written to ${DDIR}"
 MSCWDIR=${DDIR}
 MSCWDIR="${VERITAS_USER_DATA_DIR}/analysis/Results/${VERSION}/${ANALYSISTYPE}/mscw_DISP/"
+# MSCWDIR="${VERITAS_USER_DATA_DIR}/analysis/Results/${VERSION}/${ANALYSISTYPE}/tmp_mscw/"
 SDIR=`pwd`
 
 cd ${EVNDISPSCRIPTS}
 
 if [[ ${ANATYPE} == "EVNDISP" ]]; then
-   ./ANALYSIS.evndisp.sh ${SDIR}/${SOURCE}/runlist_releaseTesting.dat ${DDIR}/evndisp
+   ./ANALYSIS.evndisp.sh ${SDIR}/${SOURCE}/runlist_releaseTesting_${EPOCH}.dat ${DDIR}/evndisp
 
 elif [[ ${ANATYPE} == "MSCW" ]]; then
-   ./ANALYSIS.mscw_energy.sh ${SDIR}/${SOURCE}/runlist_releaseTesting.dat ${DDIR}/evndisp ${MSCWDIR}
+   ./ANALYSIS.mscw_energy.sh ${SDIR}/${SOURCE}/runlist_releaseTesting_${EPOCH}.dat ${EVDIR}/evndisp ${MSCWDIR}
 
 elif [ ${ANATYPE} == "ANASUM_SUB" ]; then
        ./ANALYSIS.anasum_parallel_from_runlist.sh \
-           ${SDIR}/${SOURCE}/runlist_releaseTesting.dat \
+           ${SDIR}/${SOURCE}/runlist_releaseTesting_${EPOCH}.dat \
            ${DDIR}/${CUT} \
            ${CUT} ${BCKMODEL} \
            ${SDIR}/${SOURCE}/runparameter.dat \
@@ -84,7 +88,7 @@ elif [ ${ANATYPE} == "ANASUM_SUB" ]; then
 
 elif [ ${ANATYPE} == "ANASUM_FFF" ] ; then
        ./ANALYSIS.anasum_combine.sh \
-           ${SDIR}/${SOURCE}/runlist_releaseTesting.dat \
+           ${SDIR}/${SOURCE}/runlist_releaseTesting_${EPOCH}.dat \
            ${DDIR}/${CUT} \
            anasum.combined.root \
            ${SDIR}/${SOURCE}/runparameter.dat
