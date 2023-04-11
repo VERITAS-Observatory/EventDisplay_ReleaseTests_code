@@ -48,7 +48,7 @@ if [[ ! -z  $VERITAS_ANALYSIS_TYPE ]]; then
     fi
 fi
 
-ODIR="../../../../EventDisplay_ReleaseTests_${VERSION}/irf_plotting/${ANALYSISTYPE}_${DIRRECOTYPE}/${SIMTYPE}/${CUT}_ATM${ATMO}"
+ODIR="../../../../EventDisplay_ReleaseTests_${VERSION}/irf_plotting/${ANALYSISTYPE}${DIRRECOTYPE}/${SIMTYPE}/${CUT}_ATM${ATMO}"
 mkdir -p ${ODIR}
 
 DDIR="$VERITAS_IRFPRODUCTION_DIR/${VERSION}/${ANATYPE}/${SIMTYPE}/"
