@@ -158,7 +158,12 @@ elif [ ${ANATYPE} == "ALL_RESULTS" ]; then
     fi
     RESULT=$(grep "ALL RUNS" ${DDIR}/${CUT}/anasum.combined.log)
     echo "ALL_RESULTS ${RESULT/ALL RUNS/v490}"
-
+elif [ ${ANATYPE} == "COPY_RESULTS" ]; then
+    if [[ -e ${DDIR}/${CUT}/anasum.combined.log ]]; then
+        ODIR="${VERITAS_USER_DATA_DIR}/analysis/Results/${VERSION}/${ANALYSISTYPE}/SourceTests/anasum.combined/${SOURCE}"
+        mkdir -p ${ODIR}/${CUT}
+        cp -v ${DDIR}/${CUT}/anasum.combined.log ${ODIR}/${CUT}
+    fi
 else
         echo "error: ANALYSIS type not given"
 fi
