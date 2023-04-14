@@ -151,6 +151,14 @@ elif [ ${ANATYPE} == "VALIDATION_PLOT" ] ; then
      else
          echo "error: GAMMAPY script path not given"
      fi
+elif [ ${ANATYPE} == "ALL_RESULTS" ]; then
+    if [[ ! -e ${DDIR}/${CUT}/anasum.combined.log ]]; then
+        echo "ANASUM result not found in ${DDIR}/${CUT}/anasum.combined.log"
+        return
+    fi
+    RESULT=$(grep "ALL RUNS" ${DDIR}/${CUT}/anasum.combined.log)
+    echo "ALL_RESULTS ${RESULT/ALL RUNS/v490}"
+
 else
         echo "error: ANALYSIS type not given"
 fi

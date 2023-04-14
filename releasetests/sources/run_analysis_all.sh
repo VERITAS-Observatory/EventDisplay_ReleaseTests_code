@@ -18,9 +18,19 @@ RUNPARA="../../../EventDisplay_ReleaseTests_v490/V6.runparameter.dat"
 
 for T in ${LTARGETS}
 do
-    for C in soft2tel moderate2tel hard3tel softbox
+    if [[ ${ANATYPE} == "ALL_RESULTS" ]]; then
+        echo "ALL_RESULTS"
+        echo "ALL_RESULTS ### ${T}"
+    fi
+    for C in soft2tel moderate2tel hard3tel softbox moderatebox
     do
         echo "Analysing ${T} with ${C} cuts"
+        if [[ ${ANATYPE} == "ALL_RESULTS" ]]; then
+            echo "ALL_RESULTS"
+            echo "ALL_RESULTS #### ${C}"
+            echo "ALL_RESULTS"
+        fi
+
 
         ./run_analysis.sh \
             ${RUNPARA} \
