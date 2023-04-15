@@ -12,9 +12,9 @@ exit
 fi
 
 ANATYPE=${1}
+[[ "$2" ]] && RUNPARA=$2 || RUNPARA="../../../EventDisplay_ReleaseTests_v490/V6.runparameter.dat"
 
 LTARGETS=$(cat TARGETS.dat)
-RUNPARA="../../../EventDisplay_ReleaseTests_v490/V6.runparameter.dat"
 
 for T in ${LTARGETS}
 do

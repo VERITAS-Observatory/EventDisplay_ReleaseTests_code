@@ -58,16 +58,18 @@ if [[ ! -z  $VERITAS_ANALYSIS_TYPE ]]; then
         DIRRECOTYPE=""
     fi
 fi
+if [[ ${VERSION} == "v487"* ]]; then
+    ANALYSISTYPE=""
+    DIRRECOTYPE=""
+fi
 # Bright star catalog
 CATALOG=($(grep BRIGHTSTARCATALOGUE ${1} | grep "*" | awk '{print $3}'))
 
 echo "Analysis of ${SOURCE} for Eventdisplay Version ${VERSION}"
 DDIR=${VERITAS_USER_DATA_DIR}/analysis/Results/${VERSION}/${ANALYSISTYPE}/SourceTests/${SOURCE}/
-EVDIR=${VERITAS_USER_DATA_DIR}/analysis/Results/${VERSION}/${ANALYSISTYPE}/
 echo "Results are written to ${DDIR}"
-MSCWDIR=${DDIR}
-MSCWDIR="${VERITAS_USER_DATA_DIR}/analysis/Results/${VERSION}/${ANALYSISTYPE}/mscw_DISP/"
-# MSCWDIR="${VERITAS_USER_DATA_DIR}/analysis/Results/${VERSION}/${ANALYSISTYPE}/tmp_mscw/"
+EVDIR=${VERITAS_USER_DATA_DIR}/analysis/Results/${VERSION}/${ANALYSISTYPE}/
+MSCWDIR="${VERITAS_USER_DATA_DIR}/analysis/Results/${VERSION}/${ANALYSISTYPE}/mscw${DIRRECOTYPE}/"
 SDIR=`pwd`
 
 cd ${EVNDISPSCRIPTS}
