@@ -85,7 +85,7 @@ elif [ ${ANATYPE} == "ANASUM_SUB" ]; then
            ${SDIR}/${SOURCE}/runlist_releaseTesting_${EPOCH}.dat \
            ${DDIR}/${CUT} \
            ${CUT} ${BCKMODEL} \
-           ${SDIR}/${SOURCE}/runparameter.dat \
+           ${SDIR}/runparameter.dat \
            ${MSCWDIR} ${V2DL3_PATH}
 
 elif [ ${ANATYPE} == "ANASUM_FFF" ] ; then
@@ -93,7 +93,7 @@ elif [ ${ANATYPE} == "ANASUM_FFF" ] ; then
            ${SDIR}/${SOURCE}/runlist_releaseTesting_${EPOCH}.dat \
            ${DDIR}/${CUT} \
            anasum.combined.root \
-           ${SDIR}/${SOURCE}/runparameter.dat
+           ${SDIR}/runparameter.dat
 
 elif [ ${ANATYPE} == "V2DL3" ] ; then
     if [[ -d ${V2DL3_PATH} ]]; then
