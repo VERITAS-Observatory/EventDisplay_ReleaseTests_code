@@ -154,12 +154,17 @@ elif [ ${ANATYPE} == "VALIDATION_PLOT" ] ; then
          echo "error: GAMMAPY script path not given"
      fi
 elif [ ${ANATYPE} == "ALL_RESULTS" ]; then
-    if [[ ! -e ${DDIR}/${CUT}/anasum.combined.log ]]; then
-        echo "ANASUM result not found in ${DDIR}/${CUT}/anasum.combined.log"
-        return
+    ANACOMBINED="${DDIR}/${CUT}/anasum.combined.log"
+    if [[ ! -e ${ANACOMBINED} ]]; then
+        ANACOMBINED="${DDIR}/${CUT}/anasumCombined.log"
+        if [[ ! -e ${ANACOMBINED} ]]; then
+            echo "ANASUM result not found in ${DDIR}/${CUT}/anasum.combined.log and not in ${ANACOMBINED}"
+            exit
+        fi
     fi
-    RESULT=$(grep "ALL RUNS" ${DDIR}/${CUT}/anasum.combined.log)
-    echo "ALL_RESULTS ${RESULT/ALL RUNS/v490}"
+    RESULT=$(grep "ALL RUNS" $ANACOMBINED)
+    BSR="${SOURCE}, ${CUT}, $VERSION "
+    echo "ALL_RESULTS ${RESULT/ALL RUNS/$BSR}"
 elif [ ${ANATYPE} == "COPY_RESULTS" ]; then
     if [[ -e ${DDIR}/${CUT}/anasum.combined.log ]]; then
         ODIR="${VERITAS_USER_DATA_DIR}/analysis/Results/${VERSION}/${ANALYSISTYPE}/SourceTests/anasum.combined/${SOURCE}"

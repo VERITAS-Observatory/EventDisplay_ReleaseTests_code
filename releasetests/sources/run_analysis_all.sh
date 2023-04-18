@@ -18,20 +18,11 @@ LTARGETS=$(cat TARGETS.dat)
 
 for T in ${LTARGETS}
 do
-    if [[ ${ANATYPE} == "ALL_RESULTS" ]]; then
-        echo "ALL_RESULTS"
-        echo "ALL_RESULTS ### ${T}"
-    fi
+    # v487 cut list
+    # for C in softbox moderate2tel soft2tel hard3tel
     for C in soft2tel moderate2tel hard3tel softbox moderatebox
     do
         echo "Analysing ${T} with ${C} cuts"
-        if [[ ${ANATYPE} == "ALL_RESULTS" ]]; then
-            echo "ALL_RESULTS"
-            echo "ALL_RESULTS #### ${C}"
-            echo "ALL_RESULTS"
-        fi
-
-
         ./run_analysis.sh \
             ${RUNPARA} \
             ${T} \
