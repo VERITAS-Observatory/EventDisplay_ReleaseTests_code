@@ -13,8 +13,7 @@ fi
 RPARA=${1}
 COM=${2}
   
-# for N in "0.5deg" ""  LZE_0.5deg MZE_0.5deg SZE_0.5deg SZE MZE LZE WOBBLE
-for N in "0.5deg" LZE_0.5deg MZE_0.5deg SZE_0.5deg SZE MZE LZE WOBBLE
+for N in LZE_0.5deg MZE_0.5deg SZE_0.5deg SZE MZE LZE WOBBLE
 do
    for R in IGNOREACCEPTANCE
    do 
