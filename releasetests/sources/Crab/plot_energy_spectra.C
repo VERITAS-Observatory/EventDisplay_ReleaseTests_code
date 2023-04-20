@@ -198,9 +198,9 @@ void plot( RunParameters* fPar,
             printCanvas( c, figureDir + "/Spectrum25_" + iEpoch, oDir );
         }
 
-        // curved power law fits (soft cuts only)
-        if( iCut.find( "soft" ) != string::npos 
-        || iCut.find( "Soft" ) != string::npos )
+        // curved power law fits (not for hard cuts)
+        if( iCut.find( "hard" ) == string::npos 
+        && iCut.find( "Hard" ) == string::npos )
         {
             printCanvas( e.plotCrabNebulaSpectrum( 0., i_Fit_Elow_TeV, i_Fit_Ehigh_TeV, 0.1, 4 ), 
                          figureDir + "/SpectrumCPL_" + iEpoch, oDir );
