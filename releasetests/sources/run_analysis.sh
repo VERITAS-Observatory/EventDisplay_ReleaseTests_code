@@ -34,8 +34,8 @@ CUT=${4}
 [[ "$5" ]] && V2DL3_PATH=$5 || V2DL3_PATH=""
 [[ "$6" ]] && GAMMAPY_SCRIPT=$6 || GAMMAPY_SCRIPT=""
 
-BCKMODEL="IGNOREACCEPTANCE"
 BCKMODEL="RE"
+BCKMODEL="IGNOREACCEPTANCE"
 BCKMODEL="IGNOREIRF"
 EPOCH="V6"
 
@@ -58,16 +58,18 @@ if [[ ! -z  $VERITAS_ANALYSIS_TYPE ]]; then
         DIRRECOTYPE=""
     fi
 fi
+if [[ ${VERSION} == "v487"* ]]; then
+    ANALYSISTYPE=""
+    DIRRECOTYPE=""
+fi
 # Bright star catalog
 CATALOG=($(grep BRIGHTSTARCATALOGUE ${1} | grep "*" | awk '{print $3}'))
 
 echo "Analysis of ${SOURCE} for Eventdisplay Version ${VERSION}"
 DDIR=${VERITAS_USER_DATA_DIR}/analysis/Results/${VERSION}/${ANALYSISTYPE}/SourceTests/${SOURCE}/
-EVDIR=${VERITAS_USER_DATA_DIR}/analysis/Results/${VERSION}/${ANALYSISTYPE}/
 echo "Results are written to ${DDIR}"
-MSCWDIR=${DDIR}
-MSCWDIR="${VERITAS_USER_DATA_DIR}/analysis/Results/${VERSION}/${ANALYSISTYPE}/mscw_DISP/"
-# MSCWDIR="${VERITAS_USER_DATA_DIR}/analysis/Results/${VERSION}/${ANALYSISTYPE}/tmp_mscw/"
+EVDIR=${VERITAS_USER_DATA_DIR}/analysis/Results/${VERSION}/${ANALYSISTYPE}/
+MSCWDIR="${VERITAS_USER_DATA_DIR}/analysis/Results/${VERSION}/${ANALYSISTYPE}/mscw${DIRRECOTYPE}/"
 SDIR=`pwd`
 
 cd ${EVNDISPSCRIPTS}
@@ -83,7 +85,7 @@ elif [ ${ANATYPE} == "ANASUM_SUB" ]; then
            ${SDIR}/${SOURCE}/runlist_releaseTesting_${EPOCH}.dat \
            ${DDIR}/${CUT} \
            ${CUT} ${BCKMODEL} \
-           ${SDIR}/${SOURCE}/runparameter.dat \
+           ${SDIR}/runparameter.dat \
            ${MSCWDIR} ${V2DL3_PATH}
 
 elif [ ${ANATYPE} == "ANASUM_FFF" ] ; then
@@ -91,7 +93,7 @@ elif [ ${ANATYPE} == "ANASUM_FFF" ] ; then
            ${SDIR}/${SOURCE}/runlist_releaseTesting_${EPOCH}.dat \
            ${DDIR}/${CUT} \
            anasum.combined.root \
-           ${SDIR}/${SOURCE}/runparameter.dat
+           ${SDIR}/runparameter.dat
 
 elif [ ${ANATYPE} == "V2DL3" ] ; then
     if [[ -d ${V2DL3_PATH} ]]; then
@@ -151,6 +153,29 @@ elif [ ${ANATYPE} == "VALIDATION_PLOT" ] ; then
      else
          echo "error: GAMMAPY script path not given"
      fi
+elif [ ${ANATYPE} == "ALL_RESULTS" ]; then
+    ANACOMBINED="${DDIR}/${CUT}/anasum.combined.log"
+    if [[ ! -e ${ANACOMBINED} ]]; then
+        ANACOMBINED="${DDIR}/${CUT}/anasumCombined.log"
+        if [[ ! -e ${ANACOMBINED} ]]; then
+            echo "ANASUM result not found in ${DDIR}/${CUT}/anasum.combined.log and not in ${ANACOMBINED}"
+            exit
+        fi
+    fi
+    RESULT=$(grep "ALL RUNS" $ANACOMBINED)
+    BSR="${SOURCE}, ${CUT}, $VERSION "
+    echo "ALL_RESULTS ${RESULT/ALL RUNS/$BSR}"
+elif [ ${ANATYPE} == "COPY_RESULTS" ]; then
+    if [[ -e ${DDIR}/${CUT}/anasum.combined.log ]]; then
+        # ODIR="${VERITAS_USER_DATA_DIR}/analysis/Results/${VERSION}/${ANALYSISTYPE}/SourceTests/anasum.combined/${SOURCE}"
+        ODIR="/afs/ifh.de/group/cta/scratch/maierg/EVNDISP/EVNDISP-400/GITHUB_Eventdisplay/EventDisplay_Release_v490/v490.0/sources/${SOURCE}"
+        mkdir -p ${ODIR}/${CUT}
+        # cp -v ${DDIR}/${CUT}/anasum.combined.log ${ODIR}/${CUT}
+        cp -v ${DDIR}/${CUT}/SignificanceRatioTov487.png ${ODIR}/${CUT}
+    fi
+elif [ ${ANATYPE} == "SIGNIFICANCE_RATIO" ]; then
+    cd ${SDIR}
+    root -q -l -b "plot_significance_ratio.C(\"${SOURCE}/${CUT}\")"
 else
         echo "error: ANALYSIS type not given"
 fi

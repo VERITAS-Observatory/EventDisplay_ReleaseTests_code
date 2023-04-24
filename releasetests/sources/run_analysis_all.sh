@@ -12,16 +12,17 @@ exit
 fi
 
 ANATYPE=${1}
+[[ "$2" ]] && RUNPARA=$2 || RUNPARA="../../../EventDisplay_ReleaseTests_v490/V6.runparameter.dat"
 
 LTARGETS=$(cat TARGETS.dat)
-RUNPARA="../../../EventDisplay_ReleaseTests_v490/V6.runparameter.dat"
 
 for T in ${LTARGETS}
 do
-    for C in soft2tel moderate2tel hard3tel softbox
+    # v487 cut list
+    # for C in softbox moderate2tel soft2tel hard3tel
+    for C in soft2tel moderate2tel hard3tel softbox moderatebox
     do
         echo "Analysing ${T} with ${C} cuts"
-
         ./run_analysis.sh \
             ${RUNPARA} \
             ${T} \

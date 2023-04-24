@@ -12,9 +12,9 @@ Time mask
 
 Exclusion regions
 -----------------
-* REGIONTOEXCLUDE 0. 0. 0.35
+* REGIONTOEXCLUDE 0. 0. 0.40
 * BRIGHTSTARCATALOGUE Hipparcos_MAG8_1997.dat
-* BRIGHTSTARSETTINGS 6 0.30 B
+* BRIGHTSTARSETTINGS 8 0.25 B
 
 Sky maps
 --------
@@ -26,10 +26,6 @@ size of sky map (x-axis/declination axis) [deg]
 * SKYMAPSIZEX 2.
 size of sky map (y-axis/RA axis) [deg]
 * SKYMAPSIZEY 2.
-sky map centre
-* SKYMAPCENTRE_RADECJ2000_HOUR 16 53 52.216 +39 45 36.6132
-target position
-* TARGETPOSITION_RADECJ2000_HOUR 16 53 52.216 +39 45 36.6132
 
 Spectral reconstruction
 -----------------------
