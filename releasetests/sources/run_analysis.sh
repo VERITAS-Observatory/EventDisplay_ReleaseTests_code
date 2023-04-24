@@ -167,10 +167,15 @@ elif [ ${ANATYPE} == "ALL_RESULTS" ]; then
     echo "ALL_RESULTS ${RESULT/ALL RUNS/$BSR}"
 elif [ ${ANATYPE} == "COPY_RESULTS" ]; then
     if [[ -e ${DDIR}/${CUT}/anasum.combined.log ]]; then
-        ODIR="${VERITAS_USER_DATA_DIR}/analysis/Results/${VERSION}/${ANALYSISTYPE}/SourceTests/anasum.combined/${SOURCE}"
+        # ODIR="${VERITAS_USER_DATA_DIR}/analysis/Results/${VERSION}/${ANALYSISTYPE}/SourceTests/anasum.combined/${SOURCE}"
+        ODIR="/afs/ifh.de/group/cta/scratch/maierg/EVNDISP/EVNDISP-400/GITHUB_Eventdisplay/EventDisplay_Release_v490/v490.0/sources/${SOURCE}"
         mkdir -p ${ODIR}/${CUT}
-        cp -v ${DDIR}/${CUT}/anasum.combined.log ${ODIR}/${CUT}
+        # cp -v ${DDIR}/${CUT}/anasum.combined.log ${ODIR}/${CUT}
+        cp -v ${DDIR}/${CUT}/SignificanceRatioTov487.png ${ODIR}/${CUT}
     fi
+elif [ ${ANATYPE} == "SIGNIFICANCE_RATIO" ]; then
+    cd ${SDIR}
+    root -q -l -b "plot_significance_ratio.C(\"${SOURCE}/${CUT}\")"
 else
         echo "error: ANALYSIS type not given"
 fi
