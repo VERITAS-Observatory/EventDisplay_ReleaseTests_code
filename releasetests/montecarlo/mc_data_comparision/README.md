@@ -17,5 +17,5 @@ Requires as input:
 first run linking of epochs from `../../sources/Crab/`: `./runlist_generator.sh V6`
 (or for any other epoch)
 
-Output and plots are written as pdfs into the `../../../../EventDisplay_ReleaseTests_<version>/mc_data_comparision/` directories
+Output and plots are written as pdfs into the `../../../../EventDisplay_Release_<version>/mc_data_comparision/` directories
 
