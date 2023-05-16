@@ -47,7 +47,7 @@ if [[ ! -z  $VERITAS_ANALYSIS_TYPE ]]; then
 fi
 ##############################################
 # output directory for all data productions
-VDIR="../../../../EventDisplay_ReleaseTests_${VERSION}/${OBJECT}${DIRRECOTYPE}/"
+VDIR="../../../../EventDisplay_Release_${VERSION}/${OBJECT}${DIRRECOTYPE}/"
 mkdir -p ${VDIR}
 
 ##############################################
