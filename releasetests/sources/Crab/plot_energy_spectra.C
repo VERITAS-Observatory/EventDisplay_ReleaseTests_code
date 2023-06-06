@@ -271,7 +271,7 @@ void plot_energy_spectra( string runparameterfile, string fElevation = "SZE",
     vector< string > fCuts = fPar->getCutsVector();
 
     // output directory
-    string oDir = "../../../../EventDisplay_ReleaseTests_" + fPar->fVersion + "/" + fPar->fSource;
+    string oDir = "../../../../EventDisplay_Release_" + fPar->fVersion + "/" + fPar->fSource;
     if( fPar->fDirectionType.size() > 0 )
     {
         oDir += "_" + fPar->fDirectionType;
