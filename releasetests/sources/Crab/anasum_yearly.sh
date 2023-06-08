@@ -63,14 +63,8 @@ fi
 VERSION=$(grep VERSION ${1} | awk '{print $3}')
 # Analysis type
 ANALYSISTYPE="AP"
-DIRRECOTYPE="_DISP"
 if [[ ! -z  $VERITAS_ANALYSIS_TYPE ]]; then
     ANALYSISTYPE="${VERITAS_ANALYSIS_TYPE:0:2}"
-    if [[ ${VERITAS_ANALYSIS_TYPE} == *"DISP"* ]]; then
-        DIRRECOTYPE="_DISP"
-    else
-        DIRRECOTYPE=""
-    fi
 fi
 # eventdisplay version --> defines script directory
 EDVERSION=$($EVNDISPSYS/bin/evndisp --version | tr -d .)
@@ -92,7 +86,7 @@ BRIGHTSTARSETTINGS=($(grep BRIGHTSTARSETTINGS ${1} | grep "*" | awk '{print $3}'
 # run mode
 MODE=$2
 # Directory for data files
-DDIR="$VERITAS_USER_DATA_DIR/analysis/Results/${VERSION}/${ANALYSISTYPE}/${OBJECT}${DIRRECOTYPE}/"
+DDIR="$VERITAS_USER_DATA_DIR/analysis/Results/${VERSION}/${ANALYSISTYPE}/${OBJECT}/"
 echo $DDIR
 SDIR=`pwd`
 
