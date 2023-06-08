@@ -36,18 +36,12 @@ MEPOCH=$(grep MAJOREPOCH ${1} | awk '{print $3}')
 OBJECT=$(grep SOURCE ${1} | awk '{print $3}')
 # Analysis type
 ANALYSISTYPE="AP"
-DIRRECOTYPE="_DISP"
 if [[ ! -z  $VERITAS_ANALYSIS_TYPE ]]; then
     ANALYSISTYPE="${VERITAS_ANALYSIS_TYPE:0:2}"
-    if [[ ${VERITAS_ANALYSIS_TYPE} == *"DISP"* ]]; then
-        DIRRECOTYPE="_DISP"
-    else
-        DIRRECOTYPE=""
-    fi
 fi
 ##############################################
 # output directory for all data productions
-VDIR="../../../../EventDisplay_Release_${VERSION}/${OBJECT}${DIRRECOTYPE}/"
+VDIR="../../../../EventDisplay_Release_${VERSION}/${OBJECT}/"
 mkdir -p ${VDIR}
 
 ##############################################
@@ -60,7 +54,7 @@ fi
 # 'master' directory with all mscw file 
 MSCWSDIR="mscw-redHV"
 MSCWSDIR="mscw"
-MSCWDDIR="$VERITAS_USER_DATA_DIR/analysis/Results/${VERSION}/${ANALYSISTYPE}/${OBJECT}${DIRRECOTYPE}/${MSCWSDIR}"
+MSCWDDIR="$VERITAS_USER_DATA_DIR/analysis/Results/${VERSION}/${ANALYSISTYPE}/${OBJECT}/${MSCWSDIR}"
 if [[ ! -e ${MSCWDDIR} ]]; then
    echo "Error: directory with MSCW files not found" 
    echo ${MSCWDDIR}
