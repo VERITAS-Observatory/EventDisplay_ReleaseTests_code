@@ -35,8 +35,8 @@ CUT=${4}
 [[ "$6" ]] && GAMMAPY_SCRIPT=$6 || GAMMAPY_SCRIPT=""
 
 BCKMODEL="RE"
-BCKMODEL="IGNOREACCEPTANCE"
 BCKMODEL="IGNOREIRF"
+BCKMODEL="IGNOREACCEPTANCE"
 EPOCH="V6"
 
 ###########################
@@ -70,15 +70,18 @@ DDIR=${VERITAS_USER_DATA_DIR}/analysis/Results/${VERSION}/${ANALYSISTYPE}/Source
 echo "Results are written to ${DDIR}"
 EVDIR=${VERITAS_USER_DATA_DIR}/analysis/Results/${VERSION}/${ANALYSISTYPE}/
 MSCWDIR="${VERITAS_USER_DATA_DIR}/analysis/Results/${VERSION}/${ANALYSISTYPE}/mscw${DIRRECOTYPE}/"
+MSCWDIR="$VERITAS_DATA_DIR/processed_data_v490/${ANALYSISTYPE}/mscw/"
 SDIR=`pwd`
 
 cd ${EVNDISPSCRIPTS}
 
 if [[ ${ANATYPE} == "EVNDISP" ]]; then
-   ./ANALYSIS.evndisp.sh ${SDIR}/${SOURCE}/runlist_releaseTesting_${EPOCH}.dat ${DDIR}/evndisp
+   echo "./ANALYSIS.evndisp.sh ${SDIR}/${SOURCE}/runlist_releaseTesting_${EPOCH}.dat ${DDIR}/evndisp"
+   echo "Consider using pre-processed data..."
 
 elif [[ ${ANATYPE} == "MSCW" ]]; then
-   ./ANALYSIS.mscw_energy.sh ${SDIR}/${SOURCE}/runlist_releaseTesting_${EPOCH}.dat ${EVDIR}/evndisp ${MSCWDIR}
+   #./ANALYSIS.mscw_energy.sh ${SDIR}/${SOURCE}/runlist_releaseTesting_${EPOCH}.dat ${EVDIR}/evndisp ${MSCWDIR}"
+   echo "Consider using pre-processed data..."
 
 elif [ ${ANATYPE} == "ANASUM_SUB" ]; then
        ./ANALYSIS.anasum_parallel_from_runlist.sh \
