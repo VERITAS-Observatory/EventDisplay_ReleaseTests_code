@@ -17,7 +17,7 @@ PSPACE="SZE_0.5deg MZE_0.5deg LZE_0.5deg SZE MZE LZE WOBBLE"
 if [[ $RPARA == *"redHV"* ]]; then
     PSPACE="SZE_0.5deg MZE_0.5deg LZE_0.5deg"
 fi
-  
+
 for N in $PSPACE
 do
    for R in IGNOREACCEPTANCE
