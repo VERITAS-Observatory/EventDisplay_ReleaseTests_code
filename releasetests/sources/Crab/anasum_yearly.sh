@@ -96,18 +96,12 @@ RDIR=`pwd`
 
 [[ "$3" ]] && ELE=$3 || ELE="SZE"
 [[ "$4" ]] && BCK=$4 || BCK="RE"
-
 [[ "$5" ]] && V2DL3_PATH=$5 || V2DL3_PATH="NOTSET"
 [[ "$6" ]] && GAMMAPY_SCRIPT=$6 || GAMMAPY_SCRIPT="$(pwd)"
 
 # mscw_energy subdirectory
 MSCWSDIR="mscw"
 FORCEDATMO=""
-# forced for redHV (only available for ATM61)
-if [[ ${MEPOCH} == *"redHV"* ]]
-then
-    FORCEDATMO="61"
-fi
 
 for I in "${EPOCH[@]}"
 #for I in ${MEPOCH}
@@ -136,8 +130,8 @@ do
 
         MDIR="$DDIR/${MSCWSDIR}_${I}${ATM}_${ELE}"
         if [[ ! -d ${MDIR} ]]; then
-           echo "error: data directory not found: ${MDIR}"
-           echo "continuing..."
+           echo "   Data directory not found: ${MDIR}"
+           echo "   skipping (this might be due to an error; or there are simply no runs available for this epoch)"
            continue
         fi
         echo ${MDIR}
