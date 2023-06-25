@@ -37,8 +37,8 @@ CUT=${4}
 BCKMODEL="RE"
 BCKMODEL="IGNOREIRF"
 BCKMODEL="IGNOREACCEPTANCE"
-EPOCH="V5"
 EPOCH="V6"
+EPOCH="V5"
 
 ###########################
 # read runparameter file
