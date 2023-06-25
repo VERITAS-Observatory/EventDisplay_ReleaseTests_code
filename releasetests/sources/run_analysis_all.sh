@@ -12,7 +12,7 @@ exit
 fi
 
 ANATYPE=${1}
-[[ "$2" ]] && RUNPARA=$2 || RUNPARA="../../../EventDisplay_Release_v490/runparameter/V6.runparameter.dat"
+[[ "$2" ]] && RUNPARA=$2 || RUNPARA="../../../EventDisplay_Release_v490/runparameter/V6.${VERITAS_ANALYSIS_TYPE:0:2}.runparameter.dat"
 
 LTARGETS=$(cat TARGETS.dat)
 

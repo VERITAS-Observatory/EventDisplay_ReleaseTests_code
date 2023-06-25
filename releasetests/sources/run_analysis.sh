@@ -37,6 +37,7 @@ CUT=${4}
 BCKMODEL="RE"
 BCKMODEL="IGNOREIRF"
 BCKMODEL="IGNOREACCEPTANCE"
+EPOCH="V5"
 EPOCH="V6"
 
 ###########################
@@ -66,12 +67,17 @@ fi
 CATALOG=($(grep BRIGHTSTARCATALOGUE ${1} | grep "*" | awk '{print $3}'))
 
 echo "Analysis of ${SOURCE} for Eventdisplay Version ${VERSION}"
-DDIR=${VERITAS_USER_DATA_DIR}/analysis/Results/${VERSION}/${ANALYSISTYPE}/SourceTests/${SOURCE}/
+DDIR=${VERITAS_USER_DATA_DIR}/analysis/Results/${VERSION}/${ANALYSISTYPE}/SourceTests/${EPOCH}/${SOURCE}/
 echo "Results are written to ${DDIR}"
 EVDIR=${VERITAS_USER_DATA_DIR}/analysis/Results/${VERSION}/${ANALYSISTYPE}/
 MSCWDIR="${VERITAS_USER_DATA_DIR}/analysis/Results/${VERSION}/${ANALYSISTYPE}/mscw${DIRRECOTYPE}/"
 MSCWDIR="$VERITAS_DATA_DIR/processed_data_v490/${ANALYSISTYPE}/mscw/"
 SDIR=`pwd`
+
+if [[ ! -e ${SDIR}/${SOURCE}/runlist_releaseTesting_${EPOCH}.dat ]]; then
+    echo "Runlist for epoch $EPOCH not found: ${SDIR}/${SOURCE}/runlist_releaseTesting_${EPOCH}.dat"
+    exit
+fi
 
 cd ${EVNDISPSCRIPTS}
 
