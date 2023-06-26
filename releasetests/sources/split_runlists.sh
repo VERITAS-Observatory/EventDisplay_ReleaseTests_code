@@ -19,9 +19,9 @@ FF=$(cat $RLIST)
 
 for F in $FF
 do
-    if [[ $F < 46642 ]]; then
+    if [ "$F" -lt "46642" ]; then
         echo $F >> $DIRN/runlist_releaseTesting_V4.dat
-    elif [[ $F < 63373 ]] ; then
+    elif [ "$F" -lt "63373" ]; then
         echo $F >> $DIRN/runlist_releaseTesting_V5.dat
     else
         echo $F >> $DIRN/runlist_releaseTesting_V6.dat
