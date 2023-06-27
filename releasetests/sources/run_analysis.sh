@@ -39,6 +39,7 @@ BCKMODEL="IGNOREIRF"
 BCKMODEL="IGNOREACCEPTANCE"
 EPOCH="V6"
 EPOCH="V5"
+EPOCH="V4"
 
 ###########################
 # read runparameter file
