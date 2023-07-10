@@ -16,10 +16,8 @@ ANATYPE=${1}
 
 LTARGETS=$(cat TARGETS.dat)
 
-EPOCHS="V4 V5 V6"
-CUTS="soft2tel moderate2tel hard3tel moderatebox"
-CUTS="moderate2tel"
-CUTS="soft2tel"
+EPOCHS="V4 V5 V6 all"
+CUTS="soft2tel moderate2tel hard3tel"
 if [[ $RUNPARA == *"AP"* ]] && [[ $RUNPARA == *"redHV"* ]]; then
     CUTS="softbox"
 elif [[ $RUNPARA == *"NN"* ]] && [[ $RUNPARA == *"redHV"* ]]; then
