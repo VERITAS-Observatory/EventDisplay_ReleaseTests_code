@@ -16,7 +16,10 @@ ANATYPE=${1}
 
 LTARGETS=$(cat TARGETS.dat)
 
+EPOCHS="V4 V5 V6"
 CUTS="soft2tel moderate2tel hard3tel moderatebox"
+CUTS="moderate2tel"
+CUTS="soft2tel"
 if [[ $RUNPARA == *"AP"* ]] && [[ $RUNPARA == *"redHV"* ]]; then
     CUTS="softbox"
 elif [[ $RUNPARA == *"NN"* ]] && [[ $RUNPARA == *"redHV"* ]]; then
@@ -29,12 +32,16 @@ for T in ${LTARGETS}
 do
     for C in $CUTS
     do
-        echo "Analysing ${T} with ${C} cuts"
-        ./run_analysis.sh \
-            ${RUNPARA} \
-            ${T} \
-            ${ANATYPE} \
-            ${C}
+        for E in $EPOCHS
+        do
+            echo "Analysing ${T} with ${C} cuts (epoch $E)"
+            ./run_analysis.sh \
+                ${RUNPARA} \
+                ${T} \
+                ${ANATYPE} \
+                ${C} \
+                ${E}
+        done
     done
 done
 
