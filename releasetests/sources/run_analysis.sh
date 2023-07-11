@@ -12,7 +12,7 @@
 
 if [[ $# < 2 ]]; then
 echo "
-  ./run_analysis.sh <runparameter file> <SOURCE> <TYPE> <CUT> [V2DL3_PATH] [GAMMAPY_SCRIPT]
+  ./run_analysis.sh <runparameter file> <SOURCE> <TYPE> <CUT> <EPOCH> [V2DL3_PATH] [GAMMAPY_SCRIPT]
 
    analysis types:
        EVNDISP
@@ -31,13 +31,13 @@ fi
 SOURCE=${2}
 ANATYPE=${3}
 CUT=${4}
-[[ "$5" ]] && V2DL3_PATH=$5 || V2DL3_PATH=""
-[[ "$6" ]] && GAMMAPY_SCRIPT=$6 || GAMMAPY_SCRIPT=""
+EPOCH=${5}
+[[ "$6" ]] && V2DL3_PATH=$6 || V2DL3_PATH=""
+[[ "$7" ]] && GAMMAPY_SCRIPT=$7 || GAMMAPY_SCRIPT=""
 
 BCKMODEL="RE"
-BCKMODEL="IGNOREACCEPTANCE"
 BCKMODEL="IGNOREIRF"
-EPOCH="V6"
+BCKMODEL="IGNOREACCEPTANCE"
 
 ###########################
 # read runparameter file
@@ -66,21 +66,21 @@ fi
 CATALOG=($(grep BRIGHTSTARCATALOGUE ${1} | grep "*" | awk '{print $3}'))
 
 echo "Analysis of ${SOURCE} for Eventdisplay Version ${VERSION}"
-DDIR=${VERITAS_USER_DATA_DIR}/analysis/Results/${VERSION}/${ANALYSISTYPE}/SourceTests/${SOURCE}/
+DDIR=${VERITAS_USER_DATA_DIR}/analysis/Results/${VERSION}/${ANALYSISTYPE}/SourceTests//${SOURCE}/${EPOCH}/
 echo "Results are written to ${DDIR}"
 EVDIR=${VERITAS_USER_DATA_DIR}/analysis/Results/${VERSION}/${ANALYSISTYPE}/
 MSCWDIR="${VERITAS_USER_DATA_DIR}/analysis/Results/${VERSION}/${ANALYSISTYPE}/mscw${DIRRECOTYPE}/"
+MSCWDIR="$VERITAS_DATA_DIR/processed_data_v490/${ANALYSISTYPE}/mscw/"
 SDIR=`pwd`
+
+if [[ ! -e ${SDIR}/${SOURCE}/runlist_releaseTesting_${EPOCH}.dat ]]; then
+    echo "Runlist for epoch $EPOCH not found: ${SDIR}/${SOURCE}/runlist_releaseTesting_${EPOCH}.dat"
+    exit
+fi
 
 cd ${EVNDISPSCRIPTS}
 
-if [[ ${ANATYPE} == "EVNDISP" ]]; then
-   ./ANALYSIS.evndisp.sh ${SDIR}/${SOURCE}/runlist_releaseTesting_${EPOCH}.dat ${DDIR}/evndisp
-
-elif [[ ${ANATYPE} == "MSCW" ]]; then
-   ./ANALYSIS.mscw_energy.sh ${SDIR}/${SOURCE}/runlist_releaseTesting_${EPOCH}.dat ${EVDIR}/evndisp ${MSCWDIR}
-
-elif [ ${ANATYPE} == "ANASUM_SUB" ]; then
+if [ ${ANATYPE} == "ANASUM_SUB" ]; then
        ./ANALYSIS.anasum_parallel_from_runlist.sh \
            ${SDIR}/${SOURCE}/runlist_releaseTesting_${EPOCH}.dat \
            ${DDIR}/${CUT} \
