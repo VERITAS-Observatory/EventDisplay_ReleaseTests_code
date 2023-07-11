@@ -26,6 +26,8 @@ elif [[ $RUNPARA == *"NN"* ]]; then
     CUTS="supersoft supersoftNN2tel"
 fi
 
+CUTS="hard3tel"
+
 for T in ${LTARGETS}
 do
     for C in $CUTS
