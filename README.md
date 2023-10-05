@@ -10,7 +10,7 @@ Note that it is impossible to test every single IRF function and every single po
 This repository contains code and macros for release testing. Results of release tests are saved in separate repositories (see e.g., for [v490](https://github.com/VERITAS-Observatory/EventDisplay_ReleaseTests_v490)).
 **Release tests for versions before v490: see https://github.com/VERITAS-Observatory/Eventdisplay_ReleaseTests**
 
-Simplified overview of the testing (somewhat outdated): 
+Simplified overview of the testing (somewhat outdated):
 
 <img src="documentation/EVNDISP-ReleaseTesting.png" alt="drawing" width="550"/>
 
@@ -46,7 +46,7 @@ tests for the instrument response functions
   - [ ] location of FADC integration window (check high and low-gain channels)
   - [ ] pedestal level correct?
   - [ ] for MC: check direction and core reconstruction (the true position is plotted also in the display)
-  - [ ] check other tabs: pedestal, pedestal variations, gains, etc. 
+  - [ ] check other tabs: pedestal, pedestal variations, gains, etc.
 - [ ] MC / data comparison (see below)
 - [ ] Instrument response functions tests (see below)
 - [ ] Tests with known sources
@@ -56,7 +56,7 @@ tests for the instrument response functions
 
 ### MC / data comparison
 
-Comparison of distributions obtained from Crab observations (on-off) and 
+Comparison of distributions obtained from Crab observations (on-off) and
 simulated gamma rays.
 Verifies that MC model describes sufficiently well the data.
 
@@ -85,15 +85,15 @@ Checks that correction factors are correctly applied.
 Input:
 
 - mscw_energy files from MC simulations (note: usually these files are not on disk)
-- correction factors from $VERITAS_EVNDISP_AUX 
+- correction factors from $VERITAS_EVNDISP_AUX
 
 Code:
 
 - [releasetests/nsb](releasetests/nsb)
 
-### Instrument response functions 
+### Instrument response functions
 
-Compare effective areas at fixed energies and energy thresholds. 
+Compare effective areas at fixed energies and energy thresholds.
 Code can be found in [releasetests/montecarlo/energythresholds](releasetests/montecarlo/energythresholds).
 
 Examples e.g., in [./v483b/energytresholds/](./v483b/energytresholds/)
