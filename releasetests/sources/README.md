@@ -1,7 +1,5 @@
 # Release testing - Crab and published sources
 
-**not completely implemented yet**
-
 Crab:
 
 - use scripts and macros in ./Crab directory (implementation completed)

@@ -1,7 +1,8 @@
+#!/bin/bash
 # run test analyses from list of targets
-# 
 #
-if [[ $# < 1 ]]; then
+#
+if [[ $# -lt 1 ]]; then
 echo "
     ./run_analysis_all.sh <TYPE>
 
@@ -44,4 +45,3 @@ do
         done
     done
 done
-
