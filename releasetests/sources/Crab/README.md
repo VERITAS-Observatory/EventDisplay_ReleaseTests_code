@@ -1,16 +1,16 @@
 # Crab analysis
 
-Scripts and macros for epoch-dependent Crab analysis.
+Scripts and macros for epoch-, zenith, and observation-type dependent Crab analysis.
 
-The following steps need to be done in the described sequence.
+Steps need to be executed in the described sequence.
 
-Directory structure expected:
+## Expected directory structure
 
 - Crab evndisp analysis files in in `$VERITAS_USER_DATA_DIR/analysis/Results/<version>/<anatype>/Crab/evndisp`
 - Crab mscw_energy analysis files in `$VERITAS_USER_DATA_DIR/analysis/Results/<version>/<anatype>/Crab/mscw`
-- all data files and products from this analysis will be written to ../../../EventDisplay_Release_<version>/sources/Crab/
+- all data files and products from this analysis will be written to `../../../EventDisplay_Release_<version>/sources/Crab/`
 
-## Runparameter files
+## Run parameter files
 
 Parameters required for the analysis are all listed in parameter files. This includes:
 
@@ -22,9 +22,10 @@ Parameters required for the analysis are all listed in parameter files. This inc
 
 see example for [EventDisplay_Release_v490/](https://github.com/VERITAS-Observatory/EventDisplay_Release_v490/runparameter/V6.runparameter.dat)
 
-## Analysis of Crab data
+## Analysis
 
 Analysis of all Crab data with Eventdisplay for epochs V4, V5, V6, and V6.redHV.
+Result files should be written to a single directory (linked in the next steps to epochs and elevation ranges).
 
 e.g. for V6, do in the Eventdisplay scripts directory:
 
@@ -66,48 +67,16 @@ for
 Individual runs (submission to job queue):
 
 ```bash
-./anasum_yearly.sh <runparameter file> SUB SZE RE <V2DL3_DIR>
+./anasum_yearly.sh <runparameter file> SUB SZE RE
 ```
 
 for reflected region model (RE), and small zenith angle files (SZE).
 
-`V2DL3_DIR` is pointing towards the V2DL3 installation directory (necessary at the anasum step already for filling the V2DL3 conversion scripts).
-
-Combine files (local executation):
+Combine files:
 
 ```bash
 ./anasum_yearly.sh <runparameter file> FFF SZE RE
 ```
-
-Convert each anasum file to DL3 file (local execution):
-
-```bash
-./anasum_yearly.sh <runparameter file> V2DL3 SZE RE <V2DL3_DIR>
-```
-
-We need reference spectral flux points to get the Gammapy flux points in same
-energy bins, so first run
-
-```bash
-root -q -l -b 'plot_energy_spectra.C("<runparameter file>", "SZE" )'
-```
-
-It writes the csv file with flux points and text file with power law fit parameters in anasum output directory.
-
-Run Gammapy-0.20.1 analysis:
-
-```bash
-./anasum_yearly.sh <runparameter file> GAMMAPY SZE RE V2DL3_DIR GAMMAPY_SCRIPT_DIR
-```
-It writes the fits file having flux points from Gammapy analysis in anasum dir. This needs to have reference flux point file generated above in the anasum directory
-
-Make spectral comparision plots:
-
-```bash
-./anasum_yearly.sh <runparameter file> VALIDATION_PLOT SZE RE V2DL3_DIR GAMMAPY_SCRIPT_DIR
-```
-
-**(Text below only for Eventdisplay)**
 
 ## Plotting
 
