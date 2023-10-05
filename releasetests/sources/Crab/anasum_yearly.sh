@@ -1,5 +1,4 @@
 #!/bin/bash
-
 # run epoch wise anasum analysis
 # (also analysis of the data divided in
 # atmospheres)
