@@ -1,10 +1,11 @@
+#!/bin/bash
 # run all plotting scripts for all zenith angle ranges
 #
 
-if [[ $# < 1 ]]; then
+if [[ $# -lt 1 ]]; then
 echo "
    $0 <runparameter file>
-   
+
 "
 exit
 fi

@@ -1,8 +1,9 @@
+#!/bin/bash
 # run release testing analysis using
 # VTSCat runlists
 #
 
-if [[ $# < 2 ]]; then
+if [[ $# -lt 2 ]]; then
 echo "
   ./run_analysis_from_vtscat.sh <runparameter file> <ANASUM_SUB/ANASUM_FFF> <CUT> <paper directory>
 
@@ -71,4 +72,4 @@ elif [ ${ANATYPE} == "ANASUM_FFF" ] ; then
            ${PDIR}/analysis/runparameter.dat
 fi
 
-cd ${SDIR}
+cd ${SDIR} || exit

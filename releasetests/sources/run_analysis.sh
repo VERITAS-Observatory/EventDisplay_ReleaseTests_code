@@ -1,3 +1,4 @@
+#!/bin/bash
 # run release testing analysis
 #
 # requires run list (simple format) as
@@ -10,18 +11,15 @@
 # is exected to be in DDIR
 #
 
-if [[ $# < 2 ]]; then
+if [[ $# -lt 2 ]]; then
 echo "
-  ./run_analysis.sh <runparameter file> <SOURCE> <TYPE> <CUT> <EPOCH> [V2DL3_PATH] [GAMMAPY_SCRIPT]
+  ./run_analysis.sh <runparameter file> <SOURCE> <TYPE> <CUT> <EPOCH>
 
    analysis types:
        EVNDISP
        MSCW
        ANASUM_SUB
        ANASUM_FFF
-       V2DL3
-       GAMMAPY
-       VALIDATION_PLOT
 
    cuts: (i.e., moderate2tel, soft2tel, hard3tel)
 "
@@ -32,8 +30,6 @@ SOURCE=${2}
 ANATYPE=${3}
 CUT=${4}
 EPOCH=${5}
-[[ "$6" ]] && V2DL3_PATH=$6 || V2DL3_PATH=""
-[[ "$7" ]] && GAMMAPY_SCRIPT=$7 || GAMMAPY_SCRIPT=""
 
 BCKMODEL="RE"
 BCKMODEL="IGNOREIRF"
@@ -62,23 +58,20 @@ if [[ ${VERSION} == "v487"* ]]; then
     ANALYSISTYPE=""
     DIRRECOTYPE=""
 fi
-# Bright star catalog
-CATALOG=($(grep BRIGHTSTARCATALOGUE ${1} | grep "*" | awk '{print $3}'))
 
 echo "Analysis of ${SOURCE} for Eventdisplay Version ${VERSION}"
 DDIR=${VERITAS_USER_DATA_DIR}/analysis/Results/${VERSION}/${ANALYSISTYPE}/SourceTests//${SOURCE}/${EPOCH}/
 echo "Results are written to ${DDIR}"
-EVDIR=${VERITAS_USER_DATA_DIR}/analysis/Results/${VERSION}/${ANALYSISTYPE}/
 MSCWDIR="${VERITAS_USER_DATA_DIR}/analysis/Results/${VERSION}/${ANALYSISTYPE}/mscw${DIRRECOTYPE}/"
 MSCWDIR="$VERITAS_DATA_DIR/processed_data_v490/${ANALYSISTYPE}/mscw/"
-SDIR=`pwd`
+SDIR=$(pwd)
 
 if [[ ! -e ${SDIR}/${SOURCE}/runlist_releaseTesting_${EPOCH}.dat ]]; then
     echo "Runlist for epoch $EPOCH not found: ${SDIR}/${SOURCE}/runlist_releaseTesting_${EPOCH}.dat"
     exit
 fi
 
-cd ${EVNDISPSCRIPTS}
+cd ${EVNDISPSCRIPTS} || exit
 
 if [ ${ANATYPE} == "ANASUM_SUB" ]; then
        ./ANALYSIS.anasum_parallel_from_runlist.sh \
@@ -95,89 +88,6 @@ elif [ ${ANATYPE} == "ANASUM_FFF" ] ; then
            anasum.combined.root \
            ${SDIR}/runparameter.dat
 
-elif [ ${ANATYPE} == "V2DL3" ] ; then
-    if [[ -d ${V2DL3_PATH} ]]; then
-        export PYTHONPATH=$PYTHONPATH:"${V2DL3_PATH}"
-        ${DDIR}/${CUT}/v2dl3_from_runlist_${CUT}.sh
-    else
-        echo "error: V2DL3 path not given"
-        exit
-    fi
-
-elif [ "$ANATYPE" == "INDEX" ]; then
-    if [[ -d ${V2DL3_PATH} ]]; then
-        export PYTHONPATH=$PYTHONPATH:"${V2DL3_PATH}"
-        source activate base
-        conda activate v2dl3Eventdisplay
-        python ${V2DL3_PATH}/pyV2DL3/script/generate_index_file.py \
-             -f ${DDIR}/${CUT} \
-             -i ${DDIR}/${CUT} -r
-        conda deactivate
-    else
-        echo "error: V2DL3 path not given"
-        exit 
-    fi
-
-elif [ ${ANATYPE} == "GAMMAPY" ] ; then
-     if [[ -d ${GAMMAPY_SCRIPT} ]]; then
-         source activate base
-         conda activate gammapy-0.20.1
-         python ${GAMMAPY_SCRIPT}/compare_spectra.py \
-             -d ${DDIR}/${CUT} \
-             -t release_test_${SOURCE}_${CUT} \
-             -r ${DDIR}/${CUT}/Eventdisplay_${SOURCE}_${CUT}_SpecPoints.csv \
-             -o ${DDIR}/${CUT} \
-             -c ${VERITAS_EVNDISP_AUX_DIR}/AstroData/Catalogues/${CATALOG} \
-             -p ${SDIR}/${SOURCE}/gammapy_analysis_parameter.yaml \
-             -z NONE \
-             -s ${CUT}
-         conda deactivate
-      else
-          echo "error: GAMMAPY script path not given"
-      fi
-
-elif [ ${ANATYPE} == "VALIDATION_PLOT" ] ; then
-     if [[ -d ${GAMMAPY_SCRIPT} ]]; then
-        source activate base
-        conda activate gammapy-0.20.1
-        python ${GAMMAPY_SCRIPT}/plot_all_spec_comparison.py \
-              ${DDIR}/${CUT}/Eventdisplay_${SOURCE}_${CUT} \
-              ${DDIR}/${CUT}/release_test_${SOURCE}_${CUT} \
-              release_test_${SOURCE}_${CUT} \
-              ${DDIR}/${CUT} \
-              ${SDIR}/${SOURCE}/gammapy_analysis_parameter.yaml \
-              NONE \
-              ${CUT} \
-              ${VERSION}
-       conda deactivate
-     else
-         echo "error: GAMMAPY script path not given"
-     fi
-elif [ ${ANATYPE} == "ALL_RESULTS" ]; then
-    ANACOMBINED="${DDIR}/${CUT}/anasum.combined.log"
-    if [[ ! -e ${ANACOMBINED} ]]; then
-        ANACOMBINED="${DDIR}/${CUT}/anasumCombined.log"
-        if [[ ! -e ${ANACOMBINED} ]]; then
-            echo "ANASUM result not found in ${DDIR}/${CUT}/anasum.combined.log and not in ${ANACOMBINED}"
-            exit
-        fi
-    fi
-    RESULT=$(grep "ALL RUNS" $ANACOMBINED)
-    BSR="${SOURCE}, ${CUT}, $VERSION "
-    echo "ALL_RESULTS ${RESULT/ALL RUNS/$BSR}"
-elif [ ${ANATYPE} == "COPY_RESULTS" ]; then
-    if [[ -e ${DDIR}/${CUT}/anasum.combined.log ]]; then
-        # ODIR="${VERITAS_USER_DATA_DIR}/analysis/Results/${VERSION}/${ANALYSISTYPE}/SourceTests/anasum.combined/${SOURCE}"
-        ODIR="/afs/ifh.de/group/cta/scratch/maierg/EVNDISP/EVNDISP-400/GITHUB_Eventdisplay/EventDisplay_Release_v490/v490.0/sources/${SOURCE}"
-        mkdir -p ${ODIR}/${CUT}
-        # cp -v ${DDIR}/${CUT}/anasum.combined.log ${ODIR}/${CUT}
-        cp -v ${DDIR}/${CUT}/SignificanceRatioTov487.png ${ODIR}/${CUT}
-    fi
-elif [ ${ANATYPE} == "SIGNIFICANCE_RATIO" ]; then
-    cd ${SDIR}
-    root -q -l -b "plot_significance_ratio.C(\"${SOURCE}/${CUT}\")"
-else
-        echo "error: ANALYSIS type not given"
 fi
 
 cd ${SDIR}

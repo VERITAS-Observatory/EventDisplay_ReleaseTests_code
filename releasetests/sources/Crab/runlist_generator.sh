@@ -1,3 +1,4 @@
+#!/bin/bash
 #  generate run lists and linked directories
 # - epochs
 # - summer / winter (all, and for epochs)
@@ -6,7 +7,7 @@
 # required input:
 # - master run lists with all analysed runs
 # - mscw root files from analysis
-# 
+#
 # **hardwired directory names**
 
 if [ $# -ne 1 ]; then
@@ -45,23 +46,23 @@ VDIR="../../../../EventDisplay_Release_${VERSION}/${OBJECT}/"
 mkdir -p ${VDIR}
 
 ##############################################
-# 'master' run list
+# 'main' run list
 MLIST="./runlist_releaseTesting${MEPOCH}.dat"
 if [[ ! -e ${MLIST} ]]; then
    echo "Runlist not found for epoch ${MEPOCH}: ${MLIST}"
    exit
 fi
-# 'master' directory with all mscw file 
+# 'main' directory with all mscw file
 MSCWSDIR="mscw-redHV"
 MSCWSDIR="mscw"
 MSCWDDIR="$VERITAS_USER_DATA_DIR/analysis/Results/${VERSION}/${ANALYSISTYPE}/${OBJECT}/${MSCWSDIR}"
 if [[ ! -e ${MSCWDDIR} ]]; then
-   echo "Error: directory with MSCW files not found" 
+   echo "Error: directory with MSCW files not found"
    echo ${MSCWDDIR}
    exit
 fi
 echo "READING mscw files from ${MSCWDDIR}"
-LL=`cat ${MLIST}`
+LL=$(cat ${MLIST})
 # fill new run lists
 FILLRUNLISTS="TRUE"
 # link mscw files into the epoch/etc directories
@@ -100,7 +101,7 @@ link_run()
     then
        return
     fi
-    PWDIR=`pwd`
+    PWDIR=$(pwd)
     LINKDIR=${MSCWDDIR}"_"${LNAME}
     echo "    Link directory ${LINKDIR}"
     mkdir -p ${LINKDIR}

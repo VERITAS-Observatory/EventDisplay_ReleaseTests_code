@@ -1,7 +1,8 @@
+#!/bin/bash
 # run epoch wise anasum analysis
 # for all zenith angles and background models
 
-if [[ $# < 2 ]]; then
+if [[ $# -lt 2 ]]; then
 echo "
    ./anasum_yearly_all.sh <runparameter file> <SUB/FFF>
    --> Step 1 to analyse run-wise with anasum (SUB)
@@ -21,7 +22,7 @@ fi
 for N in $PSPACE
 do
    for R in IGNOREACCEPTANCE
-   do 
+   do
       ./anasum_yearly.sh ${RPARA} ${COM} "${N}" "${R}"
    done
 done
