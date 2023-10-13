@@ -120,7 +120,7 @@ class RunParameters
     vector< string > getAtmosphereVector( string prefix = "" );
     vector< string > getCutsVector();
     vector< string > getEpochsVector( bool iAddMajorEpoch = false );
-    string getDataDir();
+    string getDataDir(bool addDirectionType=false);
     bool IsZombie() { return fIsZombie; }
     void print();
     void printMCParameter();
@@ -304,14 +304,14 @@ void RunParameters::print()
  * return anasum data dir 
  * (as assumed in the run scripts)
  */
-string RunParameters::getDataDir()
+string RunParameters::getDataDir(bool addDirectionType)
 {
     string iDataDir;
 
     iDataDir = "$VERITAS_USER_DATA_DIR/analysis/Results/"
                     + fVersion + "/" + fAnaType + "/"
                     + fSource;
-    if( fDirectionType.size() > 0 )
+    if( fDirectionType.size() > 0 && addDirectionType )
     {
         iDataDir += "_" + fDirectionType;
     }
