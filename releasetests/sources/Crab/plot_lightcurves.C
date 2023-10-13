@@ -283,10 +283,6 @@ void plot_lightcurves( string runparameterfile, string fElevation = "SZE",
 
     // output directory
     string oDir = "../../../../EventDisplay_Release_" + fPar->fVersion + "/" + fPar->fSource;
-    if( fPar->fDirectionType.size() > 0 )
-    {
-        oDir += "_" + fPar->fDirectionType;
-    }
     oDir += "/figures/";
     gSystem->mkdir( oDir.c_str(), true );
     cout << "figures will be written to " << oDir << endl;
