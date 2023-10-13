@@ -19,7 +19,7 @@ if [ $# -ne 1 ]; then
     echo ""
     echo "  reads runs from master list (e.g., runlist_releaseTestingV6.dat)"
     echo ""
-    echo "IMPORTANT: requires files an a directory like $VERITAS_USER_DATA_DIR/analysis/Results/v490/AP/Crab_DISP/mscw"
+    echo "IMPORTANT: requires files an a directory like $VERITAS_USER_DATA_DIR/analysis/Results/v490/AP/Crab/mscw"
     exit
 fi
 
