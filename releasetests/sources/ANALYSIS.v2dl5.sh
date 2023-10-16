@@ -37,7 +37,7 @@ corresponding conda installation (v2dl5)
 "
 exit
 fi
-RLIST=$1
+RLIST=$(readlink -f "$1")
 TARGET=$2
 DATASTORE=$3
 ODIR=$4
@@ -80,7 +80,7 @@ sed -e "s|RRUNLIST|$RLIST|" \
 
 chmod u+x $FSCRIPT.sh
 
-# $EVNDISPSCRIPTS/helper_scripts/UTILITY.condorSubmission.sh $FSCRIPT.sh $h_vmem $tmpdir_size
+$EVNDISPSCRIPTS/helper_scripts/UTILITY.condorSubmission.sh $FSCRIPT.sh $h_vmem $tmpdir_size
 echo
 echo "-------------------------------------------------------------------------------"
 echo "Job submission using HTCondor - run the following script to submit jobs at once:"

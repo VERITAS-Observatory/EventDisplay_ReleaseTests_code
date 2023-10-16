@@ -44,10 +44,6 @@ source activate base
 conda activate v2dl5
 export PYTHONPATH=\$PYTHONPATH:${V2DL5}
 
-echo "O $ODIR"
-echo "C $CONFIG"
-echo "R $RUNLIST"
-
 python ${V2DL5}/v2dl5/scripts/reflected_region_analysis.py \
     --output_dir ${ODIR} \
     --config ${CONFIG} \
