@@ -61,7 +61,7 @@ echo -e "Log files will be written to:\n $LOGDIR"
 rm -f ${LOGIDR}/x* 2>/dev/null
 
 # Job submission script
-SUBSCRIPT=$( dirname "$0" )"/ANALYSIS.v2dl5_sub"
+SUBSCRIPT=$( dirname "$0" )"/ANALYSIS.v2dl5_qsub"
 TIMETAG=`date +"%s"`
 
 # Prepare template file
