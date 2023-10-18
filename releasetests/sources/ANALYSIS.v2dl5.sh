@@ -38,7 +38,7 @@ corresponding conda installation (v2dl5)
 exit
 fi
 RLIST=$(readlink -f "$1")
-TARGET=$2
+TARGET="$2"
 DATASTORE=$3
 ODIR=$4
 CONFIG=$5
