@@ -134,7 +134,7 @@ do
    ELEV=$(echo $ELEVATION | awk '{print $3}')
    WOBB=$(echo $WOBBLE | awk '{print $3}')
    OBSL=$(echo $RUNINFO | awk '{print $4}')
-   EL=$(echo $ELEV | awk -v e=$ELEV '{if (e > 50 ) {print "SZE"} else if (e > 40 ) {print "MZE"} else {print "LZE"}}')
+   EL=$(echo $ELEV | awk -v e=$ELEV '{if (e > 50 ) {print "SZE"} else if (e > 40 ) {print "MZE"} else if (e > 30 ) {print "LZE"} else {print "BZE"}}')
    # print run info
    echo "${R}: ${RUNINFO}   ${ELEV}   ${EL}  $ATM   $WOBB"
 
