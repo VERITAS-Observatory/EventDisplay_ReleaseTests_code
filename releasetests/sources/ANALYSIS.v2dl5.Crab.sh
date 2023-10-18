@@ -8,6 +8,11 @@ CONFIG="ANALYSIS.v2dl5.reflected_region.yml"
 
 for RLIST in $RLISTS
 do
+    if [[ $(wc -l < "$RLIST") -eq 0 ]]; then
+        echo "Zero lines in $RLIST"
+        continue
+    fi
+
     ODIR=$(basename $RLIST .dat)
     ODIR="${ODIR/runlist_releaseTesting/}"
     echo $ODIR

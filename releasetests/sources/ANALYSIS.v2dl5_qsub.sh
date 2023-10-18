@@ -47,7 +47,7 @@ export PYTHONPATH=\$PYTHONPATH:${V2DL5}
 python ${V2DL5}/v2dl5/scripts/reflected_region_analysis.py \
     --output_dir ${ODIR} \
     --config ${CONFIG} \
-    --run_list ${RUNLIST} > v2dl5.log 2>&1
+    --run_list ${RUNLIST} > ${ODIR}/v2dl5.log 2>&1
 
 exit
 

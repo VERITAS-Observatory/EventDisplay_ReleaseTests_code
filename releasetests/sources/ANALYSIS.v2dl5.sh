@@ -4,7 +4,7 @@
 #
 
 # qsub parameters
-h_cpu=11:59:00; h_vmem=4000M; tmpdir_size=5G
+h_cpu=11:59:00; h_vmem=8000M; tmpdir_size=5G
 
 # EventDisplay version
 EDVERSION=$($EVNDISPSYS/bin/anasum --version | tr -d .)
