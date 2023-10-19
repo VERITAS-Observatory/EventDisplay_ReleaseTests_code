@@ -1,0 +1,42 @@
+---
+# Configuration for a reflected region analysis
+
+observations:
+    datastore: DATASTORE
+    # search for observations around the on_region direction
+    # within a maximum offset of obs_cone_radius
+    obs_cone_radius: 1.5 deg
+    required_irf: ['aeff', 'edisp']
+
+datasets:
+    type: 1d
+    stack: false
+    geom:
+        axes:
+            energy: {min: 0.1 TeV, max: 100 TeV, nbins: 30}
+            energy_true: {min: 0.05 TeV, max: 100 TeV, nbins: 40}
+    on_region:
+        target: TARGET
+    exclusion_region:
+        on_radius: 0.5 deg
+        magnitude_B: 7
+        star_exclusion_radius: 0.30 deg
+        fov: 3.5 deg
+        star_file: "$EVNDISPSYS/../V2DL5/data/hip_mag9.fits.gz"
+    containment_correction: false
+    safe_mask:
+        methods: ['aeff-max']
+        parameters: {aeff_percent: 10.}
+    background:
+        method: reflected
+fit:
+    fit_range: {min: 0.1 TeV, max: 20 TeV}
+    model: pl
+
+flux_points:
+    energy: {min: 0.1 TeV, max: 20 TeV, nbins: 10}
+
+light_curve:
+    energy: {min: 1. TeV, max: 100 TeV}
+    time_zone: -7
+
