@@ -1,6 +1,9 @@
 # Run V2DL5 analysis for all Crab runs
 
 CUT="soft2tel"
+CUT="moderate2tel"
+CUT="hard3tel"
+
 RLISTS=$(ls -1 Crab/runlists/*.dat)
 DL3DIR="/lustre/fs24/group/veritas/shared/processed_data_v490/AP/dl3_pointlike_${CUT}/"
 DDIR="$VERITAS_USER_DATA_DIR/analysis/Results/v490/AP/v2dl5/${CUT}"
