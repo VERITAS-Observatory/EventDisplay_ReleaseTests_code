@@ -80,10 +80,10 @@ void plotFitResults( string iParameter, string iFile, string oDir = "./" )
 
 void write_fit_para(TF1 *fP, string OutFile)
 {
-     ofstream Op; 
+     ofstream Op;
      Op.open( gSystem->ExpandPathName(OutFile.c_str()) );
-         
-     std::cout.precision(5); 
+
+     std::cout.precision(5);
      Op << TMath::Abs(fP->GetParameter( 1 )) << "\t";
      Op << fP->GetParError( 1 ) << "\t";
      Op << fP->GetParameter( 0 ) << "\t";
@@ -98,7 +98,7 @@ void write_fit_para(TF1 *fP, string OutFile)
 
 void plot( RunParameters* fPar,
            string iCut,
-           string iATM, 
+           string iATM,
            string iElevation,
            string iBck,
            string oDir )
@@ -146,11 +146,11 @@ void plot( RunParameters* fPar,
 
         string anasum_dir = fPar->getDataDir() + "anasum_" + iEpoch + "_" + iCut + "_" + iElevation + "_" + iBck;
         cout << "reading " << anasum_dir << endl;
-       
+
         // adjust fit range according to cuts
         double i_Fit_Elow_TeV = 0.2;
         double i_Fit_Ehigh_TeV = 10.;
-        if( iCut.find( "soft" ) != string::npos 
+        if( iCut.find( "soft" ) != string::npos
         || iCut.find( "Soft" ) != string::npos )
         {
             i_Fit_Elow_TeV = 0.14;
@@ -165,6 +165,7 @@ void plot( RunParameters* fPar,
         }
 
         VEnergySpectrum e( anasum_dir+"/anasum.combined.root" );
+        e.setSignificanceParameters( 2., 3 );
         if( e.isZombie() ) continue;
         // power law fits
         printCanvas( e.plotCrabNebulaSpectrum( 0., i_Fit_Elow_TeV, i_Fit_Ehigh_TeV ),
@@ -183,7 +184,7 @@ void plot( RunParameters* fPar,
                 osPL << endl;
                 fSuccess = true;
             }
-            
+
             e.writeSpectralPointsToCSVFile( anasum_dir+"/Eventdisplay_" + iEpoch + "_SpecPoints.csv") ;
             write_fit_para(fPL, anasum_dir+"/Eventdisplay_" + iEpoch + "_SpecFit.txt") ;
          }
@@ -199,10 +200,10 @@ void plot( RunParameters* fPar,
         }
 
         // curved power law fits (not for hard cuts)
-        if( iCut.find( "hard" ) == string::npos 
+        if( iCut.find( "hard" ) == string::npos
         && iCut.find( "Hard" ) == string::npos )
         {
-            printCanvas( e.plotCrabNebulaSpectrum( 0., i_Fit_Elow_TeV, i_Fit_Ehigh_TeV, 0.1, 4 ), 
+            printCanvas( e.plotCrabNebulaSpectrum( 0., i_Fit_Elow_TeV, i_Fit_Ehigh_TeV, 0.1, 4 ),
                          figureDir + "/SpectrumCPL_" + iEpoch, oDir );
             TF1 *f = 0;
             if( e.getSpectralFitFunction() )
@@ -282,8 +283,8 @@ void plot_energy_spectra( string runparameterfile, string fElevation = "SZE",
         {
             plot( fPar,
                   fCuts[c],
-                  fAtmosphere[i], 
-                  fElevation, 
+                  fAtmosphere[i],
+                  fElevation,
                   fBackgroundModel,
                   oDir );
         }
