@@ -45,9 +45,9 @@ followed by:
 
 Generates run lists for each minor epoch, atmospheres, zenith angle range.
 
-MSCW results should be processed all into one single directory.
+MSCW results should be processed all into one single directory (or: mscw files of Crab observations should be linked into one single directory).
 
-Run with:
+Generate links with:
 
 ```bash
 ./runlist_generator.sh <runparameter file>
