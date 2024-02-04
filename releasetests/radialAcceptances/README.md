@@ -1,24 +1,12 @@
 # Radial acceptance calculation
 
-## Evndisp and lookup table analysis
-
 Mostly M82 runs are used for the radial acceptance analysis, see ./runlists
-
-Evndisp analysis:
-```
-./calculate_radialAcceptances.sh <version> EVNDISP
-```
-
-MSCW analysis:
-```
-./calculate_radialAcceptances.sh <version> MSCW 
-```
 
 ## Calculation of radial acceptances
 
 Submit jobs for radial acceptance calculations:
 ```
-./calculate_radialAcceptances.sh <version> ACCEPTANCES
+./calculate_radialAcceptances.sh <version>
 ```
 
 radial acceptances are written to:
@@ -47,7 +35,7 @@ Step 2 to combine anasum file
 ```
 ./test_radialAcceptances.sh <version> FFF <RE/RB>
 ```
- 
+
 Plotting:
 ```
 root -l -q -b 'plot_skymaps.C( "v483", "RE")'

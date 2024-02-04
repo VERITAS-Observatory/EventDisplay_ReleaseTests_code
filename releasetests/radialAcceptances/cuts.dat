@@ -1,8 +1,11 @@
+ANASUM.GammaHadron-Cut-NTel2-PointSource-Moderate.dat
 ANASUM.GammaHadron-Cut-NTel2-PointSource-Moderate-TMVA-BDT.dat
-ANASUM.GammaHadron-Cut-NTel2-PointSource-Hard-TMVA-BDT.dat
-ANASUM.GammaHadron-Cut-NTel2-PointSource-Soft-TMVA-BDT.dat
-ANASUM.GammaHadron-Cut-NTel3-PointSource-Hard-TMVA-BDT.dat
-ANASUM.GammaHadron-Cut-NTel2-PointSource-SuperSoft.dat
+ANASUM.GammaHadron-Cut-NTel2-PointSource-Moderate-TMVA-Preselection.dat
 ANASUM.GammaHadron-Cut-NTel2-PointSource-Soft.dat
-ANASUM.GammaHadron-Cut-NTel2-Extended025-Moderate-TMVA-BDT.dat
-ANASUM.GammaHadron-Cut-NTel2-Extended050-Moderate-TMVA-BDT.dat
+ANASUM.GammaHadron-Cut-NTel2-PointSource-Soft-TMVA-BDT.dat
+ANASUM.GammaHadron-Cut-NTel2-PointSource-Soft-TMVA-Preselection.dat
+ANASUM.GammaHadron-Cut-NTel2-PointSource-SuperSoft.dat
+ANASUM.GammaHadron-Cut-NTel2-PointSource-SuperSoft-NN-TMVA-BDT.dat
+ANASUM.GammaHadron-Cut-NTel2-PointSource-SuperSoft-TMVA-Preselection.dat
+ANASUM.GammaHadron-Cut-NTel3-PointSource-Hard-TMVA-BDT.dat
+ANASUM.GammaHadron-Cut-NTel3-PointSource-Hard-TMVA-Preselection.dat
