@@ -10,16 +10,16 @@
 #
 # **hardwired directory names**
 
-if [ $# -ne 1 ]; then
-    echo "./runlist_generator.sh <runparameter file>"
+if [ $# -ne 2 ]; then
+    echo "./runlist_generator_from_anasum_log.sh <runparameter file>"
     echo ""
     echo "  generates run lists for minor epochs, zenith angle ranges, different atmospheres"
-    echo "  generates links of mscw_energy files for anasum analysis"
-    echo "  (minor epochs are read from mscw_energy files)"
+    echo "  generates links of anasum files for combined anasum file"
+    echo "  (minor epochs are read from anasum log files)"
     echo ""
     echo "  reads runs from main lists (e.g., runlist_releaseTestingV6.dat)"
     echo ""
-    echo "IMPORTANT: requires files an a directory like $VERITAS_USER_DATA_DIR/analysis/Results/v490/AP/Crab/mscw"
+    echo "IMPORTANT: requires files an a directory like $VERITAS_USER_DATA_DIR/analysis/Results/v490/AP/Crab/anasum_CUT"
     exit
 fi
 
@@ -53,19 +53,18 @@ if [[ ! -e ${MLIST} ]]; then
    exit
 fi
 # 'main' directory with all mscw file
-MSCWSDIR="mscw-redHV"
-MSCWSDIR="mscw"
-MSCWDDIR="$VERITAS_USER_DATA_DIR/analysis/Results/${VERSION}/${ANALYSISTYPE}/${OBJECT}/${MSCWSDIR}"
-if [[ ! -e ${MSCWDDIR} ]]; then
-   echo "Error: directory with MSCW files not found"
-   echo ${MSCWDDIR}
+DATADIR="${2}"
+# DATADIR="$VERITAS_USER_DATA_DIR/analysis/Results/${VERSION}/${ANALYSISTYPE}/${OBJECT}/${DATADIR}"
+if [[ ! -e ${DATADIR} ]]; then
+   echo "Error: directory with anasum files not found"
+   echo ${DATADIR}
    exit
 fi
-echo "READING mscw files from ${MSCWDDIR}"
+echo "READING anasum files from ${DATADIR}"
 LL=$(cat ${MLIST})
 # fill new run lists
 FILLRUNLISTS="TRUE"
-# link mscw files into the epoch/etc directories
+# link files into the epoch/etc directories
 MAKELINKDDIR="TRUE"
 
 fill_run()
@@ -95,48 +94,49 @@ fill_run()
     fi
 }
 
-link_run()
-{
-    if [ $MAKELINKDDIR != "TRUE" ]
-    then
-       return
-    fi
-    PWDIR=$(pwd)
-    LINKDIR=${MSCWDDIR}"_"${LNAME}
-    echo "    Link directory ${LINKDIR}"
-    mkdir -p ${LINKDIR}
-    if [ -e ${LINKDIR}/$R.mscw.root ]
-    then
-       rm -f ${LINKDIR}/$R.mscw.root
-    fi
-    cd ${LINKDIR}
-    ln -s ../${1}/${R}.mscw.root .
-    cd ${PWDIR}
-}
-
 for R in $LL
 do
-   if [ ! -e ${MSCWDDIR}/$R.mscw.root ]; then
-      echo "Run $R - file not found: ${MSCWDDIR}/$R.mscw.root"
+   if [ ! -e ${DATADIR}/$R.anasum.root ]; then
+      echo "Run $R - root file not found: ${DATADIR}/$R.anasum.root"
       continue
    fi
+   if [ ! -e ${DATADIR}/$R.anasum.log ]; then
+      echo "Run $R - log file not found: ${DATADIR}/$R.anasum.log"
+      continue
+   fi
+   echo "DATADIR ${DATADIR}/$R.anasum.log"
    # read and extract run info from files
-   RUNINFO="$($EVNDISPSYS/bin/printRunParameter ${MSCWDDIR}/$R.mscw.root -runinfo)"
-   ELEVATION="$($EVNDISPSYS/bin/printRunParameter ${MSCWDDIR}/$R.mscw.root -elevation)"
-   WOBBLE="$($EVNDISPSYS/bin/printRunParameter ${MSCWDDIR}/$R.mscw.root -wobbleInt)"
-   EPOCH=$(echo $RUNINFO | awk '{print $1}')
-   MAJOREPOCH=$(echo $RUNINFO | awk '{print $2}')
-   ATM=$(echo $RUNINFO | awk '{print $3}')
+   INSTRUMENT_EPOCH=$(grep "Instrument epoch selected" "${DATADIR}/$R.anasum.log" | head -n 1 | awk '{print $NF}')
+   MAJOREPOCH=$(echo "$INSTRUMENT_EPOCH" | cut -d '_' -f1)
+   EPOCH="${INSTRUMENT_EPOCH%_ATM*}"
+   EPOCH=$(echo "$INSTRUMENT_EPOCH" | cut -d '_' -f1-3)
+   ATM=$(echo "$INSTRUMENT_EPOCH" | grep -oE 'ATM[0-9]+')
    if [[ $EPOCH == *"V4"* ]] || [[ $EPOCH == *"V5"* ]]
    then
        ATM=${ATM/6/2}
    fi
-   ELEV=$(echo $ELEVATION | awk '{print $3}')
-   WOBB=$(echo $WOBBLE | awk '{print $3}')
-   OBSL=$(echo $RUNINFO | awk '{print $4}')
+   EFFECTIVEAREA=$(grep "effective areas from" "${DATADIR}/$R.anasum.log")
+   if [[ $EFFECTIVEAREA == *"RedHV"* ]]; then
+       OBSL="obsLowHV"
+   else
+       OBSL="stdHV"
+   fi
+   ELEV=$(grep "mean elevation" "${DATADIR}/$R.anasum.log" | head -n 1 | awk '{print $3}')
    EL=$(echo $ELEV | awk -v e=$ELEV '{if (e > 50 ) {print "SZE"} else if (e > 40 ) {print "MZE"} else if (e > 30 ) {print "LZE"} else {print "BZE"}}')
-   # print run info
-   echo "${R}: ${RUNINFO}   ${ELEV}   ${EL}  $ATM   $WOBB"
+   WOBBLESTRING=$(grep "Wobble offsets (currE)" "${DATADIR}/$R.anasum.log")
+   n_offset=$(echo "$WOBBLESTRING" | head -n 1 | awk '{print $5}')
+   w_offset=$(echo "$WOBBLESTRING" | head -n 1 | awk '{print $7}')
+   w_offset=${w_offset/,/}
+   w_offset=${w_offset/-/}
+   n_offset=${n_offset/-/}
+   if [[ $n_offset != 0 ]]; then
+       WOBB="$n_offset"
+   elif [[ $w_offset != 0 ]]; then
+       WOBB="$w_offset"
+   else
+       WOBBB="0"
+   fi
+   echo "${R}: MAJOREPOCH ${MAJOREPOCH} EPOCH ${EPOCH} ELEVATION ${EL} ATM $ATM  WOBBLE $WOBB OBSL $OBSL"
 
    # files per major/minor epoch
    for E in ${MAJOREPOCH} ${EPOCH}
@@ -148,34 +148,34 @@ do
        # epoch
        LNAME="${E}"
        fill_run
-       link_run ${MSCWSDIR}
+   #    link_run ${MSCWSDIR}
        # files per epoch and season
        LNAME="${E}_ATM${ATM}"
        fill_run
-       link_run ${MSCWSDIR}
+  #     link_run ${MSCWSDIR}
        # files per elevation range and epoch
        LNAME="${E}_${EL}"
        fill_run
-       link_run ${MSCWSDIR}
+ #      link_run ${MSCWSDIR}
        # files per elevation range and epoch and season
        LNAME="${E}_ATM${ATM}_${EL}"
        fill_run
-       link_run ${MSCWSDIR}
+ #      link_run ${MSCWSDIR}
        # files with non-0.5 deg wobble offsets (all in one directory)
-       if [[ $WOBB != "50" ]]; then
+       if [[ $WOBB != "0.5" ]]; then
            LNAME=${E}_WOBBLE
            fill_run
-           link_run ${MSCWSDIR}
+  #         link_run ${MSCWSDIR}
        else
           LNAME="${E}_ATM${ATM}_${EL}_0.5deg"
           fill_run
-          link_run ${MSCWSDIR}
+  #        link_run ${MSCWSDIR}
           LNAME="${E}_${EL}_0.5deg"
           fill_run
-          link_run ${MSCWSDIR}
+  #        link_run ${MSCWSDIR}
           LNAME="${E}_0.5deg"
           fill_run
-          link_run ${MSCWSDIR}
+  #        link_run ${MSCWSDIR}
        fi
    done
 done
