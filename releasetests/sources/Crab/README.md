@@ -31,44 +31,38 @@ MSCW results should be processed all into one single directory (or: mscw files o
 Generate links with:
 
 ```bash
-./runlist_generator.sh <runparameter file>
+./runlist_generator.sh <runparameter file> <anasum run-wise file directory>
+```
+
+e.g.,
+
+```bash
+./runlist_generator_from_anasum_log.sh \
+   ../../../../EventDisplay_Release_v490/runparameter/V6redHV.AP.runparameter.dat \
+   $VERITAS_USER_DATA_DIR/analysis/Results/v490/AP/PreProcessing/anasum_moderate2tel
 ```
 
 for
 
 - linking into yearly sets.
-- selection of ATM61 and 62 files
+- selection of ATM61 and ATM62 files
 - apply cut on mean elevation of a specific run
 - generate run lists
 
-(this may take a while)
-
 ## Run anasum analysis
 
-Individual runs (submission to job queue):
+Combine files using pre-processed anasum files and run list generated in step before:
 
 ```bash
-./anasum_yearly.sh <runparameter file> SUB SZE RE
-```
-
-for reflected region model (RE), and small zenith angle files (SZE).
-
-Combine files:
-
-```bash
-./anasum_yearly.sh <runparameter file> FFF SZE RE
+./anasum_yearly.sh <runparameter file> <anasum-run-wise directory>
 ```
 
 ## Plotting
 
-### Spectra
-
-plot energy spectra
-
-- pdfs in figures directory
+use `plot_all.sh` to generate spectra and light curves for each of above run lists:
 
 ```bash
-root -q -l -b 'plot_energy_spectra.C("<runparameter file>", "SZE" )'
+./plot_all.sh <anasum directory> <output directory>
 ```
 
 - 2. argument: zenith angle range (SZE, MZE, LZE)
@@ -83,23 +77,3 @@ Colors / markers in plot for spectra from the literature:
 - cyan: MAGIC PL 2008
 - green (dark): MAGIC VPL 2014
 - orange: VERITAS 2015
-
-### Light curves
-
-```bash
-root -q -l -b 'plot_lightcurves.C("<runparameter file>", "SZE" )'
-```
-
-- 2. argument: zenith angle range (SZE, MZE, LZE)
-
-Orange solid/dashed line: average flux over all runs (+-1sigma)
-Orange dotted lines: average flux +-20% systematic range
-
-## Sky maps
-
-```bash
-root -l -q -b 'plot_skymaps.C("<runparameter file>", "SZE", "RE" )'
-```
-
-- 2. argument: zenith angle range (SZE, MZE, LZE)
-- 3. argument: background model (RE=reflected region, RB=ring background)
