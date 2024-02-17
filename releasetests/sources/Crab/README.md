@@ -1,14 +1,7 @@
 # Crab analysis
 
 Scripts and macros for epoch-, zenith, and observation-type dependent Crab analysis.
-
-Steps need to be executed in the described sequence.
-
-## Expected directory structure
-
-- Crab evndisp analysis files in in `$VERITAS_USER_DATA_DIR/analysis/Results/<version>/<anatype>/Crab/evndisp`
-- Crab mscw_energy analysis files in `$VERITAS_USER_DATA_DIR/analysis/Results/<version>/<anatype>/Crab/mscw`
-- all data files and products from this analysis will be written to `../../../EventDisplay_Release_<version>/sources/Crab/`
+Analysis depends on pre-processed data products (up to anasum-per run).
 
 ## Run parameter files
 
@@ -20,28 +13,16 @@ Parameters required for the analysis are all listed in parameter files. This inc
 - object to be analyzed
 - ...
 
-see example for [EventDisplay_Release_v490/](https://github.com/VERITAS-Observatory/EventDisplay_Release_v490/runparameter/V6.runparameter.dat)
+Most important parameter files are:
 
-## Analysis
+- [AP StdHV V6](https://github.com/VERITAS-Observatory/EventDisplay_Release_v490/blob/main/runparameter/V6.AP.runparameter.dat)
+- [AP RedHV V6](https://github.com/VERITAS-Observatory/EventDisplay_Release_v490/blob/main/runparameter/V6redHV.AP.runparameter.dat)
+- [NN StdHV V6](https://github.com/VERITAS-Observatory/EventDisplay_Release_v490/blob/main/runparameter/V6.NN.runparameter.dat)
+- [NN RedHV V6](https://github.com/VERITAS-Observatory/EventDisplay_Release_v490/blob/main/runparameter/V6redHV.NN.runparameter.dat)
+- [AP StdHV V5](https://github.com/VERITAS-Observatory/EventDisplay_Release_v490/blob/main/runparameter/V5.AP.runparameter.dat)
+- [AP StdHV V4](https://github.com/VERITAS-Observatory/EventDisplay_Release_v490/blob/main/runparameter/V4.AP.runparameter.dat)
 
-Analysis of all Crab data with Eventdisplay for epochs V4, V5, V6, and V6.redHV.
-Result files should be written to a single directory (linked in the next steps to epochs and elevation ranges).
-
-e.g. for V6, do in the Eventdisplay scripts directory:
-
-```bash
-./ANALYSIS.evndisp.sh <this directory/runlist_releaseTestingV6.dat> $VERITAS_USER_DATA_DIR/analysis/Results/<version>/Crab/evndisp
-```
-
-followed by:
-
-```bash
-./ANALYSIS.mscw_energy.sh <this directory/runlist_releaseTestingV6.dat> \
-                          $VERITAS_USER_DATA_DIR/analysis/Results/<version>/Crab/evndisp \
-                          $VERITAS_USER_DATA_DIR/analysis/Results/<version>/Crab/mscw_energy
-```
-
-## Linking of MSCW files and run list generation
+## Run list generation using anasum log file
 
 Generates run lists for each minor epoch, atmospheres, zenith angle range.
 

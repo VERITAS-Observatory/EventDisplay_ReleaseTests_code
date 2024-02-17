@@ -11,15 +11,14 @@
 # **hardwired directory names**
 
 if [ $# -ne 2 ]; then
-    echo "./runlist_generator_from_anasum_log.sh <runparameter file>"
+    echo "./runlist_generator_from_anasum_log.sh <runparameter file> <anasum-run wise results"
     echo ""
     echo "  generates run lists for minor epochs, zenith angle ranges, different atmospheres"
     echo "  generates links of anasum files for combined anasum file"
     echo "  (minor epochs are read from anasum log files)"
     echo ""
-    echo "  reads runs from main lists (e.g., runlist_releaseTestingV6.dat)"
+    echo "  reads runs from major epoch lists (e.g., runlist_releaseTestingV6.dat)"
     echo ""
-    echo "IMPORTANT: requires files an a directory like $VERITAS_USER_DATA_DIR/analysis/Results/v490/AP/Crab/anasum_CUT"
     exit
 fi
 
@@ -52,27 +51,16 @@ if [[ ! -e ${MLIST} ]]; then
    echo "Runlist not found for epoch ${MEPOCH}: ${MLIST}"
    exit
 fi
-# 'main' directory with all mscw file
+# 'main' directory with all anasum files
 DATADIR="${2}"
-# DATADIR="$VERITAS_USER_DATA_DIR/analysis/Results/${VERSION}/${ANALYSISTYPE}/${OBJECT}/${DATADIR}"
 if [[ ! -e ${DATADIR} ]]; then
    echo "Error: directory with anasum files not found"
    echo ${DATADIR}
    exit
 fi
-echo "READING anasum files from ${DATADIR}"
-LL=$(cat ${MLIST})
-# fill new run lists
-FILLRUNLISTS="TRUE"
-# link files into the epoch/etc directories
-MAKELINKDDIR="TRUE"
 
 fill_run()
 {
-    if [ $FILLRUNLISTS != "TRUE" ]
-    then
-       return
-    fi
     mkdir -p ${VDIR}/runlists
     RUNLNAME="${VDIR}/runlists/runlist_releaseTesting${LNAME}.dat"
     # check if run lists exists
@@ -94,6 +82,8 @@ fill_run()
     fi
 }
 
+echo "READING anasum files from ${DATADIR}"
+LL=$(cat ${MLIST})
 for R in $LL
 do
    if [ ! -e ${DATADIR}/$R.anasum.root ]; then
