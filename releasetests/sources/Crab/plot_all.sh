@@ -20,7 +20,6 @@ echo "Output directory: $ODIR"
 mkdir -p "$ODIR"
 
 PDIR=$(pwd)
-# cd $ROOTSYS
 
 for F in $LFIL; do
     echo "Analysing $F"
@@ -29,18 +28,7 @@ for F in $LFIL; do
     OTF="${ODIR}/${TF}"
     echo "Output per analysis: $OTF"
     mkdir -p "${OTF}"
-    # root -q -l -b "plot_energy_spectra.C(\"$F\", \"${OTF}\" )"
+    root -q -l -b "plot_energy_spectra.C(\"$F\", \"${OTF}\" )"
     root -q -l -b "plot_lightcurves.C(\"$F\", \"${OTF}\" )"
-    exit
-done
-
-exit
-
-for N in $PSPACE
-do
-   #root -q -l -b "plot_energy_spectra.C(\"${1}\", \"$N\", \"$BCKMODEL\" )"
-   root -q -l -b "plot_lightcurves.C(\"${1}\", \"$N\", \"$BCKMODEL\" )"
-#   root -q -l -b "plot_lightcurves.C(\"${1}\", \"$N\", \"$BCKMODEL\" )"
-#   root -q -l -b "plot_skymaps.C(\"${1}\", \"$N\", \"$BCKMODEL\" )"
-#   root -q -l -b "plot_skymaps.C(\"${1}\", \"$N\", \"RB\" )"
+#    root -q -l -b "plot_skymaps.C(\"$F\", \"${OTF}\", true )"
 done

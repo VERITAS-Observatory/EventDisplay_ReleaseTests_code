@@ -32,7 +32,7 @@ OBJECT=($(grep SOURCE ${1} | grep "*" | awk '{print $3}'))
 # run mode
 INDIR="$2"
 # cut
-CUT="${INDIR##*/}"
+CUT="$(basename $INDIR)"
 echo "CUT $CUT"
 # Directory for data files
 DDIR="$VERITAS_USER_DATA_DIR/analysis/Results/${VERSION}/${ANALYSISTYPE}/${OBJECT}/${CUT}"

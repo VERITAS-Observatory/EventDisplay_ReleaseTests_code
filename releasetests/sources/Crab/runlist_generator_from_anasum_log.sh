@@ -148,34 +148,26 @@ do
        # epoch
        LNAME="${E}"
        fill_run
-   #    link_run ${MSCWSDIR}
        # files per epoch and season
-       LNAME="${E}_ATM${ATM}"
+       LNAME="${E}_${ATM}"
        fill_run
-  #     link_run ${MSCWSDIR}
        # files per elevation range and epoch
        LNAME="${E}_${EL}"
        fill_run
- #      link_run ${MSCWSDIR}
        # files per elevation range and epoch and season
-       LNAME="${E}_ATM${ATM}_${EL}"
+       LNAME="${E}_${ATM}_${EL}"
        fill_run
- #      link_run ${MSCWSDIR}
        # files with non-0.5 deg wobble offsets (all in one directory)
        if [[ $WOBB != "0.5" ]]; then
            LNAME=${E}_WOBBLE
            fill_run
-  #         link_run ${MSCWSDIR}
        else
-          LNAME="${E}_ATM${ATM}_${EL}_0.5deg"
+          LNAME="${E}_${ATM}_${EL}_0.5deg"
           fill_run
-  #        link_run ${MSCWSDIR}
           LNAME="${E}_${EL}_0.5deg"
           fill_run
-  #        link_run ${MSCWSDIR}
           LNAME="${E}_0.5deg"
           fill_run
-  #        link_run ${MSCWSDIR}
        fi
    done
 done
