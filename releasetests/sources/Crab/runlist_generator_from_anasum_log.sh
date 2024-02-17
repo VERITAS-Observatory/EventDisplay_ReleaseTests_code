@@ -34,11 +34,6 @@ VERSION=$(grep VERSION ${1} | awk '{print $3}')
 MEPOCH=$(grep MAJOREPOCH ${1} | awk '{print $3}')
 # Source name
 OBJECT=$(grep SOURCE ${1} | awk '{print $3}')
-# Analysis type
-ANALYSISTYPE="AP"
-if [[ ! -z  $VERITAS_ANALYSIS_TYPE ]]; then
-    ANALYSISTYPE="${VERITAS_ANALYSIS_TYPE:0:2}"
-fi
 ##############################################
 # output directory for all data productions
 VDIR="../../../../EventDisplay_Release_${VERSION}/${OBJECT}/"
