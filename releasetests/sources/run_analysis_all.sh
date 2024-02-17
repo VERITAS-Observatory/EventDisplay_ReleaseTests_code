@@ -6,6 +6,8 @@ if [[ $# -lt 1 ]]; then
 echo "
     ./run_analysis_all.sh
 
+    (one command line argument required)
+
 "
 exit
 fi
