@@ -26,14 +26,12 @@ elif [[ $RUNPARA == *"NN"* ]]; then
     CUTS="supersoft supersoftNN2tel"
 fi
 
-CUTS="hard3tel"
-
 # current directory with run lists
 SDIR=$(pwd)
-# data directory
-DDIR="$VERITAS_USER_DATA_DIR/analysis/Results/${VERSION}/processed_data_v490.7/"
+# archive directory
+DDIR="${VERITAS_DATA_DIR}/shared/processed_data_${VERSION}.7"
 # output directory
-ODIR="${VERITAS_USER_DATA_DIR}/analysis/Results/${VERSION}/${ANALYSISTYPE}/SourceTests/"
+ODIR="${VERITAS_USER_DATA_DIR}/analysis/Results/${VERSION}/${ANALYSISTYPE}/SourceTests"
 
 cd ${EVNDISPSCRIPTS} || exit
 
@@ -51,12 +49,11 @@ do
             echo "Analysing ${T} with ${C} cuts (epoch $E)"
             echo "   input file list: ${SDIR}/${T}/runlist_releaseTesting_${E}.dat"
             echo "   input directory: ${DDIR}/${ANALYSISTYPE}/anasum_${C}"
-            echo "   output directory: ${ODIR}/${T}/${E}"
-            continue
+            echo "   output directory: ${ODIR}/${T}/${C}/${E}"
            ./ANALYSIS.anasum_combine.sh \
                ${SDIR}/${T}/runlist_releaseTesting_${E}.dat \
                ${DDIR}/${ANALYSISTYPE}/anasum_${C} \
-               ${ODIR}/${T}/${E}
+               ${ODIR}/${T}/${C}/${E}
         done
     done
 done
