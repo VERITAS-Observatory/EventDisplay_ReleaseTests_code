@@ -17,14 +17,12 @@ ANALYSISTYPE="${VERITAS_ANALYSIS_TYPE:0:2}"
 LTARGETS=$(cat TARGETS.dat)
 
 EPOCHS="V4 V5 V6 all"
-CUTS="soft2tel moderate2tel hard3tel"
-if [[ $RUNPARA == *"AP"* ]] && [[ $RUNPARA == *"redHV"* ]]; then
-    CUTS="softbox"
-elif [[ $RUNPARA == *"NN"* ]] && [[ $RUNPARA == *"redHV"* ]]; then
-    CUTS="softbox supersoft"
-elif [[ $RUNPARA == *"NN"* ]]; then
-    CUTS="supersoft supersoftNN2tel"
-fi
+# AP/NN redHV
+CUTS="softbox"
+# NN nominal
+CUTS="supersoftNN2tel"
+# AP nominal
+CUTS="hard2tel soft2tel moderate2tel hard3tel"
 
 # current directory with run lists
 SDIR=$(pwd)
@@ -50,6 +48,7 @@ do
             echo "   input file list: ${SDIR}/${T}/runlist_releaseTesting_${E}.dat"
             echo "   input directory: ${DDIR}/${ANALYSISTYPE}/anasum_${C}"
             echo "   output directory: ${ODIR}/${T}/${C}/${E}"
+
            ./ANALYSIS.anasum_combine.sh \
                ${SDIR}/${T}/runlist_releaseTesting_${E}.dat \
                ${DDIR}/${ANALYSISTYPE}/anasum_${C} \
