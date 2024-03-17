@@ -19,7 +19,7 @@ VERSION="${3}"
 
 LTARGETS=$(cat TARGETS.dat)
 
-EPOCHS="V4 V5 V6 all"
+EPOCHS="V4 V5 V4V5 V6 all"
 # AP/NN redHV
 CUTS="softbox"
 # NN nominal
@@ -64,7 +64,7 @@ do
                 {
                     echo "## ${T} ${E} ${C}"
 
-                    echo "\`\`\`text "
+                    echo "\`\`\`text"
                     echo "$RESULT_l1"
                     echo "$RESULT_l2"
                     echo "\`\`\`"
