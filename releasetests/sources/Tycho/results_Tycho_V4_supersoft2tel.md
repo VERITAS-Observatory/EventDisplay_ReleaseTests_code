@@ -1,4 +1,4 @@
-## Mrk501 V6 hard2tel
+## Tycho V4 supersoft2tel
 ```text
 v487f:
 v487f:

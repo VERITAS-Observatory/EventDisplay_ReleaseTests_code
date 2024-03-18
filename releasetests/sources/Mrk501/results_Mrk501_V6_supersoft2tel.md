@@ -1,4 +1,4 @@
-## RGBJ1310p323 V6 supersoft2tel
+## Mrk501 V6 supersoft2tel
 ```text
 v487f:
 v487f:
