@@ -1,4 +1,4 @@
-used RHV "super soft" in v487 and "soft" in v490 so it might not be a "strict" comparison: 
+used RHV "super soft" in v487 and "soft" in v490 so it might not be a "strict" comparison:
 v487:
 RUN SUMMARY:
 
