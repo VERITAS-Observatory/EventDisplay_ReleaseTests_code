@@ -1,4 +1,4 @@
-## Mrk501 V6 hard2tel
+## 1ES1118p424 V6 supersoft2tel
 ```text
 v487f:
 v487f:

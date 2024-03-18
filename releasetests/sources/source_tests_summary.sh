@@ -22,10 +22,8 @@ LTARGETS=$(cat TARGETS.dat)
 EPOCHS="V4 V5 V4V5 V6 all"
 # AP/NN redHV
 CUTS="softbox"
-# NN nominal
-CUTS="supersoftNN2tel"
-# AP nominal
-CUTS="hard2tel soft2tel moderate2tel hard3tel"
+# nominal AP and NN cuts
+CUTS="hard2tel soft2tel moderate2tel hard3tel supersoftNN2tel"
 
 # current directory with initial files
 SDIR=$(pwd)

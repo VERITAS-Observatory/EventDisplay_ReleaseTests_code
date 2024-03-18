@@ -19,10 +19,14 @@ LTARGETS=$(cat TARGETS.dat)
 EPOCHS="V4 V5 V4V5 V6 all"
 # AP/NN redHV
 CUTS="softbox"
-# NN nominal
-CUTS="supersoftNN2tel"
-# AP nominal
-CUTS="hard2tel soft2tel moderate2tel hard3tel"
+if [[ $ANALYSISTYPE == "NN" ]]; then
+    # NN nominal
+    CUTS="supersoftNN2tel"
+else
+    # AP nominal
+    CUTS="hard2tel soft2tel moderate2tel hard3tel"
+fi
+echo $CUTS
 
 # current directory with run lists
 SDIR=$(pwd)
