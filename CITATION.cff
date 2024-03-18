@@ -4,8 +4,8 @@ cff-version: 1.2.0
 message: If you use this software, please cite it using these metadata.
 title: "Eventdisplay Release Tests"
 # doi: 10.5281/zenodo.3559075
-version: 4.9.2
-date-released: 2023-07-17
+version: 4.9.5
+date-released: 2023-12-18
 keywords:
 - "gamma-ray astronomy"
 - "astronomy software"

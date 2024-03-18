@@ -1,14 +1,7 @@
 # Crab analysis
 
 Scripts and macros for epoch-, zenith, and observation-type dependent Crab analysis.
-
-Steps need to be executed in the described sequence.
-
-## Expected directory structure
-
-- Crab evndisp analysis files in in `$VERITAS_USER_DATA_DIR/analysis/Results/<version>/<anatype>/Crab/evndisp`
-- Crab mscw_energy analysis files in `$VERITAS_USER_DATA_DIR/analysis/Results/<version>/<anatype>/Crab/mscw`
-- all data files and products from this analysis will be written to `../../../EventDisplay_Release_<version>/sources/Crab/`
+Analysis depends on pre-processed data products (up to anasum-per run).
 
 ## Run parameter files
 
@@ -20,28 +13,16 @@ Parameters required for the analysis are all listed in parameter files. This inc
 - object to be analyzed
 - ...
 
-see example for [EventDisplay_Release_v490/](https://github.com/VERITAS-Observatory/EventDisplay_Release_v490/runparameter/V6.runparameter.dat)
+Most important parameter files are:
 
-## Analysis
+- [AP StdHV V6](https://github.com/VERITAS-Observatory/EventDisplay_Release_v490/blob/main/runparameter/V6.AP.runparameter.dat)
+- [AP RedHV V6](https://github.com/VERITAS-Observatory/EventDisplay_Release_v490/blob/main/runparameter/V6redHV.AP.runparameter.dat)
+- [NN StdHV V6](https://github.com/VERITAS-Observatory/EventDisplay_Release_v490/blob/main/runparameter/V6.NN.runparameter.dat)
+- [NN RedHV V6](https://github.com/VERITAS-Observatory/EventDisplay_Release_v490/blob/main/runparameter/V6redHV.NN.runparameter.dat)
+- [AP StdHV V5](https://github.com/VERITAS-Observatory/EventDisplay_Release_v490/blob/main/runparameter/V5.AP.runparameter.dat)
+- [AP StdHV V4](https://github.com/VERITAS-Observatory/EventDisplay_Release_v490/blob/main/runparameter/V4.AP.runparameter.dat)
 
-Analysis of all Crab data with Eventdisplay for epochs V4, V5, V6, and V6.redHV.
-Result files should be written to a single directory (linked in the next steps to epochs and elevation ranges).
-
-e.g. for V6, do in the Eventdisplay scripts directory:
-
-```bash
-./ANALYSIS.evndisp.sh <this directory/runlist_releaseTestingV6.dat> $VERITAS_USER_DATA_DIR/analysis/Results/<version>/Crab/evndisp
-```
-
-followed by:
-
-```bash
-./ANALYSIS.mscw_energy.sh <this directory/runlist_releaseTestingV6.dat> \
-                          $VERITAS_USER_DATA_DIR/analysis/Results/<version>/Crab/evndisp \
-                          $VERITAS_USER_DATA_DIR/analysis/Results/<version>/Crab/mscw_energy
-```
-
-## Linking of MSCW files and run list generation
+## Run list generation using anasum log file
 
 Generates run lists for each minor epoch, atmospheres, zenith angle range.
 
@@ -50,44 +31,38 @@ MSCW results should be processed all into one single directory (or: mscw files o
 Generate links with:
 
 ```bash
-./runlist_generator.sh <runparameter file>
+./runlist_generator.sh <runparameter file> <anasum run-wise file directory>
+```
+
+e.g.,
+
+```bash
+./runlist_generator_from_anasum_log.sh \
+   ../../../../EventDisplay_Release_v490/runparameter/V6redHV.AP.runparameter.dat \
+   $VERITAS_USER_DATA_DIR/analysis/Results/v490/AP/PreProcessing/anasum_moderate2tel
 ```
 
 for
 
 - linking into yearly sets.
-- selection of ATM61 and 62 files
+- selection of ATM61 and ATM62 files
 - apply cut on mean elevation of a specific run
 - generate run lists
 
-(this may take a while)
-
 ## Run anasum analysis
 
-Individual runs (submission to job queue):
+Combine files using pre-processed anasum files and run list generated in step before:
 
 ```bash
-./anasum_yearly.sh <runparameter file> SUB SZE RE
-```
-
-for reflected region model (RE), and small zenith angle files (SZE).
-
-Combine files:
-
-```bash
-./anasum_yearly.sh <runparameter file> FFF SZE RE
+./anasum_yearly.sh <runparameter file> <anasum-run-wise directory>
 ```
 
 ## Plotting
 
-### Spectra
-
-plot energy spectra
-
-- pdfs in figures directory
+use `plot_all.sh` to generate spectra and light curves for each of above run lists:
 
 ```bash
-root -q -l -b 'plot_energy_spectra.C("<runparameter file>", "SZE" )'
+./plot_all.sh <anasum directory> <output directory>
 ```
 
 - 2. argument: zenith angle range (SZE, MZE, LZE)
@@ -102,23 +77,3 @@ Colors / markers in plot for spectra from the literature:
 - cyan: MAGIC PL 2008
 - green (dark): MAGIC VPL 2014
 - orange: VERITAS 2015
-
-### Light curves
-
-```bash
-root -q -l -b 'plot_lightcurves.C("<runparameter file>", "SZE" )'
-```
-
-- 2. argument: zenith angle range (SZE, MZE, LZE)
-
-Orange solid/dashed line: average flux over all runs (+-1sigma)
-Orange dotted lines: average flux +-20% systematic range
-
-## Sky maps
-
-```bash
-root -l -q -b 'plot_skymaps.C("<runparameter file>", "SZE", "RE" )'
-```
-
-- 2. argument: zenith angle range (SZE, MZE, LZE)
-- 3. argument: background model (RE=reflected region, RB=ring background)

@@ -1,6 +1,7 @@
+#!/bin/bash
 # split runlist according to major epoch
 #
-if [[ $# < 1 ]]; then
+if [[ $# -lt 1 ]]; then
 echo "
     ./split_runlists.sh <runlist>
 "
@@ -12,7 +13,7 @@ DIRN=$(dirname $RLIST)
 
 for E in V4 V5 V6
 do
-    > $DIRN/runlist_releaseTesting_${E}.dat
+    touch $DIRN/runlist_releaseTesting_${E}.dat
 done
 
 FF=$(cat $RLIST)

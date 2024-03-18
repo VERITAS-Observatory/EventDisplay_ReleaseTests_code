@@ -12,7 +12,7 @@ Time mask
 
 Exclusion regions
 -----------------
-* REGIONTOEXCLUDE 0. 0. 0.35
+* REGIONTOEXCLUDE 0. 0. 0.40
 * BRIGHTSTARCATALOGUE Hipparcos_MAG8_1997.dat
 * BRIGHTSTARSETTINGS 6 0.30 B
 Zeta Tau
