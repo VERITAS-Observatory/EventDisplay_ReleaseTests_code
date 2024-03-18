@@ -1,4 +1,4 @@
-## Mrk501 V6 hard2tel
+## Mrk501 (short runlist) V6 hard2tel
 ```text
 v487f:
 v487f:
