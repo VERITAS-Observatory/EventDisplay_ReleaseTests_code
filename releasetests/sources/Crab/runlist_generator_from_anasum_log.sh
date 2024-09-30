@@ -5,13 +5,13 @@
 # - zenith angle ranges (fixed to >50, 40-50, <40 deg)
 #
 # required input:
-# - master run lists with all analysed runs
+# - complete run lists with all analysed runs
 # - mscw root files from analysis
 #
 # **hardwired directory names**
 
 if [ $# -ne 2 ]; then
-    echo "./runlist_generator_from_anasum_log.sh <runparameter file> <anasum-run wise results"
+    echo "./runlist_generator_from_anasum_log.sh <runparameter file> <directory with anasum-run wise results>"
     echo ""
     echo "  generates run lists for minor epochs, zenith angle ranges, different atmospheres"
     echo "  generates links of anasum files for combined anasum file"
@@ -77,21 +77,32 @@ fill_run()
     fi
 }
 
+get_anasum_log_file()
+{
+    data_dir="${1}"
+    runn="${2}"
+    if [ ! -e ${data_dir}/$runn.anasum.log ]; then
+        if [[ ${runn} -lt 100000 ]]; then
+            EDIR="${data_dir}/${runn:0:1}/"
+        else
+            EDIR="${data_dir}/${runn:0:2}/"
+        fi
+    fi
+    echo "$EDIR/$runn.anasum.log"
+}
+
 echo "READING anasum files from ${DATADIR}"
 LL=$(cat ${MLIST})
 for R in $LL
 do
-   if [ ! -e ${DATADIR}/$R.anasum.root ]; then
-      echo "Run $R - root file not found: ${DATADIR}/$R.anasum.root"
+   ANASUMLOG=$(get_anasum_log_file ${DATADIR} ${R})
+   if [ ! -e ${ANASUMLOG} ]; then
+      echo "Run $R - log file not found: ${ANASUMLOG}"
       continue
    fi
-   if [ ! -e ${DATADIR}/$R.anasum.log ]; then
-      echo "Run $R - log file not found: ${DATADIR}/$R.anasum.log"
-      continue
-   fi
-   echo "DATADIR ${DATADIR}/$R.anasum.log"
+   echo "DATADIR ${ANASUMLOG}"
    # read and extract run info from files
-   INSTRUMENT_EPOCH=$(grep "Instrument epoch selected" "${DATADIR}/$R.anasum.log" | head -n 1 | awk '{print $NF}')
+   INSTRUMENT_EPOCH=$(grep "Instrument epoch selected" "${ANASUMLOG}" | head -n 1 | awk '{print $NF}')
    MAJOREPOCH=$(echo "$INSTRUMENT_EPOCH" | cut -d '_' -f1)
    EPOCH="${INSTRUMENT_EPOCH%_ATM*}"
    EPOCH=$(echo "$INSTRUMENT_EPOCH" | cut -d '_' -f1-3)
@@ -100,15 +111,15 @@ do
    then
        ATM=${ATM/6/2}
    fi
-   EFFECTIVEAREA=$(grep "effective areas from" "${DATADIR}/$R.anasum.log")
+   EFFECTIVEAREA=$(grep "effective areas from" "${ANASUMLOG}")
    if [[ $EFFECTIVEAREA == *"RedHV"* ]]; then
        OBSL="obsLowHV"
    else
        OBSL="stdHV"
    fi
-   ELEV=$(grep "mean elevation" "${DATADIR}/$R.anasum.log" | head -n 1 | awk '{print $3}')
+   ELEV=$(grep "mean elevation" "${ANASUMLOG}" | head -n 1 | awk '{print $3}')
    EL=$(echo $ELEV | awk -v e=$ELEV '{if (e > 50 ) {print "SZE"} else if (e > 40 ) {print "MZE"} else if (e > 30 ) {print "LZE"} else {print "BZE"}}')
-   WOBBLESTRING=$(grep "Wobble offsets (currE)" "${DATADIR}/$R.anasum.log")
+   WOBBLESTRING=$(grep "Wobble offsets (currE)" "${ANASUMLOG}")
    n_offset=$(echo "$WOBBLESTRING" | head -n 1 | awk '{print $5}')
    w_offset=$(echo "$WOBBLESTRING" | head -n 1 | awk '{print $7}')
    w_offset=${w_offset/,/}
