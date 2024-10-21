@@ -4,7 +4,7 @@
 
 Releases of Eventdisplay are required to pass a list of testing procedures before being tagged for science analysis.
 
-Testing a release needs time and should cover large parts of the parameter space (e.g., zenith angle, epochs and atmospheres, NSB range) 
+Testing a release needs time and should cover large parts of the parameter space (e.g., zenith angle, epochs and atmospheres, NSB range)
 Note that it is impossible to test every single IRF function and every single possible science case.
 
 This repository contains code and macros for release testing. Results of release tests are saved in separate repositories:

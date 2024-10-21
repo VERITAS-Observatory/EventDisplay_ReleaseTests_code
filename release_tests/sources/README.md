@@ -1,6 +1,6 @@
 # Release testing - Crab and published sources
 
-## Crab:
+## Crab
 
 - use scripts and macros in ./Crab directory (implementation completed)
 - other objects: to be done
@@ -14,8 +14,3 @@ This should involve soft and hard sources, moderate and very weak sources.
 ## Published sources
 
 List of sources to be tested are in `TARGET.dat`. Use `run_analysis_all.sh` to analysis all sources.
-
-## TODO
-
-- copy over run lists
-- scripts and run lists per major epoch

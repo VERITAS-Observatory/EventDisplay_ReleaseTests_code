@@ -1,3 +1,4 @@
+#!/bin/bash
 # testing lookup tables by analysis
 # a run and see if the table tests are
 # survived at the start of the run

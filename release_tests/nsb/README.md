@@ -8,12 +8,15 @@ Note that this is showing simply that the correction factors are applied.
 Requires MC mscw files to be on disk (which they are usually not)
 
 First run
-```
+
+```console
 ./read_pedvar.sh <runparameter file>
 ```
+
 then plot the results with
-```
+
+```console
 root -l -q -b 'plot.C("runparameter file")'
 ```
 
-Results are written and plotted (pdfs) into: `../../<version>/nsb/`
+Results are written and plotted (PDFs) into: `../../<version>/nsb/`

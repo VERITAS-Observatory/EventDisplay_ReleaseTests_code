@@ -12,7 +12,8 @@ echo "
 exit
 fi
 
-VERSION="v490"
+VERSION="v491"
+MINORVERSION="v491.0"
 ANALYSISTYPE="${VERITAS_ANALYSIS_TYPE:0:2}"
 LTARGETS=$(cat TARGETS.dat)
 
@@ -26,16 +27,16 @@ else
     # AP nominal
     CUTS="hard2tel soft2tel moderate2tel hard3tel"
 fi
-echo $CUTS
+echo "$CUTS"
 
 # current directory with run lists
 SDIR=$(pwd)
 # archive directory
-DDIR="${VERITAS_DATA_DIR}/shared/processed_data_${VERSION}.7"
+DDIR="${VERITAS_DATA_DIR}/shared/processed_data_${MINORVERSION}"
 # output directory
 ODIR="${VERITAS_USER_DATA_DIR}/analysis/Results/${VERSION}/${ANALYSISTYPE}/SourceTests"
 
-cd ${EVNDISPSCRIPTS} || exit
+cd "${EVNDISPSCRIPTS}" || exit
 
 for T in ${LTARGETS}
 do
@@ -54,9 +55,9 @@ do
             echo "   output directory: ${ODIR}/${T}/${C}/${E}"
 
            ./ANALYSIS.anasum_combine.sh \
-               ${SDIR}/${T}/runlist_releaseTesting_${E}.dat \
-               ${DDIR}/${ANALYSISTYPE}/anasum_${C} \
-               ${ODIR}/${T}/${C}/${E}
+               "${SDIR}"/"${T}"/runlist_releaseTesting_"${E}".dat \
+               "${DDIR}"/"${ANALYSISTYPE}"/anasum_"${C}" \
+               "${ODIR}"/"${T}"/"${C}"/"${E}"
         done
     done
 done
