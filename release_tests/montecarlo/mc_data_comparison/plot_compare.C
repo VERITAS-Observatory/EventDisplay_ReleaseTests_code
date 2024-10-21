@@ -1,5 +1,5 @@
 /*
- * prepare long pdfs with data MC plots for all periods
+ * prepare long PDFs with data MC plots for all periods
  *
  * call this from compareDatawithMC.sh
  *
