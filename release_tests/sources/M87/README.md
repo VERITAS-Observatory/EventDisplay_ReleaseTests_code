@@ -1,4 +1,4 @@
-for comparisions
+for comparisons
 
 next day analysis with 487 (checked on 2023, April 14)
 

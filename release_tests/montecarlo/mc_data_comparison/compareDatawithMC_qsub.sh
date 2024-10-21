@@ -1,5 +1,5 @@
 #!/bin/bash
-# run script for data - MC comparision
+# run script for data - MC comparison
 #
 
 source $EVNDISPSYS/setObservatory.sh VTS

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# run script for data - MC comparision
+# run script for data - MC comparison
 #
 # requires:
 # - MC files for each minor epoch
@@ -71,7 +71,7 @@ if [[ ! -e ${DDIR} ]]; then
 fi
 
 # output directory
-BDIR="../../../../EventDisplay_Release_${VERSION}/mc_data_comparision/${ANALYSISTYPE}${DIRRECOTYPE}/${SIMTYPE}/"
+BDIR="../../../../EventDisplay_Release_${VERSION}/mc_data_comparison/${ANALYSISTYPE}${DIRRECOTYPE}/${SIMTYPE}/"
 mkdir -p ${BDIR}
 
 mkdir -p tmpdir/logdir
