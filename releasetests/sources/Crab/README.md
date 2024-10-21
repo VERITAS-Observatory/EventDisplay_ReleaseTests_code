@@ -15,12 +15,12 @@ Parameters required for the analysis are all listed in parameter files. This inc
 
 Most important parameter files are:
 
-- [AP StdHV V6](https://github.com/VERITAS-Observatory/EventDisplay_Release_v490/blob/main/runparameter/V6.AP.runparameter.dat)
-- [AP RedHV V6](https://github.com/VERITAS-Observatory/EventDisplay_Release_v490/blob/main/runparameter/V6redHV.AP.runparameter.dat)
-- [NN StdHV V6](https://github.com/VERITAS-Observatory/EventDisplay_Release_v490/blob/main/runparameter/V6.NN.runparameter.dat)
-- [NN RedHV V6](https://github.com/VERITAS-Observatory/EventDisplay_Release_v490/blob/main/runparameter/V6redHV.NN.runparameter.dat)
-- [AP StdHV V5](https://github.com/VERITAS-Observatory/EventDisplay_Release_v490/blob/main/runparameter/V5.AP.runparameter.dat)
-- [AP StdHV V4](https://github.com/VERITAS-Observatory/EventDisplay_Release_v490/blob/main/runparameter/V4.AP.runparameter.dat)
+- [AP StdHV V6](https://github.com/VERITAS-Observatory/EventDisplay_Release_v491/blob/main/runparameter/V6.AP.runparameter.dat)
+- [AP RedHV V6](https://github.com/VERITAS-Observatory/EventDisplay_Release_v491/blob/main/runparameter/V6redHV.AP.runparameter.dat)
+- [NN StdHV V6](https://github.com/VERITAS-Observatory/EventDisplay_Release_v491/blob/main/runparameter/V6.NN.runparameter.dat)
+- [NN RedHV V6](https://github.com/VERITAS-Observatory/EventDisplay_Release_v491/blob/main/runparameter/V6redHV.NN.runparameter.dat)
+- [AP StdHV V5](https://github.com/VERITAS-Observatory/EventDisplay_Release_v491/blob/main/runparameter/V5.AP.runparameter.dat)
+- [AP StdHV V4](https://github.com/VERITAS-Observatory/EventDisplay_Release_v491/blob/main/runparameter/V4.AP.runparameter.dat)
 
 ## Run list generation using anasum log file
 
@@ -38,8 +38,8 @@ e.g.,
 
 ```bash
 ./runlist_generator_from_anasum_log.sh \
-   ../../../../EventDisplay_Release_v490/runparameter/V6redHV.AP.runparameter.dat \
-   $VERITAS_USER_DATA_DIR/analysis/Results/v490/AP/PreProcessing/anasum_moderate2tel
+   ../../../../EventDisplay_Release_v491/runparameter/V6redHV.AP.runparameter.dat \
+   $VERITAS_USER_DATA_DIR/analysis/Results/v491/AP/PreProcessing/anasum_moderate2tel
 ```
 
 for

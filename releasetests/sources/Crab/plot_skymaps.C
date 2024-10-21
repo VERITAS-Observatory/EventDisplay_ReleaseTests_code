@@ -14,7 +14,7 @@
 #include "../../utilitities/parameters.C"
 #include "../../utilitities/printutilities.C"
 
-R__LOAD_LIBRARY(/afs/ifh.de/group/cta/scratch/maierg/EVNDISP/EVNDISP-400/GITHUB_Eventdisplay/EventDisplay_v490-el9/lib/libVAnaSum.so)
+R__LOAD_LIBRARY(/afs/ifh.de/group/cta/scratch/maierg/EVNDISP/EVNDISP-400/GITHUB_Eventdisplay/EventDisplay_v491-al9/lib/libVAnaSum.so)
 
 void plot_skymaps( string anasumfile, string figureDir, bool skymaps = false )
 {
