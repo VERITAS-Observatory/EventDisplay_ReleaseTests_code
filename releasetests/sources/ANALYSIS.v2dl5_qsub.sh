@@ -1,9 +1,9 @@
 #!/bin/bash
-# script to run V2DL5 
+# script to run V2DL5
 
 # set observatory environmental variables
 source $EVNDISPSYS/setObservatory.sh VTS
-# Don't do set -e. 
+# Don't do set -e.
 # set -e
 
 # parameters replaced by parent script using sed
@@ -50,4 +50,3 @@ python ${V2DL5}/v2dl5/scripts/reflected_region_analysis.py \
     --run_list ${RUNLIST} > ${ODIR}/v2dl5.log 2>&1
 
 exit
-

@@ -37,7 +37,7 @@ void plot_pedvars( string iFile, string oDir, string SimType )
 
     c->Print( (oDir + "/" + SimType + "/" + iFile+".pdf").c_str() );
 }
-   
+
 
 void plot( string runparameterfile )
 {

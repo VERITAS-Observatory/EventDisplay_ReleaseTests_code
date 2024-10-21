@@ -41,7 +41,7 @@ void plot_radialAcceptances( string version )
 
     vector< string > fEpoch;
 *   fEpoch.push_back( "V4" );
-    fEpoch.push_back( "V5" ); 
+    fEpoch.push_back( "V5" );
     fEpoch.push_back( "V6" );
 
     vector< string > telCombo;

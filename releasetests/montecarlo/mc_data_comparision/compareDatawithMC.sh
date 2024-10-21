@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # run script for data - MC comparision
-# 
+#
 # requires:
 # - MC files for each minor epoch
 # - Crab results for each minor epoch
@@ -130,14 +130,14 @@ do
             REDHV="_redHV"
         fi
         echo "Processing $I $A ${atm} $REDHV"
-        
+
         # check if data files are availabe
         MSCWS="mscw"
         DMSCWDIR="${DDIR}/${MSCWS}_${I}${REDHV}${A}_${ELE}_0.5deg"
         if [[ $ELE = "WOBBLE" ]]; then
             DMSCWDIR="${DDIR}/${MSCWS}_${I}${REDHV}${A}_${ELE}"
         fi
-        # make sure that files are available for the given 
+        # make sure that files are available for the given
         # epoch (not all epochs have Crab runs available)
         if [[ ! -d ${DMSCWDIR} ]]; then
            echo "Directory ${DMSCWDIR} not found; skipping"
@@ -160,7 +160,7 @@ do
         if [[ -e $ODIR/mcdatacomparison.runparameter ]]
         then
             rm -f $ODIR/mcdatacomparison.runparameter
-        fi 
+        fi
         echo "Runparameter file $ODIR/mcdatacomparison.runparameter"
         SIMMSCW="MSCW_RECID0${DIRRECOTYPE}"
 
@@ -187,7 +187,7 @@ do
         echo "Run script: $FSCRIPT"
         chmod u+x $FSCRIPT.sh
 
-        $EVNDISPSCRIPTS/helper_scripts/UTILITY.condorSubmission.sh ${FSCRIPT}.sh 4000M 10G 
+        $EVNDISPSCRIPTS/helper_scripts/UTILITY.condorSubmission.sh ${FSCRIPT}.sh 4000M 10G
         condor_submit ${FSCRIPT}.sh.condor
     done
 done

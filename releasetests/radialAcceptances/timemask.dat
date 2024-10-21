@@ -1,7 +1,7 @@
 timemask.dat
 ---------------------------
 VTimeMask settings per run.
-Format is: 
+Format is:
 
 < run_number >	< mask_start_seconds >	< mask_width_seconds >	< mask_mode_boolean >
 
@@ -25,8 +25,8 @@ The default mask is open for the entire run.
 - Put an asterisk (*) as the first charcter on a line to use it.
 ========================================================================================
 
-* 58356 1140 600 0 
-* 58863 1140 600 0 
+* 58356 1140 600 0
+* 58863 1140 600 0
 * 64443 1020 600 0
 * 64444 1020 180 0
 * 66533 0 120 0
@@ -45,7 +45,7 @@ The default mask is open for the entire run.
 * 67604 880 120 0
 * 69862 1680 120 0
 * 70381 0 240 0
-* 70354 300 720 0 
+* 70354 300 720 0
 * 70534 1140 60 0
 * 70355 1200 600 0
 * 70381 0 240 0

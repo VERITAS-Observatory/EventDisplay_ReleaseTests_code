@@ -1,5 +1,5 @@
 /*
- * plot energy threshold and effective areas as 
+ * plot energy threshold and effective areas as
  * function of zenith angle and NSB level
  *
  * requires as input the combined effective area files
@@ -42,7 +42,7 @@ void plot_energy_thresholds( TTree *t,
                              string treevar,
                              float xmin, float xmax,
                              string cutstr,
-                             string figname, 
+                             string figname,
                              string figure_directory )
 {
     if( !t ) return;
@@ -95,7 +95,7 @@ void plot_effectiveAreas( TTree *t,
                           string treevar,
                           float xmin, float xmax,
                           string cutstr,
-                          string figname, 
+                          string figname,
                           string figure_directory )
 {
     if( !t ) return;
@@ -177,18 +177,18 @@ void plot( string runparameterfile )
             continue;
         }
         a.calculateEnergyThreshold( false );
-        a.writeResults(); 
+        a.writeResults();
         a.closeOutputFile();
 
         cout << "Plotting " << figure_directory << endl;
         TFile iF( iTresholdFile.c_str() );
         if( iF.IsZombie() ) continue;
         TTree *t = (TTree*)iF.Get( "fTreeEth" );
-        if( !t ) continue; 
+        if( !t ) continue;
         t->SetMarkerStyle( 20 );
-        
+
         //////////////////////////
-       // plotting 
+       // plotting
 
        // this macro only works with a single wobble offset defined
        stringstream iWoffString;
@@ -235,7 +235,7 @@ void plot( string runparameterfile )
            cutstr << "TMath::Abs(ze-" << fPar->MC_ze[n] << ")<0.1&&";
            if( fPar->MC_woff.size() > 0 ) cutstr << "TMath::Abs(Woff-" << fPar->MC_woff[0] << ")<0.1";
            else cutstr << "TMath::Abs(Woff-0.5)<0.1";
- 
+
            stringstream figname;
            figname << "ETh-FixedZe" << int(fPar->MC_ze[n]) << iWoffString.str();
 

@@ -6,7 +6,7 @@ Run parameters for the anasum stage
 All lines without a '*' in the first column are ignored!
 --------------------------------------------------------
 
-* SKYMAPCENTRE_RADECJ2000_DEG 6.339700 64.140800 
+* SKYMAPCENTRE_RADECJ2000_DEG 6.339700 64.140800
 * TARGETPOSITION_RADECJ2000_DEG 6.339700 64.140800
 
 Time mask

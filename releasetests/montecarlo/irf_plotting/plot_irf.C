@@ -25,7 +25,7 @@ void printCanvas( TCanvas *c, string iName, string oDir )
  * plot IRFs as function for a given set of parameter
  *
  */
-void plot_irf( 
+void plot_irf(
         string IRFdirectory,
         string epoch,
         string atmosphere,
@@ -38,9 +38,9 @@ void plot_irf(
         string dir_suff_2 = "_DISP"
         )
 {
-    string IRFDirectory = 
+    string IRFDirectory =
         IRFdirectory + "/" +
-        epoch + "_ATM" + 
+        epoch + "_ATM" +
         atmosphere + "_gamma/" +
         "EffectiveAreas_Cut-" + cut;
 

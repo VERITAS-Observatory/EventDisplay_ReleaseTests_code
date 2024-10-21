@@ -1,4 +1,4 @@
-# 
+#
 # analysis of pedestal variations vs correction factors
 #
 # - correction factors are read from MSCW.sizecal.runparameter file
@@ -65,4 +65,3 @@ do
         done
     done
 done
-

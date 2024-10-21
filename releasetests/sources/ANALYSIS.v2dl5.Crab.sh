@@ -24,4 +24,3 @@ do
     ./ANALYSIS.v2dl5.sh ${RLIST} ${TARGET} ${DL3DIR} ${DDIR}/${ODIR} ${CONFIG}
 
 done
-

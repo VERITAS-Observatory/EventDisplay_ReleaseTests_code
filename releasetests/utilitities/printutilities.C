@@ -1,5 +1,5 @@
 /*
- *  printing functions used in the most of the 
+ *  printing functions used in the most of the
  *  plotting macros
  *
  */
@@ -13,7 +13,7 @@
 #include <string>
 
 void printCanvas( TCanvas *c,
-                  string iName, 
+                  string iName,
                   string iFigDir = "figures",
                   string iSuffix = ".pdf" )
 {

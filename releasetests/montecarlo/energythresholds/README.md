@@ -15,4 +15,3 @@ It is usually enough to scan through these plots and search for any outliers by 
 ```
 <version>/energythresholds/NTel2-PointSource-*/Aeff-Fix*
 ```
-

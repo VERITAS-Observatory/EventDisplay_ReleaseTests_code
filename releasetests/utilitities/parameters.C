@@ -37,7 +37,7 @@ class RunParameterData
     void print();
 };
 
-RunParameterData::RunParameterData( string iVersion, 
+RunParameterData::RunParameterData( string iVersion,
                                     string iSimType,
                                     string iAnaType,
                                     string iDirectionType )
@@ -301,7 +301,7 @@ void RunParameters::print()
 }
 
 /*
- * return anasum data dir 
+ * return anasum data dir
  * (as assumed in the run scripts)
  */
 string RunParameters::getDataDir(bool addDirectionType)
@@ -349,10 +349,10 @@ vector< string > RunParameters::getCutsVector()
        {
            a.insert( fData[i]->fCutNameAnasum );
        }
-    } 
+    }
     vector< string > b( a.size() );
     std::copy( a.begin(), a.end(), b.begin() );
-    
+
     return b;
 }
 
@@ -369,10 +369,10 @@ vector< string > RunParameters::getAtmosphereVector( string prefix )
        {
            a.insert( prefix + fData[i]->fAtmosphere );
        }
-    } 
+    }
     vector< string > b( a.size() );
     std::copy( a.begin(), a.end(), b.begin() );
-    
+
     return b;
 }
 
@@ -390,7 +390,7 @@ vector< string > RunParameters::getEpochsVector( bool iAddMajorEpoch )
            a.insert( fData[i]->fEpoch );
            if( iAddMajorEpoch )
            {
-               if( fMajorEpoch.find( "redHV" ) != string::npos ) 
+               if( fMajorEpoch.find( "redHV" ) != string::npos )
                {
                   a.insert( "V6" );
                }
@@ -400,15 +400,15 @@ vector< string > RunParameters::getEpochsVector( bool iAddMajorEpoch )
                }
            }
        }
-    } 
+    }
     vector< string > b( a.size() );
     std::copy( a.begin(), a.end(), b.begin() );
-    
+
     return b;
 }
 
 /*
- *  test 
+ *  test
 */
 void parameters( string runparameterfile = "test.runparameter.dat" )
 {
@@ -425,5 +425,3 @@ void parameters( string runparameterfile = "test.runparameter.dat" )
       cout << "ATM " << a[i] << endl;
    }
 }
-   
-

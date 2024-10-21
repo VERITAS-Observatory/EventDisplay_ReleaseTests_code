@@ -1,5 +1,5 @@
 /*
- * testing radial acceptances: plotting sky maps  for 
+ * testing radial acceptances: plotting sky maps  for
  * data sample used for the generation of acceptances
  * --> should be uniform and N(0,1)
  *
@@ -24,12 +24,12 @@ void printCanvas( TCanvas *c, string iName, string iSuffix = ".pdf", string oDir
 }
 
 void plot( string version,
-           string iCut = "BDTmoderate2tel", string iBck = "RE", 
+           string iCut = "BDTmoderate2tel", string iBck = "RE",
            string oDir = "./" )
 {
     gSystem->mkdir( (oDir + iCut).c_str(), true );
 
-    string iDataDir = "$VERITAS_USER_DATA_DIR/analysis/Results/" + version + "/RadialAcceptances/anasum/"; 
+    string iDataDir = "$VERITAS_USER_DATA_DIR/analysis/Results/" + version + "/RadialAcceptances/anasum/";
 
     vector< string > fEpoch;
 // No sky map tests for V4 (mixed set of runs)
@@ -82,10 +82,9 @@ void plot_skymaps( string version, string fBackgroundModel = "RB" )
     string oDir = "../../" + version + "/radialAcceptances/";
     gSystem->mkdir( oDir.c_str(), true );
 
-/*    plot( version, "BDTmoderate2tel", fBackgroundModel, oDir );  
+/*    plot( version, "BDTmoderate2tel", fBackgroundModel, oDir );
     plot( version, "BDTsoft2tel",     fBackgroundModel, oDir );
     plot( version, "BDThard3tel",     fBackgroundModel, oDir ); */
     plot( version, "BDTExtended025moderate2tel", fBackgroundModel, oDir );
     plot( version, "BDTExtended050moderate2tel", fBackgroundModel, oDir );
 }
-

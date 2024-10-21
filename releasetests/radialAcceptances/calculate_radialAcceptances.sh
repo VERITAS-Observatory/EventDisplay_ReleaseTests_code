@@ -1,6 +1,6 @@
 #!/bin/bash
 # calculate radial acceptances for different epochs
-# 
+#
 set -e
 
 if [ $# -lt 1 ]; then

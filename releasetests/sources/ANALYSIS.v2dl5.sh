@@ -1,6 +1,6 @@
 #!/bin/bash
 # script to run V2DL5 and generate gammapy analysis results
-# run point-like 
+# run point-like
 #
 
 # qsub parameters
@@ -25,7 +25,7 @@ required parameters:
     <target>                target name (SIMBAD conform)
 
     <data/obs store directory> directory with data/obs store
-    
+
     <output directory>      output directory for results
 
     <configuration template> V2DL5 configuration template file

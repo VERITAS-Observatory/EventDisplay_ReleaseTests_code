@@ -32,9 +32,9 @@ void plot_effectiveAreas( string Epoch1 = "2012_2013a", string Epoch2 = "2019_20
         string iEffAreaDir = "$VERITAS_EVNDISP_AUX_DIR/EffectiveAreas/";
 
         string Epoch1_file = "effArea-v483-auxv01-CARE_RedHV-Cut-NTel2-PointSource-" + iCut + "-TMVA-BDT-GEO-V6_";
-        Epoch1_file += Epoch1 + "-ATM61-T1234.root"; 
+        Epoch1_file += Epoch1 + "-ATM61-T1234.root";
         string Epoch2_file = "effArea-v483-auxv01-CARE_RedHV-Cut-NTel2-PointSource-" + iCut + "-TMVA-BDT-GEO-V6_";
-        Epoch2_file += Epoch2 + "-ATM61-T1234.root"; 
+        Epoch2_file += Epoch2 + "-ATM61-T1234.root";
 
         string v480_file = "/lustre/fs19/group/cta/VERITAS//analysis/AnalysisData-VTS-v470/EffectiveAreas/";
         v480_file += "effArea-v470-auxv01-CARE-Cut-NTel2-PointSource-Soft-GEO-V6-ATM21-redHV-T1234.root";

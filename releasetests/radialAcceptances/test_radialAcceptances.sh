@@ -67,7 +67,7 @@ do
                             $C ${BCK} \
                             $CDIR/runparameter.dat \
                             $DDIR/RecID0 \
-                            DEFAULT 0 
+                            DEFAULT 0
              else
                  ./ANALYSIS.anasum_combine.sh \
                             ${ANASUMDIR}/${C}.anasum.dat \
@@ -79,4 +79,3 @@ do
     done
 done
 cd ${CDIR}
-

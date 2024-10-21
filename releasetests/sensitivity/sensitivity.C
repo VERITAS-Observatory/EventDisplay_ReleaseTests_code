@@ -1,8 +1,8 @@
-/*  
+/*
  *  print and plot sensitivities calculated
  *  from Crab rates for different cuts
  *
- *  missing: 
+ *  missing:
  *  - main plotting routine
  *  - loop over all epochs / cuts
  *  - print and testing
@@ -46,7 +46,7 @@ void crab_rates( string result_file_suffix = "" )
     for( unsigned int i = 0; i < fCrabFiles.size(); i++ )
     {
         TFile *f = new TFile( (data_dir+fCrabFiles[i]+".root").c_str() );
-        if( f->IsZombie() || !f->cd( "total_1/stereo" ) ) 
+        if( f->IsZombie() || !f->cd( "total_1/stereo" ) )
         {
             continue;
         }

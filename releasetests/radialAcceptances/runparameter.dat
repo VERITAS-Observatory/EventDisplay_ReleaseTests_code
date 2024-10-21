@@ -5,8 +5,8 @@ All lines without a '*' in the first column are ignored!
 --------------------------------------------------------
 
 ========================================================
-File containing time mask details 
-(this allows to exclude certain time intervals from 
+File containing time mask details
+(this allows to exclude certain time intervals from
 the analysis)
 * TIMEMASKFILE timemask.dat
 ========================================================
@@ -66,7 +66,7 @@ Minimum magnitude of stars to be excluded
 Radius of region to be excluded from background calculation around bright star (<=0 to switch off)
 * BRIGHTSTAREXCLUDEFROMBACKGROUNDRADIUS 0.30
 
-User defined regions in the sky to exclude from background 
+User defined regions in the sky to exclude from background
 ->REGIONTOEXCLUDE (West(deg)  North(deg)  Radius(deg))
 (coordinates are relative to camera center)
 ex: 0.48 -0.2 0.5
@@ -82,7 +82,7 @@ Additional regions:
 Zeta Tau
  REGIONTOEXCLUDE_RADECJ2000_HOUR 05 37 38.686 +21 08 33.18 0.25
 ========================================================
-Energy spectra 
+Energy spectra
 
 Energy spectra binning (logarithmic axis)
 * ENERGYBINSIZE 0.05

@@ -24,19 +24,19 @@ void plotAverageFlux( TCanvas *c, TGraphErrors *g, double fA, double fAE, int iC
     {
         return;
     }
-    TLine* iL3 = new TLine( 
+    TLine* iL3 = new TLine(
                        g->GetHistogram()->GetXaxis()->GetXmin(), fA,
                        g->GetHistogram()->GetXaxis()->GetXmax(), fA );
     iL3->SetLineColor( iColor );
     iL3->Draw();
 
-    TLine* iL3b = new TLine( 
+    TLine* iL3b = new TLine(
                        g->GetHistogram()->GetXaxis()->GetXmin(), fA-fAE,
                        g->GetHistogram()->GetXaxis()->GetXmax(), fA-fAE );
     iL3b->SetLineColor( iColor );
     iL3b->SetLineStyle( 2 );
     iL3b->Draw();
-    TLine* iL3c = new TLine( 
+    TLine* iL3c = new TLine(
                        g->GetHistogram()->GetXaxis()->GetXmin(), fA+fAE,
                        g->GetHistogram()->GetXaxis()->GetXmax(), fA+fAE );
     iL3c->SetLineColor( iColor );
@@ -44,13 +44,13 @@ void plotAverageFlux( TCanvas *c, TGraphErrors *g, double fA, double fAE, int iC
     iL3c->Draw();
     // systematic uncertainty bands +-15%
     double iSys = 0.2;
-    TLine* iS3b = new TLine( 
+    TLine* iS3b = new TLine(
                        g->GetHistogram()->GetXaxis()->GetXmin(), (1.-iSys)*fA,
                        g->GetHistogram()->GetXaxis()->GetXmax(), (1.-iSys)*fA );
     iS3b->SetLineColor( iColor );
     iS3b->SetLineStyle( 3 );
     iS3b->Draw();
-    TLine* iS3c = new TLine( 
+    TLine* iS3c = new TLine(
                        g->GetHistogram()->GetXaxis()->GetXmin(), (1.+iSys)*fA,
                        g->GetHistogram()->GetXaxis()->GetXmax(), (1.+iSys)*fA);
     iS3c->SetLineColor( iColor );
@@ -103,7 +103,7 @@ void plot_cut( string iSource, string iCut = "BDTmoderate2tel" )
         iEnergy_TeV = 0.5;
         i_Fit_Elow_TeV = 0.2;
     }
-        
+
     for( unsigned int b = 0; b < fBackgroundModel.size(); b++ )
     {
         string anasum_dir = iDataDir + "/" + iCut + "_" + fBackgroundModel[b];
@@ -161,7 +161,7 @@ void plot_cut( string iSource, string iCut = "BDTmoderate2tel" )
                 TCanvas *cFluxD = 0;
                 cout << "FLUX " << Flux_run.size() << endl;
                 for( unsigned int j = 0; j < Flux_run.size(); j++ )
-                { 
+                {
                      if( Flux_run[j] > 0. && Flux_run[j] < i_flux_min )
                      {
                          i_flux_min = Flux_run[j];
@@ -184,13 +184,13 @@ void plot_cut( string iSource, string iCut = "BDTmoderate2tel" )
                  cFluxD->SetGridy( 0 );
                  cFluxD->Draw();
                  for( unsigned int j = 0; j < Flux_run.size(); j++ )
-                 { 
+                 {
                       h->Fill( Flux_run[j] );
                  }
                  h->Fit("gaus");
                  h->Draw();
-                printCanvas( cFluxD, iSource + "/figures/" + iCut + "/LightCurveDistribution_" + fBackgroundModel[b] ); 
-            } 
+                printCanvas( cFluxD, iSource + "/figures/" + iCut + "/LightCurveDistribution_" + fBackgroundModel[b] );
+            }
         }
         //////////////////////////////////////
         // spectra
@@ -211,7 +211,7 @@ void plot_cut( string iSource, string iCut = "BDTmoderate2tel" )
 
             printCanvas( cE,
                          iSource + "/figures/" + iCut + "/Spectrum_" + fBackgroundModel[b] );
-            
+
         }
     }
 }
@@ -226,4 +226,3 @@ void plot( string iSource = "Tycho" )
     plot_cut( iSource, "BDTsoft2tel" );
     plot_cut( iSource, "BDThard3tel" );
 }
-

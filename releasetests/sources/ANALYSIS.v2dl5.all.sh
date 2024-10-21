@@ -1,5 +1,5 @@
 # Run V2DL5 analysis for all test sources except Crab
-# expect a TARGET.txt file in each directory with a 
+# expect a TARGET.txt file in each directory with a
 # one line entry containing the SIMBAD identifier
 
 CUT="soft2tel"
@@ -33,4 +33,3 @@ do
         echo "No target file found in ${DIRN}"
     fi
 done
-

@@ -10,7 +10,7 @@ string FileName = Idir + "anasum.combined.root" ;
 cout << "Output dir:" << Odir << endl;
 
 VEnergySpectrum b(FileName);
-b.setSignificanceParameters(2.0, 2.0, 0.99, 4); 
+b.setSignificanceParameters(2.0, 2.0, 0.99, 4);
 //b.setSignificanceParameters(-99,-99); // plot all points, even non-significant ones.
 b.setEnergyBinning(0.1);
 b.setSpectralFitFluxNormalisationEnergy( eref );
@@ -22,7 +22,7 @@ b.plotFitValues();
 b.printDifferentialFluxes();
 b.writeSpectralPointsToCSVFile( Odir + "Eventdisplay_" + Source + "_" + Cut + "_SpecPoints.csv");
 
-string  OutFile = Odir + "Eventdisplay_" + Source + "_" + Cut + "_SpecFit.txt" ; 
+string  OutFile = Odir + "Eventdisplay_" + Source + "_" + Cut + "_SpecFit.txt" ;
 
 ofstream Op;
 Op.open(OutFile.c_str());
