@@ -11,7 +11,7 @@ Fill and plot distributions with
 Requires as input:
 
 - MC files for each minor epoch
-- Crab results for each minor epoch
+- Crab mscw results for each minor epoch
 
 **important:**
 first run linking of epochs from `../../sources/Crab/`: `./runlist_generator.sh V6`
