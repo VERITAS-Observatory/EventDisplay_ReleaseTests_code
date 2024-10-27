@@ -26,6 +26,7 @@ ANALYSISTYPE="AP"
 if [[ ! -z  $VERITAS_ANALYSIS_TYPE ]]; then
     ANALYSISTYPE="${VERITAS_ANALYSIS_TYPE:0:2}"
 fi
+echo "VERSION $VERSION ANALYSISTYPE $ANALYSISTYPE"
 # Major epoch
 MEPOCH=($(grep MAJOREPOCH ${1} | grep "*" | awk '{print $3}'))
 # Source name
@@ -37,6 +38,7 @@ while IFS= read -r line; do
         CUTS="$CUTS $(echo "$line" | awk '{print $4}')"
     fi
 done < "${1}"
+echo "CUTS $CUTS"
 
 # run lists
 VDIR=$(readlink -f ../../../../EventDisplay_Release_${VERSION}/${OBJECT}/runlists)
@@ -45,7 +47,7 @@ if [[ $MEPOCH == *"redHV"* ]]; then
 else
     RLISTS="$(ls -1 ${VDIR}/*$MEPOCH*.dat | grep -v redHV)"
 fi
-echo $RLISTS
+echo "RUNLISTS: $RLISTS"
 
 cd "${EVNDISPSCRIPTS}"
 

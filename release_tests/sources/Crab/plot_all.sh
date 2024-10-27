@@ -1,5 +1,5 @@
 #!/bin/bash
-# run all plotting scripts for all zenith angle ranges
+# run all plotting scripts for a given cut
 #
 
 if [[ $# -lt 1 ]]; then
@@ -10,7 +10,7 @@ echo "
 exit
 fi
 
-LFIL="$(ls -1 ${1}/*.combined.root)"
+LFIL="$(ls -1 ${1}/*.combined.root | sort -r)"
 
 CUT=$(basename $1)
 CUT=${CUT/anasum_/}
@@ -30,5 +30,5 @@ for F in $LFIL; do
     mkdir -p "${OTF}"
     root -q -l -b "plot_energy_spectra.C(\"$F\", \"${OTF}\" )"
     root -q -l -b "plot_lightcurves.C(\"$F\", \"${OTF}\" )"
-#    root -q -l -b "plot_skymaps.C(\"$F\", \"${OTF}\", true )"
+    root -q -l -b "plot_skymaps.C(\"$F\", \"${OTF}\", true )"
 done

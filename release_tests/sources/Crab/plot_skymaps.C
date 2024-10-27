@@ -27,11 +27,12 @@ void plot_skymaps( string anasumfile, string figureDir, bool skymaps = false )
     if ( skymaps )
     {
         TCanvas *c = f.plot_radec(0, -3., -3., 3. );
+        f.plot_catalogue(c, "BrightStarCatalogue.txt" );
         f.plot_catalogue(c, "tevcat.dat" );
-        printCanvas( c, "/SkyMapRaDec", figureDir, ".pdf" );
+        printCanvas( c, "/SkyMapRaDec", figureDir, ".png" );
     // non-rescricted sky map
         c = f.plot_radec(0, -4., -3. );
         f.plot_catalogue(c, "tevcat.dat" );
-        printCanvas( c, "/SkyMapRaDecMax", figureDir, ".pdf" );
+        printCanvas( c, "/SkyMapRaDecMax", figureDir, ".png" );
     }
 }
