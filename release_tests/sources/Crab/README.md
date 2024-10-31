@@ -26,16 +26,6 @@ Most important parameter files are:
 
 Generates run lists for each minor epoch, atmospheres, zenith angle range.
 
-MSCW results should be processed all into one single directory (or: mscw files of Crab observations should be linked into one single directory).
-
-Generate links with:
-
-```bash
-./runlist_generator.sh <runparameter file> <anasum run-wise file directory>
-```
-
-e.g.,
-
 ```bash
 ./runlist_generator_from_anasum_log.sh \
    ../../../../EventDisplay_Release_v491/runparameter/V6redHV.AP.runparameter.dat \
@@ -44,10 +34,9 @@ e.g.,
 
 for
 
-- linking into yearly sets.
+- generate run lists
 - selection of ATM61 and ATM62 files
 - apply cut on mean elevation of a specific run
-- generate run lists
 
 ## Run anasum analysis
 
