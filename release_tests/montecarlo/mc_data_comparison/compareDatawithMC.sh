@@ -4,20 +4,20 @@
 #
 # requires:
 # - MC files for each minor epoch
-# - Crab results for each minor epoch
-# atmospheres)
-#
+# - Crab results for each minor epoch (read from Crab runlists; used pre-processed data)
+
 set -e
 
 if [[ $# < 2 ]]; then
 echo "
   ./compareDatawithMC.sh <runparameter file> <SZE/MZE/LZE/WOBBLE>
   --> choose zenith angle / wobble range
-  SZE: small zenith angles (0.5 wobble)
-  MZE: medium large zenith angles (0.5 wobble)
-  LZE: large zenith angles (0.5 wobble)
-  WOBBLE: large wobble offsets
+      SZE: small zenith angles (0.5 wobble)
+      MZE: medium large zenith angles (0.5 wobble)
+      LZE: large zenith angles (0.5 wobble)
+      WOBBLE: large wobble offsets
 
+  Input are MC and Crab mscw files.
 "
 exit
 fi
@@ -63,22 +63,43 @@ if [[ ! -e ${SIMDIR} ]]; then
        exit
    fi
 fi
-# Directory for data files
-DDIR="$VERITAS_USER_DATA_DIR/analysis/Results/${VERSION}/${ANALYSISTYPE}/Crab${DIRRECOTYPE}/"
+# Directory for mscw data files
+DDIR="$VERITAS_PREPROCESSED_DATA_DIR/${ANALYSISTYPE}/mscw/"
 if [[ ! -e ${DDIR} ]]; then
    echo "Error: data directory not found: $DDIR"
    exit
 fi
 
-# output directory
-BDIR="../../../../EventDisplay_Release_${VERSION}/mc_data_comparison/${ANALYSISTYPE}${DIRRECOTYPE}/${SIMTYPE}/"
+# Directory with Crab run lists
+CDIR="../../../../EventDisplay_Release_${VERSION}/Crab/runlists"
+if [[ ! -e ${CDIR} ]]; then
+   echo "Error: directory with Crab run lists not found: $CDIR"
+   exit
+fi
+
+# output directory for MC/Data comparison
+BDIR=$(readlink -f "../../../../EventDisplay_Release_${VERSION}/mc_data_comparison/${ANALYSISTYPE}${DIRRECOTYPE}/${SIMTYPE}/")
 mkdir -p ${BDIR}
 
-mkdir -p tmpdir/logdir
 PWDIR=$(pwd)
+
+get_mscw_file()
+{
+    data_dir="${1}"
+    runn="${2}"
+    if [ ! -e ${data_dir}/$runn.mscw.root ]; then
+        if [[ ${runn} -lt 100000 ]]; then
+            EDIR="${data_dir}/${runn:0:1}/"
+        else
+            EDIR="${data_dir}/${runn:0:2}/"
+        fi
+    fi
+    echo "$EDIR/$runn.mscw.root"
+}
 
 for I in "${EPOCH[@]}"
 do
+    # ignore major epoch
     if [[ $I == "V6" ]]; then
        continue
     fi
@@ -131,30 +152,25 @@ do
         fi
         echo "Processing $I $A ${atm} $REDHV"
 
-        # check if data files are availabe
-        MSCWS="mscw"
-        DMSCWDIR="${DDIR}/${MSCWS}_${I}${REDHV}${A}_${ELE}_0.5deg"
+        # Crab run list
+        RUNLIST="$CDIR/runlist_releaseTesting${I}${REDHV}_${ELE}_0.5deg.dat"
         if [[ $ELE = "WOBBLE" ]]; then
-            DMSCWDIR="${DDIR}/${MSCWS}_${I}${REDHV}${A}_${ELE}"
+            RUNLIST="$CDIR/runlist_releaseTesting${I}${REDHV}_${ELE}.dat"
         fi
-        # make sure that files are available for the given
-        # epoch (not all epochs have Crab runs available)
-        if [[ ! -d ${DMSCWDIR} ]]; then
-           echo "Directory ${DMSCWDIR} not found; skipping"
-           continue
-        fi
-        NMSWC=$(ls -1 ${DMSCWDIR}/*.mscw.root | wc -l)
-        # require at least 3 runs
-        echo ${DMSCWDIR} $NMSWC
-        if [[ ${NMSWC} -lt 3 ]]; then
-           echo "Less then 3 files found in ${DMSCWDIR}"
-           continue
-        else
-           echo "Found ${NMSWC} mscw file in ${DMSCWDIR}"
-        fi
+        echo "RUNLIST $RUNLIST"
+
         # output directory
         ODIR=${BDIR}/${I}${A}_${ELE}_${MCWOFF}_${NSB}
         mkdir -p ${ODIR}
+
+        # tmp mscw file in output directory
+        DMSCWDIR=${ODIR}/tmp/$(uuidgen)
+        mkdir -p "$DMSCWDIR"
+        DFILES=$(cat $RUNLIST)
+        for D in $DFILES; do
+            ln -s -f $(get_mscw_file $DDIR $D) "$DMSCWDIR"/"$D".mscw.root
+        done
+        echo "TEMP DIRECTORY (to be deleted by hand): $DMSCWDIR"
 
         # runparameter file
         if [[ -e $ODIR/mcdatacomparison.runparameter ]]
@@ -178,7 +194,7 @@ do
         echo "* OFF ${DMSCWDIR}/[0-9]*.mscw.root 4 -99. -99. 0. 360. ${ZEMIN} ${ZEMAX}" >> $ODIR/mcdatacomparison.runparameter
         echo "   run parameter file: $ODIR/mcdatacomparison.runparameter"
 
-        FSCRIPT="tmpdir/compareDatawithMC_qsub_${SIMTYPE}_${I}${A}_${ELE}_${MCWOFF}_${NSB}"
+        FSCRIPT="$DMSCWDIR/compareDatawithMC_qsub_${SIMTYPE}_${I}${A}_${ELE}_${MCWOFF}_${NSB}"
         rm -f ${FSCRIPT}.sh
         sed -e "s|OUTDIR|$ODIR|" \
             -e "s|EEPOCHTM|${I}_ATM${atm}|" \
@@ -189,5 +205,9 @@ do
 
         $EVNDISPSCRIPTS/helper_scripts/UTILITY.condorSubmission.sh ${FSCRIPT}.sh 4000M 10G
         condor_submit ${FSCRIPT}.sh.condor
+
+        continue
+
+
     done
 done
