@@ -1,5 +1,5 @@
 #!/bin/bash
-#  generate run lists and linked directories
+#  generate Crab run lists
 # - epochs
 # - summer / winter (all, and for epochs)
 # - zenith angle ranges (fixed to >50, 40-50, <40 deg)
@@ -14,7 +14,6 @@ if [ $# -ne 2 ]; then
     echo "./runlist_generator_from_anasum_log.sh <runparameter file> <directory with anasum-run wise results>"
     echo ""
     echo "  generates run lists for minor epochs, zenith angle ranges, different atmospheres"
-    echo "  generates links of anasum files for combined anasum file"
     echo "  (minor epochs are read from anasum log files)"
     echo ""
     echo "  reads runs from major epoch lists (e.g., runlist_releaseTestingV6.dat)"
@@ -40,7 +39,7 @@ VDIR="../../../../EventDisplay_Release_${VERSION}/${OBJECT}/"
 mkdir -p ${VDIR}
 
 ##############################################
-# 'main' run list
+# 'main' run list for a given epoch
 MLIST="./runlist_releaseTesting${MEPOCH}.dat"
 if [[ ! -e ${MLIST} ]]; then
    echo "Runlist not found for epoch ${MEPOCH}: ${MLIST}"
