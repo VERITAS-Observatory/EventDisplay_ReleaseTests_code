@@ -1,0 +1,74 @@
+timemask.dat
+---------------------------
+VTimeMask settings per run.
+Format is:
+
+< run_number >	< mask_start_seconds >	< mask_width_seconds >	< mask_mode_boolean >
+
+The mask mode is 1 for open 0 for closed.
+The default mask is open for the entire run.
+
+- Successive masks for a given run modify those already given.
+  e.g. to cut out two bands of two minutes each, separated by a window of two minutes you could use:
+999	600	360	0
+999	720	120	1
+
+  or equally
+999	600	120	0
+999	840	120	0
+
+- If you want to be certain to kill the end of a run (run durations can be several seconds over 1200)
+  you can safely overlap.
+  e.g. cut the last two minutes and overrun by 10 seconds
+999	1080	130	0
+
+- Put an asterisk (*) as the first charcter on a line to use it.
+========================================================================================
+
+* 58356 1140 600 0
+* 58863 1140 600 0
+* 64443 1020 600 0
+* 64444 1020 180 0
+* 66533 0 120 0
+* 66533 1680 600 0
+* 67074 1230 120 0
+* 67122 0 60 0
+* 67123 1140 240 0
+* 67123 1440 300 0
+* 67124 960 360 0
+* 67125 0 60 0
+* 67125 1020 1800 0
+* 67126 780 1800 0
+* 67333 600 1800 0
+* 67136 420 180 0
+* 67378 420 120 0
+* 67604 880 120 0
+* 69862 1680 120 0
+* 70381 0 240 0
+* 70354 300 720 0
+* 70534 1140 60 0
+* 70355 1200 600 0
+* 70381 0 240 0
+* 70428 700 180 0
+* 70455 950 300 0
+* 70527 0 300 0
+* 70996 0 120 0
+* 74237 1260 548.0 0
+* 74359 660 90.0 0
+* 74388 540 480 0
+* 74416 420 540 0
+* 74361 1170 12.0 0
+* 74453 180 60.0 0
+* 74453 720 60 0
+* 74504 0 240.0 0
+* 74505 900 264.0 0
+* 74784 960 180 0
+* 74785 600 60 0
+* 74784 1020 120 0
+* 74811 780 120 0
+* 74854 120 120 0
+* 75863 0 120 0
+*  80925 990 60.0 0
+*  83158 240 60.0 0
+*  83168 240 30.0 0
+*  89032 0 192.0 0
