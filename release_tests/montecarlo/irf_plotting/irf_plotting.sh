@@ -12,10 +12,10 @@ if [ ! -n "$1" ]; then
 fi
 
 #### TEMP FIXED VALUES
-# Box cut
-CUT="NTel2-PointSource-Moderate"
 # BDT cuts
 CUT="NTel2-PointSource-Moderate-TMVA-BDT"
+# Box cut
+CUT="NTel2-PointSource-Moderate"
 MCAZ="16"
 ANATYPE="AP"
 COMPAREANA_1="_DISP"
@@ -48,7 +48,7 @@ if [[ ! -z  $VERITAS_ANALYSIS_TYPE ]]; then
     fi
 fi
 
-ODIR="../../../../EventDisplay_ReleaseTests_${VERSION}/irf_plotting/${ANALYSISTYPE}${DIRRECOTYPE}/${SIMTYPE}/${CUT}_ATM${ATMO}"
+ODIR="../../../../EventDisplay_Release_${VERSION}/irf_plotting/${ANALYSISTYPE}${DIRRECOTYPE}/${SIMTYPE}/${CUT}_ATM${ATMO}"
 mkdir -p ${ODIR}
 
 DDIR="$VERITAS_IRFPRODUCTION_DIR/${VERSION}/${ANATYPE}/${SIMTYPE}/"
