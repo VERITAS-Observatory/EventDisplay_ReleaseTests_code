@@ -80,6 +80,7 @@ fi
 # output directory for MC/Data comparison
 BDIR=$(readlink -f "../../../../EventDisplay_Release_${VERSION}/mc_data_comparison/${ANALYSISTYPE}${DIRRECOTYPE}/${SIMTYPE}/")
 mkdir -p ${BDIR}
+echo "Results will be written to $BDIR"
 
 PWDIR=$(pwd)
 
@@ -147,7 +148,7 @@ do
            A=""
         fi
         REDHV=""
-        if [[ $SIMTYPE == "CARE_RedHV" ]]; then
+        if [[ $SIMTYPE == "CARE_RedHV"* ]]; then
             REDHV="_redHV"
         fi
         echo "Processing $I $A ${atm} $REDHV"
@@ -158,6 +159,15 @@ do
             RUNLIST="$CDIR/runlist_releaseTesting${I}${REDHV}_${ELE}.dat"
         fi
         echo "RUNLIST $RUNLIST"
+        if [[ ! -f "$RUNLIST" ]]; then
+            echo "..not found, skipping"
+            continue
+        fi
+        NFIL=$(wc -l < "$RUNLIST")
+        if [ "$NFIL" -lt 3 ]; then
+            echo "..not enough runs ($NFIL), skipping"
+            continue
+        fi
 
         # output directory
         ODIR=${BDIR}/${I}${A}_${ELE}_${MCWOFF}_${NSB}
