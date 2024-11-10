@@ -44,18 +44,22 @@ do
     do
         for E in $EPOCHS
         do
-            if [[ ! -e "${SDIR}/${T}/runlist_releaseTesting_${E}.dat" ]]; then
-                echo "No run list ${SDIR}/${T}/runlist_releaseTesting_${E}.dat"
-                continue
+            RUNLIST="${SDIR}/${T}/runlist_releaseTesting_${E}.dat"
+            if [[ ! -e "$RUNLIST" ]]; then
+                RUNLIST="${SDIR}/${T}/runlist_releaseTesting${E}.dat"
+                if [[ ! -e "$RUNLIST" ]]; then
+                    echo "No run list ${SDIR}/${T}/runlist_releaseTesting_${E}.dat"
+                    continue
+                fi
             fi
 
             echo "Analysing ${T} with ${C} cuts (epoch $E)"
-            echo "   input file list: ${SDIR}/${T}/runlist_releaseTesting_${E}.dat"
+            echo "   input file list: $RUNLIST"
             echo "   input directory: ${DDIR}/${ANALYSISTYPE}/anasum_${C}"
             echo "   output directory: ${ODIR}/${T}/${C}/${E}"
 
            ./ANALYSIS.anasum_combine.sh \
-               "${SDIR}"/"${T}"/runlist_releaseTesting_"${E}".dat \
+               "${RUNLIST}" \
                "${DDIR}"/"${ANALYSISTYPE}"/anasum_"${C}" \
                "${ODIR}"/"${T}"/"${C}"/"${E}"
         done
