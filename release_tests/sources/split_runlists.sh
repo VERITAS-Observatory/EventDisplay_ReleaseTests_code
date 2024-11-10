@@ -4,6 +4,9 @@
 if [[ $# -lt 1 ]]; then
 echo "
     ./split_runlists.sh <runlist>
+
+    split runlist according to major epoch
+    (output files are _V4.dat, _V5.dat, _V6.dat)
 "
 exit
 fi
