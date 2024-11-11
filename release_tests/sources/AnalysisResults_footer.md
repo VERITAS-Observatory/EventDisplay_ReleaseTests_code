@@ -11,4 +11,3 @@ Prepare the full document (requires pandoc) with:
 ```bash
 ./prepare_analysis_results_document.sh ../../../EventDisplay_Release_v491/SourceTests
 ```
-
