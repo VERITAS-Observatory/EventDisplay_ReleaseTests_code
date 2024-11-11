@@ -79,19 +79,21 @@ void plotAverageFlux( TCanvas *c, TGraphErrors *g, double fA, double fAE, int iC
 
 }
 
-void plot_lightcurves( string anasumfile, string figureDir )
+void plot_lightcurves( string anasumfile, string figureDir, double iEnergy_TeV )
 {
     gSystem->mkdir( figureDir.c_str(), true );
-    // fluxes are calculated above this energy
-    double iEnergy_TeV = 0.2;
-    if( anasumfile.find( "hard" ) != string::npos )
+    if( iEnergy_TeV < 0. )
     {
-        iEnergy_TeV = 1.;
-    }
-    else if( anasumfile.find( "moderate" ) != string::npos
-      || anasumfile.find( "Moderate" ) != string::npos )
-    {
-        iEnergy_TeV = 0.5;
+        iEnergy_TeV = 0.2;
+        if( anasumfile.find( "hard" ) != string::npos )
+        {
+            iEnergy_TeV = 1.;
+        }
+        else if( anasumfile.find( "moderate" ) != string::npos
+          || anasumfile.find( "Moderate" ) != string::npos )
+        {
+            iEnergy_TeV = 0.5;
+        }
     }
 
     // average flux+error for whole period

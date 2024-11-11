@@ -36,7 +36,7 @@ void plot_energy_spectra( string anasumfile, string figureDir )
 
     // adjust fit range according to cuts
     double i_Fit_Elow_TeV = 0.2;
-    double i_Fit_Ehigh_TeV = 10.;
+    double i_Fit_Ehigh_TeV = 30.;
     if( anasumfile.find( "soft" ) != string::npos
     || anasumfile.find( "Soft" ) != string::npos )
     {
@@ -49,6 +49,11 @@ void plot_energy_spectra( string anasumfile, string figureDir )
     else if( anasumfile.find( "hard" ) != string::npos )
     {
         i_Fit_Elow_TeV = 0.330;
+    }
+    // max fit range for summary
+    if( anasumfile.find( "V6_20" ) == string::npos )
+    {
+        i_Fit_Ehigh_TeV = 100.;
     }
 
     VEnergySpectrum e( anasumfile.c_str() );

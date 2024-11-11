@@ -29,6 +29,10 @@ for F in $LFIL; do
     echo "Output per analysis: $OTF"
     mkdir -p "${OTF}"
     root -q -l -b "plot_energy_spectra.C(\"$F\", \"${OTF}\" )"
-    root -q -l -b "plot_lightcurves.C(\"$F\", \"${OTF}\" )"
+    root -q -l -b "plot_lightcurves.C(\"$F\", \"${OTF}\", -1. )"
     root -q -l -b "plot_skymaps.C(\"$F\", \"${OTF}\", true )"
+    OTF="${ODIR}/${TF}_05TeV"
+    root -q -l -b "plot_lightcurves.C(\"$F\", \"${OTF}\", 5. )"
+    OTF="${ODIR}/${TF}_10TeV"
+    root -q -l -b "plot_lightcurves.C(\"$F\", \"${OTF}\", 10. )"
 done
