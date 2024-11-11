@@ -36,6 +36,13 @@ do
     do
         for E in $EPOCHS
         do
+            # Result from anasum log file
+            LFILE="${IDIR}/${T}/${C}/${E}.log"
+            if [[ ! -e ${LFILE} ]]; then
+                echo "No anasum log file with results: ${LFILE}"
+                continue
+            fi
+            mkdir -p ${ODIR}/${T}/
             # Output file
             OFILE="${ODIR}/${T}/results_${T}_${E}_${C}.md"
             # Initital result markdown file
@@ -43,19 +50,12 @@ do
             if [[ ! -e "$IFILE" ]]; then
                 echo "No initial results file $IFILE; creating empty file"
                 if [[ ! -e ${OFILE} ]]; then
-                    mkdir -p ${ODIR}/${T}/
                     echo "## ${T} ${E} ${C}" > "$OFILE"
                     printf "\`\`\`text\n%s\n%s\n\`\`\`\n" "$RESULT_l1" "$RESULT_l2" >> "$OFILE"
                 fi
             else
                 echo "Initial result file copied to ${ODIR}/${T}/"
                 cp -f "$IFILE" "${ODIR}/${T}/"
-            fi
-            # Result from anasum log file
-            LFILE="${IDIR}/${T}/${C}/${E}.log"
-            if [[ ! -e ${LFILE} ]]; then
-                echo "No anasum log file with results: ${LFILE}"
-                continue
             fi
             RESULT=$(grep "ALL RUNS" ${LFILE} | sed 's/ALL RUNS //' | sed 's/  */ /g')
             RESULT=$(echo "$RESULT" | sed 's/),/),\n/g')
@@ -73,6 +73,7 @@ do
                 last_line=$(grep -n "\`\`\`" "$OFILE" | tail -n 1 | cut -d ":" -f 1)
                 awk -v line_num="$last_line" -v new_line="$RESULT_l2" 'NR == line_num {print new_line} 1' "$OFILE" > temp_file && mv -f temp_file "$OFILE"
             fi
+            cp -v -f "$LFILE" "$ODIR/${T}"
         done
     done
 done
