@@ -21,6 +21,19 @@ mkdir -p "$ODIR"
 
 PDIR=$(pwd)
 
+# copy anasum log files to release test directory
+for F in $LFIL; do
+    TF=$(basename $F .combined.root)
+    LOGFILE=$(basename $F .root).log
+    LOGFILE="${F%.root}.log"
+    TF=${TF/anasum_releaseTesting/}
+    OTF="${ODIR}/${TF}"
+    echo "Output per analysis: $OTF"
+    mkdir -p "${OTF}"
+    cp -v -f "$LOGFILE" "$OTF"
+done
+
+# plotting
 for F in $LFIL; do
     echo "Analysing $F"
     TF=$(basename $F .combined.root)
