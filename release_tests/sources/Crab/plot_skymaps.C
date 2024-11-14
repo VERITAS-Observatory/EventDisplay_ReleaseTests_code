@@ -35,4 +35,7 @@ void plot_skymaps( string anasumfile, string figureDir, bool skymaps = false )
         f.plot_catalogue(c, "tevcat.dat" );
         printCanvas( c, "/SkyMapRaDecMax", figureDir, ".png" );
     }
+
+    TCanvas *cTh2 = f.plot_theta2(0., 0.15, 5., -9999., -9999., true);
+    printCanvas( cTh2, "/Theta2", figureDir, ".pdf" );
 }
