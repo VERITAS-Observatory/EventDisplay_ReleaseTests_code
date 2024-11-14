@@ -23,6 +23,8 @@ VERSION=$(grep VERSION ${1} | awk '{print $3}')
 SIMTYPE=$(grep SIMTYPE ${1} | awk '{print $3}')
 # Epochs
 EPOCH=($(grep EPOCH ${1} | grep -v MAJOR | awk '{print $3}'))
+# ATMOSPHERE (fixed to winter)
+ATM="61"
 # MC NSB
 MCNSB=($(grep MC_NSB ${1} | awk '{for(i=3;i<=NF;++i)print $i}'))
 
@@ -45,7 +47,7 @@ do
             TFILE="$VERITAS_EVNDISP_AUX_DIR/ParameterFiles/ThroughputCorrection.runparameter"
             _sizecallineraw=$(grep "* s " $TFILE | grep " ${I} ")
 
-            MCDIR="$VERITAS_USER_DATA_DIR/analysis/Results/${VERSION}/${SIMTYPE}/${I}_ATM61_gamma/MSCW_RECID0/"
+            MCDIR="$VERITAS_USER_DATA_DIR/analysis/Results/${VERSION}/${SIMTYPE}/${I}_ATM${ATM}_gamma/MSCW_RECID0/"
             _pedvars=$(grep "Mean pedvar per telescope" $MCDIR/20deg_0.5wob_NOISE${N}.log)
 
             if [[ $T == "1" ]]; then
