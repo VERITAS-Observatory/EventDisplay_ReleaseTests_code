@@ -8,20 +8,23 @@ set -e
 if [ ! -n "$1" ]; then
    echo "./irf_plotting.sh <runparameter file>"
    echo ""
+   echo "(note hardwired epoch)"
+   echo ""
    exit
 fi
 
 #### TEMP FIXED VALUES
 # BDT cuts
 CUT="NTel2-PointSource-Moderate-TMVA-BDT"
+CUT="NTel2-PointSource-Soft-TMVA-BDT"
 # Box cut
-CUT="NTel2-PointSource-Moderate"
-MCAZ="16"
-ANATYPE="AP"
-COMPAREANA_1="_DISP"
-COMPAREANA_2=""
+# CUT="NTel2-PointSource-Moderate"
+COMPAREVERSION="v490"
+COMPARESIMTYPE="CARE_June2020"
 #### (END TEMP FIXED VALUES)
 
+# Analysis type
+ANATYPE="${VERITAS_ANALYSIS_TYPE:0:2}"
 # Eventdisplay version
 VERSION=$(grep VERSION ${1} | grep '*' | awk '{print $3}')
 # Simulation type
@@ -36,6 +39,8 @@ MCZE=($(grep MC_ZE ${1} | grep '*' | awk '{for(i=3;i<=NF;++i)print $i}'))
 MCWOFF=($(grep MC_WOFF ${1} | grep '*' | awk '{for(i=3;i<=NF;++i)print $i}'))
 # MC NSB
 MCNSB=($(grep MC_NSB ${1} | grep '*' | awk '{for(i=3;i<=NF;++i)print $i}'))
+# MC AZ
+MCAZ=($(grep MC_AZ ${1} | grep '*' | awk '{print $3}'))
 # Analysis type
 ANALYSISTYPE="AP"
 DIRRECOTYPE="_DISP"
@@ -51,7 +56,7 @@ fi
 ODIR="../../../../EventDisplay_Release_${VERSION}/irf_plotting/${ANALYSISTYPE}${DIRRECOTYPE}/${SIMTYPE}/${CUT}_ATM${ATMO}"
 mkdir -p ${ODIR}
 
-DDIR="$VERITAS_IRFPRODUCTION_DIR/${VERSION}/${ANATYPE}/${SIMTYPE}/"
+DDIR="$VERITAS_IRFPRODUCTION_DIR/${VERSION}/${ANATYPE}/${SIMTYPE}"
 
 for Z in "${MCZE[@]}"
 do
@@ -66,7 +71,22 @@ do
                 fi
                 for A in "${ATMO[@]}"
                 do
-                    root -l -q -b "plot_irf.C(\"${DDIR}\",\"${E}\",\"${A}\",\"${CUT}\",\"${Z}\",\"${W}\",\"${N}\",\"${ODIR}\", \"${COMPAREANA_1}\",  \"${COMPAREANA_2}\")"
+                    if [[ ${E} == "V6_2023_2024w" ]] && [[ ${A} == "61" ]]; then
+                        IRFDIR="${DDIR}/${E}_ATM${A}_gamma/EffectiveAreas_Cut-${CUT}_DISP"
+                        IRFFILE="EffArea-${SIMTYPE}-${E}-ID0-Ze${Z}deg-${W}wob-${N}-Cut-${CUT}"
+                        echo "IRFDIR $IRFDIR"
+                        echo "IRFFILE $IRFFILE"
+                        if [[ -n $COMPAREVERSION ]]; then
+                            COMP_IRFDIR=${IRFDIR//"$VERSION"/"$COMPAREVERSION"}
+                            COMP_IRFDIR=${COMP_IRFDIR//"$SIMTYPE"/"$COMPARESIMTYPE"}
+                            COMP_IRFFILE=${IRFFILE//"$SIMTYPE"/"$COMPARESIMTYPE"}
+                            echo "IRFDIR (comparision): $COMP_IRFDIR"
+                            echo "IRFFILE (comparision): $COMP_IRFFILE"
+                            root -l -q -b "plot_irf.C(\"${IRFDIR}\",\"${IRFFILE}\",\"${E}\",\"${A}\",\"${CUT}\",\"${Z}\",\"${W}\",\"${N}\",\"${ODIR}\", \"${COMP_IRFDIR}\",\"${COMP_IRFFILE}\")"
+                        else
+                            root -l -q -b "plot_irf.C(\"${IRFDIR}\",\"${IRFFILE}\",\"${E}\",\"${A}\",\"${CUT}\",\"${Z}\",\"${W}\",\"${N}\",\"${ODIR}\")"
+                        fi
+                    fi
                 done
             done
         done
