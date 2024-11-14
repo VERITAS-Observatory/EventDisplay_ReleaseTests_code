@@ -12,10 +12,10 @@ if [[ $# < 2 ]]; then
 echo "
   ./compareDatawithMC.sh <runparameter file> <SZE/MZE/LZE/WOBBLE>
   --> choose zenith angle / wobble range
-      SZE: small zenith angles (0.5 wobble)
-      MZE: medium large zenith angles (0.5 wobble)
-      LZE: large zenith angles (0.5 wobble)
-      WOBBLE: large wobble offsets
+      SZE: small zenith angles (0.5 deg wobble)
+      MZE: medium large zenith angles (0.5 deg wobble)
+      LZE: large zenith angles (0.5 deg wobble)
+      WOBBLE: large wobble offsets (MC at 1 deg wobble)
 
   Input are MC and Crab mscw files.
 "
@@ -36,8 +36,8 @@ SIMTYPE=$(grep SIMTYPE ${1} | awk '{print $3}')
 ATMOS=($(grep ATMOSPHERE ${1} | grep "*" | awk '{print $3}'))
 # Epochs
 EPOCH=($(grep EPOCH ${1} | grep "*" | grep -v MAJOR | awk '{print $3}'))
-# Wobble
-MCWOFF=$(grep MC_WOFF ${1} | awk '{print $3}')
+# Wobble (default observing; WOBBLE mode fixed to 1 deg)
+MCWOFF="0.5"
 # Crab NSB level
 CRABNSB=$(grep CRAB_NSB ${1} | awk '{print $3}')
 # Analysis type
