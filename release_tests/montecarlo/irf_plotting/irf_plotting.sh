@@ -14,8 +14,9 @@ if [ ! -n "$1" ]; then
 fi
 
 #### TEMP FIXED VALUES
-CUT="NTel2-PointSource-Moderate-TMVA-BDT"
 CUT="NTel3-PointSource-Hard-TMVA-BDT"
+CUT="NTel2-PointSource-Moderate-TMVA-BDT"
+CUT="NTel2-PointSource-Soft-TMVA-BDT"
 # Comparision plots - version and simtype hardwired
 COMPAREVERSION="v490"
 COMPARESIMTYPE="CARE_June2020"

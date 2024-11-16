@@ -105,4 +105,7 @@ void plot_irf(
 
     c = a.plotEnergyResolution( 0.5 );
     printCanvas( c, "ERes_"+IRFFile, odir);
+
+    c = a.plotEnergyReconstructionBias("mean", -0.4, 0.4);
+    printCanvas( c, "EBias_"+IRFFile, odir);
 }
