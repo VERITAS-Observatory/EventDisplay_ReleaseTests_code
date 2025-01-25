@@ -43,7 +43,7 @@ tests for the instrument response functions
 - [ ] compilation of all steps with warnings and errors
   - [ ] linux
   - [ ] OS X
-- [ ] for releases with many changes: 
+- [ ] for releases with many changes:
   - [ ] use valgrind to check for memory leaks
     - [ ] e.g., `valgrind --log-file=valgrind.evndisp.log --suppressions=$ROOTSYS/etc/valgrind-root.supp ./bin/evndisp <command line parameters>`
 - [ ] use display to look through a number (>10) of data and MC events
