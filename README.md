@@ -9,6 +9,7 @@ Note that it is impossible to test every single IRF function and every single po
 
 This repository contains code and macros for release testing. Results of release tests are saved in separate repositories:
 
+- [v492](https://github.com/VERITAS-Observatory/EventDisplay_ReleaseTests_v492)
 - [v491](https://github.com/VERITAS-Observatory/EventDisplay_ReleaseTests_v491)
 - [v490](https://github.com/VERITAS-Observatory/EventDisplay_ReleaseTests_v490)
 - [before v490](https://github.com/VERITAS-Observatory/Eventdisplay_ReleaseTests)
@@ -42,8 +43,9 @@ tests for the instrument response functions
 - [ ] compilation of all steps with warnings and errors
   - [ ] linux
   - [ ] OS X
-- [ ] for releases with many changes: use valgrind to check for memory leaks
-  - [ ] e.g., `valgrind --log-file=valgrind.evndisp.log ./bin/evndisp <command line parameters>`
+- [ ] for releases with many changes: 
+  - [ ] use valgrind to check for memory leaks
+    - [ ] e.g., `valgrind --log-file=valgrind.evndisp.log --suppressions=$ROOTSYS/etc/valgrind-root.supp ./bin/evndisp <command line parameters>`
 - [ ] use display to look through a number (>10) of data and MC events
   - [ ] do images look reasonable (e.g. ellipses?, islands?, etc)
   - [ ] location of FADC integration window (check high and low-gain channels)
