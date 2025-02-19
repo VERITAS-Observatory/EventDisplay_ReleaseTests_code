@@ -108,4 +108,27 @@ void plot_irf(
 
     c = a.plotEnergyReconstructionBias("mean", -0.4, 0.4);
     printCanvas( c, "EBias_"+IRFFile, odir);
+
+    // plot comparision of 4 and 3-telescope effective areas
+    VPlotInstrumentResponseFunction b;
+    b.addInstrumentResponseData(
+            (IRFDirectory+"/"+IRFFile+".root").c_str(),
+            atoi(ze.c_str()), atof(woff.c_str()), 0, 1.6, atoi(nsb.c_str()), "A_MC",
+            -99, -99, -99, 1.5 );
+    for( unsigned int i = 2; i <=5; i++ )
+    {
+        string IRFFile3Tel = IRFFile;
+        IRFFile3Tel.replace(IRFFile3Tel.find("ID0"), 3, "ID" + std::to_string(i) );
+        b.addInstrumentResponseData(
+            (IRFDirectory+"/"+IRFFile3Tel+".root").c_str(),
+            atoi(ze.c_str()), atof(woff.c_str()), 0, 1.6, atoi(nsb.c_str()), "A_MC",
+            -99, -99, -99, 1.5 );
+    }
+    b.setPlottingAxis( "energy_Lin", "X", false, 0.05, 100., "energy [TeV]" );
+    c = b.plotEffectiveArea( 1.e3, 5.e5 );
+    printCanvas( c, "EffArea3Tel_"+IRFFile, odir);
+
+    c = b.plotEffectiveAreaRatio( 0, 0., 2. );
+    printCanvas( c, "EffArea3TelRatio_"+IRFFile, odir);
+
 }
