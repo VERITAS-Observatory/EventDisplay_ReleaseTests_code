@@ -73,27 +73,28 @@ def make_datasets(data_store, obs_ids, exclusion_mask):
     energy_axis = MapAxis.from_energy_bounds("0.5 TeV", "10 TeV", nbin=15)
     energy_axis_true = MapAxis.from_energy_bounds("0.3 TeV", "20 TeV", nbin=40, name="energy_true")
 
-    geom = RegionGeom.create(region="icrs;circle(83.63,22.01,0.11)", axes=[energy_axis])
+    geom = RegionGeom.create(region="icrs;circle(83.63,22.01,0.08944272)", axes=[energy_axis])
     dataset_empty = SpectrumDataset.create(geom=geom, energy_axis_true=energy_axis_true, name="crab")
 
     wcsgeom = WcsGeom.create(skydir=geom.center_skydir, width=5, binsz=0.02)
     exclusion_mask = wcsgeom.region_mask(geom.region, inside=False)
 
-    maker = SpectrumDatasetMaker()
+    maker = SpectrumDatasetMaker(
+    containment_correction=False, selection=["counts", "exposure", "edisp"]
+    )
     safe_mask_maker = SafeMaskMaker(methods=["aeff-max"], aeff_percent=10)
     bkg_maker = ReflectedRegionsBackgroundMaker(exclusion_mask=exclusion_mask)
 
     datasets = Datasets()
     for obs in observations:
-        dataset = maker.run(dataset_empty.copy(), obs)
-        dataset = safe_mask_maker.run(dataset, obs)
+        dataset = maker.run(dataset_empty.copy(name=f'{obs.obs_id}'), obs)
         dataset_on_off = bkg_maker.run(dataset, obs)
-        datasets.append(dataset)
+        dataset_on_off = safe_mask_maker.run(dataset, obs)
+        datasets.append(dataset_on_off)
 
     return datasets
 
 def estimate_lightcurve(datasets):
-    target_position = SkyCoord(ra=83.63308, dec=22.01450, unit="deg")
     spectral_model = PowerLawSpectralModel(
         index=2.5,
         amplitude=3.5e-11 * u.Unit("1 / (cm2 s TeV)"),
