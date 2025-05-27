@@ -8,6 +8,8 @@
  *
  */
 
+#include <fstream>
+#include <iomanip>
 #include <string>
 #include <vector>
 
@@ -29,6 +31,28 @@ double getMinMax( vector< double > iMJD, bool bMax )
     if( bMax ) return iMax;
 
     return iMin;
+}
+
+/*
+ * Write light curve to CSV file
+*/
+void write_fluxes(string iFileName, VFluxCalculation *f)
+{
+    cout << "Writing light curve to " << iFileName << endl;
+    std::ofstream out(iFileName.c_str());
+    out << "MJD,MJD_width,Run,Flux,FluxError\n";
+    for (unsigned int i = 0; i < f->getMJD().size(); i++ )
+    {
+        if( f->getRunList()[i] < 0 ) continue;
+
+        out << fixed << setprecision(4) << f->getMJD()[i] << ", "
+            << f->getTOn()[i] / 86400. / 2. << ", "
+            << setprecision(0) << (int)f->getRunList()[i] << ", "
+            << scientific << setprecision(6)
+            << f->getFlux()[i] << ", "
+            << f->getFluxError()[i] << "\n";
+    }
+    out.close();
 }
 
 /*
@@ -116,6 +140,7 @@ void plot_lightcurves( string anasumfile, string figureDir, double iEnergy_TeV )
     vector< double > FluxError;
 
     TGraphErrors *g = f.plotFluxesVSMJD( 0, 0., 0, 1, 24 );
+    write_fluxes(figureDir + "/LightCurve.csv", &f );
     TCanvas *c = f.getFluxesVSMJDCanvas();
     plotAverageFlux( c, g, fAverageFlux, fAverageFluxErr, 800 );
 
