@@ -97,7 +97,7 @@ do
    ANASUMLOG=$(get_anasum_log_file ${DATADIR} ${R})
    if [ ! -e ${ANASUMLOG} ]; then
       echo "Run $R - log file not found: ${ANASUMLOG}"
-      continue
+      exit
    fi
    echo "DATADIR ${ANASUMLOG}"
    # read and extract run info from files
