@@ -40,7 +40,7 @@ void write_fluxes(string iFileName, VFluxCalculation *f)
 {
     cout << "Writing light curve to " << iFileName << endl;
     std::ofstream out(iFileName.c_str());
-    out << "MJD,MJD_width,Run,Flux,FluxError\n";
+    out << "MJD,MJD_width,Run,flux,flux_err\n";
     for (unsigned int i = 0; i < f->getMJD().size(); i++ )
     {
         if( f->getRunList()[i] < 0 ) continue;
