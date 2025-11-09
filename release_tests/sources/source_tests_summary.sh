@@ -69,7 +69,7 @@ do
             # Insert the two result lines just BEFORE the closing code fence
             last_line=$(grep -n "\`\`\`" "$OFILE" | tail -n 1 | cut -d ":" -f 1)
             awk -v line_num="$last_line" -v l1="$RESULT_l1" -v l2="$RESULT_l2" 'NR == line_num {print l1; print l2} {print}' "$OFILE" > temp_file && mv -f temp_file "$OFILE"
-            cp -v -f "$LFILE" "$ODIR/${T}"
+            cp -v -f "$LFILE" "$ODIR/${T}/${C}_$(basename $LFILE)"
         done
     done
 done
