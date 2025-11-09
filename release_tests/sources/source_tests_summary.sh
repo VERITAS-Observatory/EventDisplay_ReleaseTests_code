@@ -64,8 +64,8 @@ do
                 echo "Initial result file copied to ${ODIR}/${T}/"
                 cp -f "$IFILE" "${ODIR}/${T}/"
             fi
-            # Ensure we don't keep stale lines for the same version; remove any existing lines starting with VERSION
-            sed -i "" "/^$VERSION: /d" "$OFILE"
+            # Ensure we don't keep stale lines for the same version; remove any existing lines starting with VERSION (portable, no sed -i)
+            awk -v ver="$VERSION" '($0 ~ ("^" ver ": ")){next} {print}' "$OFILE" > temp_file && mv -f temp_file "$OFILE"
             # Insert the two result lines just BEFORE the closing code fence
             last_line=$(grep -n "\`\`\`" "$OFILE" | tail -n 1 | cut -d ":" -f 1)
             awk -v line_num="$last_line" -v l1="$RESULT_l1" -v l2="$RESULT_l2" 'NR == line_num {print l1; print l2} {print}' "$OFILE" > temp_file && mv -f temp_file "$OFILE"
