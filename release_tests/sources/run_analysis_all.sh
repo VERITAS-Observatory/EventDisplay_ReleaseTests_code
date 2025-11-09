@@ -53,7 +53,7 @@ do
                 fi
             fi
 
-            echo "Analysing ${T} with ${C} cuts (epoch $E)"
+            echo "Analyzing ${T} with ${C} cuts (epoch $E)"
             echo "   input file list: $RUNLIST"
             echo "   input directory: ${DDIR}/${ANALYSISTYPE}/anasum_${C}"
             echo "   output directory: ${ODIR}/${T}/${C}/${E}"
