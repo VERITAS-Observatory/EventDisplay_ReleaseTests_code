@@ -4,6 +4,7 @@ channels:
 dependencies:
   - pandoc
   - pre-commit
+  - towncrier
 
 # cheatsheet
 # create: conda env create -f environment.yml
