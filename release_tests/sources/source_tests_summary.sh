@@ -13,7 +13,7 @@ echo "
 
     Read list of targets from TARGETS.dat
 
-    Intiial method is v490.7, to run this:
+    Initial method is v490.7, to run this:
 
     ```console
     ./source_tests_summary.sh $VERITAS_USER_DATA_DIR/analysis/Results/v490/AP/SourceTests . ../../../EventDisplay_Release_v490/SourceTests v490.7
