@@ -2,6 +2,7 @@
 # Prepare analysis results document by combining results markdown files
 # into a single file
 #
+#
 
 if [[ $# -lt 1 ]]; then
 echo "
@@ -9,6 +10,10 @@ echo "
 
     Combine results markdown files into a single file.
     (requires pandoc installed)
+
+    Example:
+
+    ./prepare_analysis_results_document.sh ../../../EventDisplay_Release_v491/SourceTests
 
 "
 exit

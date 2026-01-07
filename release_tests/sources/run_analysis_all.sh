@@ -12,8 +12,8 @@ echo "
 exit
 fi
 
-VERSION="v491"
-MINORVERSION="v491.0"
+VERSION="$(cat $VERITAS_EVNDISP_AUX_DIR/IRFVERSION)"
+MINORVERSION="$(cat $VERITAS_EVNDISP_AUX_DIR/IRFMINORVERSION)"
 ANALYSISTYPE="${VERITAS_ANALYSIS_TYPE:0:2}"
 LTARGETS=$(cat TARGETS.dat)
 
@@ -53,7 +53,7 @@ do
                 fi
             fi
 
-            echo "Analysing ${T} with ${C} cuts (epoch $E)"
+            echo "Analyzing ${T} with ${C} cuts (epoch $E)"
             echo "   input file list: $RUNLIST"
             echo "   input directory: ${DDIR}/${ANALYSISTYPE}/anasum_${C}"
             echo "   output directory: ${ODIR}/${T}/${C}/${E}"
