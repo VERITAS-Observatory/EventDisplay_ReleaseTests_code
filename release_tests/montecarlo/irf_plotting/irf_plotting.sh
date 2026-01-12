@@ -18,7 +18,7 @@ CUT="NTel3-PointSource-Hard-TMVA-BDT"
 CUT="NTel2-PointSource-Moderate-TMVA-BDT"
 CUT="NTel2-PointSource-Soft-TMVA-BDT"
 CUT="NTel2-PointSource-Moderate"
-# Comparision plots - version and simtype hardwired
+# Comparison plots - version and simtype hardwired
 COMPAREVERSION="v490"
 COMPARESIMTYPE="CARE_June2020"
 #### (END TEMP FIXED VALUES)
