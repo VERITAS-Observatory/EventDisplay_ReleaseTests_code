@@ -7,6 +7,8 @@
 #include <string>
 #include <vector>
 
+#include "TImage.h"
+
 R__LOAD_LIBRARY($EVNDISPSYS/lib/libVAnaSum.so);
 
 void printCanvas( TCanvas *c, string iName, string oDir )
@@ -15,6 +17,9 @@ void printCanvas( TCanvas *c, string iName, string oDir )
     if( c )
     {
         string iPrintName = iName + iSuffix;
+        c->SetCanvasSize(c->GetWw()*2, c->GetWh()*2);
+        c->Modified();
+        c->Update();
         c->Print( (oDir+"/"+iPrintName).c_str() );
     }
 }
@@ -38,7 +43,6 @@ void plot_irf(
         )
 {
     float base_index = 1.5;
-
 
     VPlotInstrumentResponseFunction a;
     a.addInstrumentResponseData(
