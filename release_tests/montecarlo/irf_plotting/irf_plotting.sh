@@ -72,7 +72,7 @@ do
                 fi
                 for A in "${ATMO[@]}"
                 do
-                    if [[ ${E} == "V6_2016_2017" ]] && [[ ${A} == "62" ]]; then
+                    if [[ ${E} == "V6_2016_2017" ]] && [[ ${A} == "61" ]]; then
                         IRFDIR="${DDIR}/${E}_ATM${A}_gamma/EffectiveAreas_Cut-${CUT}_DISP"
                         IRFFILE="EffArea-${SIMTYPE}-${E}-ID0-Ze${Z}deg-${W}wob-${N}-Cut-${CUT}"
                         echo "IRFDIR $IRFDIR"
