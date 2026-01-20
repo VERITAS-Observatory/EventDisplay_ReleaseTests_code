@@ -37,6 +37,7 @@ void plot_irf(
         string ze = "20",
         string woff = "0.5",
         string nsb = "200",
+        string az = "0",
         string odir = "./figures/",
         string IRFDirectory_compare = "",
         string IRFFile_compare = ""
@@ -47,13 +48,13 @@ void plot_irf(
     VPlotInstrumentResponseFunction a;
     a.addInstrumentResponseData(
             (IRFDirectory+"/"+IRFFile+".root").c_str(),
-            atoi(ze.c_str()), atof(woff.c_str()), 0, base_index, atoi(nsb.c_str()), "A_MC",
+            atoi(ze.c_str()), atof(woff.c_str()), atoi(az.c_str()), base_index, atoi(nsb.c_str()), "A_MC",
             -99, -99, -99, 1.5 );
     if( IRFDirectory_compare.size() > 0 && IRFFile.size() > 0 )
     {
         a.addInstrumentResponseData(
             (IRFDirectory_compare+"/"+IRFFile_compare+".root").c_str(),
-            atoi(ze.c_str()), atof(woff.c_str()), 0, base_index, atoi(nsb.c_str()), "A_MC",
+            atoi(ze.c_str()), atof(woff.c_str()), atoi(az.c_str()), base_index, atoi(nsb.c_str()), "A_MC",
             -99, -99, -99, 1.5 );
     }
     a.setPlottingAxis( "energy_Lin", "X", false, 0.05, 100., "energy [TeV]" );
