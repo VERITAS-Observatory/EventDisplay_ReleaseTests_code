@@ -7,14 +7,19 @@
 #include <string>
 #include <vector>
 
+#include "TImage.h"
+
 R__LOAD_LIBRARY($EVNDISPSYS/lib/libVAnaSum.so);
 
 void printCanvas( TCanvas *c, string iName, string oDir )
 {
-    string iSuffix = ".pdf";
+    string iSuffix = ".png";
     if( c )
     {
         string iPrintName = iName + iSuffix;
+        c->SetCanvasSize(c->GetWw()*2, c->GetWh()*2);
+        c->Modified();
+        c->Update();
         c->Print( (oDir+"/"+iPrintName).c_str() );
     }
 }
@@ -32,21 +37,24 @@ void plot_irf(
         string ze = "20",
         string woff = "0.5",
         string nsb = "200",
+        string az = "0",
         string odir = "./figures/",
         string IRFDirectory_compare = "",
         string IRFFile_compare = ""
         )
 {
+    float base_index = 1.5;
+
     VPlotInstrumentResponseFunction a;
     a.addInstrumentResponseData(
             (IRFDirectory+"/"+IRFFile+".root").c_str(),
-            atoi(ze.c_str()), atof(woff.c_str()), 0, 1.6, atoi(nsb.c_str()), "A_MC",
+            atoi(ze.c_str()), atof(woff.c_str()), atoi(az.c_str()), base_index, atoi(nsb.c_str()), "A_MC",
             -99, -99, -99, 1.5 );
     if( IRFDirectory_compare.size() > 0 && IRFFile.size() > 0 )
     {
         a.addInstrumentResponseData(
             (IRFDirectory_compare+"/"+IRFFile_compare+".root").c_str(),
-            atoi(ze.c_str()), atof(woff.c_str()), 0, 1.6, atoi(nsb.c_str()), "A_MC",
+            atoi(ze.c_str()), atof(woff.c_str()), atoi(az.c_str()), base_index, atoi(nsb.c_str()), "A_MC",
             -99, -99, -99, 1.5 );
     }
     a.setPlottingAxis( "energy_Lin", "X", false, 0.05, 100., "energy [TeV]" );
@@ -109,11 +117,12 @@ void plot_irf(
     c = a.plotEnergyReconstructionBias("mean", -0.4, 0.4);
     printCanvas( c, "EBias_"+IRFFile, odir);
 
+    /*
     // plot comparision of 4 and 3-telescope effective areas
     VPlotInstrumentResponseFunction b;
     b.addInstrumentResponseData(
             (IRFDirectory+"/"+IRFFile+".root").c_str(),
-            atoi(ze.c_str()), atof(woff.c_str()), 0, 1.6, atoi(nsb.c_str()), "A_MC",
+            atoi(ze.c_str()), atof(woff.c_str()), 0, base_index, atoi(nsb.c_str()), "A_MC",
             -99, -99, -99, 1.5 );
     for( unsigned int i = 2; i <=5; i++ )
     {
@@ -121,7 +130,7 @@ void plot_irf(
         IRFFile3Tel.replace(IRFFile3Tel.find("ID0"), 3, "ID" + std::to_string(i) );
         b.addInstrumentResponseData(
             (IRFDirectory+"/"+IRFFile3Tel+".root").c_str(),
-            atoi(ze.c_str()), atof(woff.c_str()), 0, 1.6, atoi(nsb.c_str()), "A_MC",
+            atoi(ze.c_str()), atof(woff.c_str()), 0, base_index, atoi(nsb.c_str()), "A_MC",
             -99, -99, -99, 1.5 );
     }
     b.setPlottingAxis( "energy_Lin", "X", false, 0.05, 100., "energy [TeV]" );
@@ -129,6 +138,6 @@ void plot_irf(
     printCanvas( c, "EffArea3Tel_"+IRFFile, odir);
 
     c = b.plotEffectiveAreaRatio( 0, 0., 2. );
-    printCanvas( c, "EffArea3TelRatio_"+IRFFile, odir);
+    printCanvas( c, "EffArea3TelRatio_"+IRFFile, odir); */
 
 }

@@ -4,8 +4,8 @@ cff-version: 1.2.0
 message: If you use this software, please cite it using these metadata.
 title: "Eventdisplay Release Tests"
 # doi: 10.5281/zenodo.3559075
-version: 4.91.0
-date-released: 2024-11-30
+version: 4.92.0
+date-released: 2026-05-18
 keywords:
 - "gamma-ray astronomy"
 - "astronomy software"
@@ -19,7 +19,3 @@ authors:
   family-names: Maier
   affiliation: DESY
   orcid: https://orcid.org/0000-0001-9868-4700
-- given-names: M.
-  family-names: Nievas
-- given-names: S.
-  family-names: Patel

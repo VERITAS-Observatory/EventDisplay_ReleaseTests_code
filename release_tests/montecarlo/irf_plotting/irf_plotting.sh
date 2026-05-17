@@ -15,12 +15,13 @@ fi
 
 #### TEMP FIXED VALUES
 CUT="NTel3-PointSource-Hard-TMVA-BDT"
-CUT="NTel2-PointSource-Moderate-TMVA-BDT"
 CUT="NTel2-PointSource-Soft-TMVA-BDT"
+CUT="NTel2-PointSource-Moderate-TMVA-BDT"
 CUT="NTel2-PointSource-Moderate"
-# Comparision plots - version and simtype hardwired
-COMPAREVERSION="v490"
-COMPARESIMTYPE="CARE_June2020"
+# Comparison plots - version and simtype hardwired
+COMPAREVERSION="v492"
+COMPARESIMTYPE="CARE_202404"
+COMPARECUT="NTel2-PointSource-ModerateXGB"
 #### (END TEMP FIXED VALUES)
 
 # Analysis type
@@ -71,7 +72,7 @@ do
                 fi
                 for A in "${ATMO[@]}"
                 do
-                    if [[ ${E} == "V6_2023_2024w" ]] && [[ ${A} == "61" ]]; then
+                    if [[ ${E} == "V6_2016_2017" ]] && [[ ${A} == "61" ]]; then
                         IRFDIR="${DDIR}/${E}_ATM${A}_gamma/EffectiveAreas_Cut-${CUT}_DISP"
                         IRFFILE="EffArea-${SIMTYPE}-${E}-ID0-Ze${Z}deg-${W}wob-${N}-Cut-${CUT}"
                         echo "IRFDIR $IRFDIR"
@@ -80,11 +81,14 @@ do
                             COMP_IRFDIR=${IRFDIR//"$VERSION"/"$COMPAREVERSION"}
                             COMP_IRFDIR=${COMP_IRFDIR//"$SIMTYPE"/"$COMPARESIMTYPE"}
                             COMP_IRFFILE=${IRFFILE//"$SIMTYPE"/"$COMPARESIMTYPE"}
-                            echo "IRFDIR (comparision): $COMP_IRFDIR"
-                            echo "IRFFILE (comparision): $COMP_IRFFILE"
-                            root -l -q -b "plot_irf.C(\"${IRFDIR}\",\"${IRFFILE}\",\"${E}\",\"${A}\",\"${CUT}\",\"${Z}\",\"${W}\",\"${N}\",\"${ODIR}\", \"${COMP_IRFDIR}\",\"${COMP_IRFFILE}\")"
+                            # compare TMVA with XGB file
+                            COMP_IRFDIR=${COMP_IRFDIR//"$CUT"/"$COMPARECUT"}
+                            COMP_IRFFILE=${COMP_IRFFILE//"$CUT"/"$COMPARECUT"}
+                            echo "COMPIRFDIR (comparison): $COMP_IRFDIR"
+                            echo "COMPIRFFILE (comparison): $COMP_IRFFILE"
+                            root -l -q -b "plot_irf.C(\"${IRFDIR}\",\"${IRFFILE}\",\"${E}\",\"${A}\",\"${CUT}\",\"${Z}\",\"${W}\",\"${N}\",\"${MCAZ}\",\"${ODIR}\", \"${COMP_IRFDIR}\",\"${COMP_IRFFILE}\")"
                         else
-                            root -l -q -b "plot_irf.C(\"${IRFDIR}\",\"${IRFFILE}\",\"${E}\",\"${A}\",\"${CUT}\",\"${Z}\",\"${W}\",\"${N}\",\"${ODIR}\")"
+                            root -l -q -b "plot_irf.C(\"${IRFDIR}\",\"${IRFFILE}\",\"${E}\",\"${A}\",\"${CUT}\",\"${Z}\",\"${W}\",\"${N}\",\"${MCAZ}\",\"${ODIR}\")"
                         fi
                     fi
                 done

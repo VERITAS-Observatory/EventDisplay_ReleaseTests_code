@@ -1,13 +1,12 @@
 # IRF plotting
 
-**in development - not working yet**
+plot effective areas and angular resolution for all points in parameter space
 
-Goal: plot effective areas and angular resolution for all points in parameter space
+use `irf_plotting.sh`, but note some hardwired values.
 
-Note: only skeleton yet, missing is the loop over the full parameter space
 
-## Usage
+e.g.
 
-```console
-root -l -q -b 'plot_effectiveAreas.C'
+```
+./irf_plotting.sh /afs/ifh.de/group/cta/scratch/maierg/EVNDISP/EVNDISP-400/GITHUB_Eventdisplay/EventDisplay_Release_v492/runparameter/V6.AP.runparameter.dat
 ```
