@@ -8,7 +8,7 @@ issue_format = "[#{issue}](https://github.com/VERITAS-Observatory/EventDisplay_R
 start_string = "<!-- towncrier release notes start -->\n"
 
 [tool.towncrier.fragment.feature]
-name = "New Feature"
+name = "New Features"
 showcontent = true
 
 [tool.towncrier.fragment.bugfix]

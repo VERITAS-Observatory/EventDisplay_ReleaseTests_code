@@ -13,7 +13,7 @@ Parameters required for the analysis are all listed in parameter files. This inc
 - object to be analyzed
 - ...
 
-Most important parameter files are (examples for v491)::
+Most important parameter files are (examples for v491):
 
 - [AP StdHV V6](https://github.com/VERITAS-Observatory/EventDisplay_Release_v491/blob/main/runparameter/V6.AP.runparameter.dat)
 - [AP RedHV V6](https://github.com/VERITAS-Observatory/EventDisplay_Release_v491/blob/main/runparameter/V6redHV.AP.runparameter.dat)
