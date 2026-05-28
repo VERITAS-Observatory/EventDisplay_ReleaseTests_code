@@ -139,7 +139,7 @@ do
     do
         if [[ ${I: -1} == "w" ]] && [[ ${atm} == *"62"* ]]; then
            continue
-        elif [[ ${I: -1} == "s" ]] && [[ ${A} == *"61"* ]]; then
+        elif [[ ${I: -1} == "s" ]] && [[ ${atm} == *"61"* ]]; then
            continue
         fi
 
