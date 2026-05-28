@@ -148,7 +148,7 @@ void plot( string runparameterfile )
     fPar->print();
 
     string e_dir = "$VERITAS_EVNDISP_AUX_DIR/EffectiveAreas/";
-    string oDir = "../../../../EventDisplay_ReleaseTests_" + fPar->fVersion + "/energythresholds/";
+    string oDir = "../../../../EventDisplay_Release_" + fPar->fVersion + "/energythresholds/";
 
     // NSB axis depend on HV
     int min_nsb = 45;
