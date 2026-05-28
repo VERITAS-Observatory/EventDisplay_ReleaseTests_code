@@ -14,15 +14,14 @@
 
 #include "TF1.h"
 
-#include "../../utilitities/parameters.C"
-#include "../../utilitities/printutilities.C"
-
-R__LOAD_LIBRARY(/afs/ifh.de/group/cta/scratch/maierg/EVNDISP/EVNDISP-400/GITHUB_Eventdisplay/EventDisplay_v491-al9/lib/libVAnaSum.so)
+#include "../../utilities/parameters.C"
+#include "../../utilities/printutilities.C"
 
 using namespace std;
 
 void plot_energy_spectra( string anasumfile, string figureDir )
 {
+    if( !loadVAnaSumLibrary() ) return;
 
     // file with fit results
     ofstream osPL;

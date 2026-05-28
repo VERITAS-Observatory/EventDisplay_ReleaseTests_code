@@ -13,6 +13,88 @@
 #include <string>
 #include <vector>
 
+/*
+ * Helper for ROOT macros: load libVAnaSum from environment.
+ * Search order:
+ *   1) $VERITAS_VANASUM_LIBRARY
+ *   2) $EVNDISP/lib/libVAnaSum.so
+ *   3) ROOT library path via "libVAnaSum.so"
+ */
+bool loadVAnaSumLibrary()
+{
+    static bool iLibraryLoaded = false;
+    if( iLibraryLoaded )
+    {
+        return true;
+    }
+
+    string iLibPath;
+    const char* iEnvLib = gSystem->Getenv( "VERITAS_VANASUM_LIBRARY" );
+    if( iEnvLib )
+    {
+        iLibPath = iEnvLib;
+    }
+    if( iLibPath.size() == 0 )
+    {
+        const char* iEvndisp = gSystem->Getenv( "EVNDISP" );
+        if( iEvndisp )
+        {
+            iLibPath = string( iEvndisp ) + "/lib/libVAnaSum.so";
+        }
+    }
+
+    if( iLibPath.size() > 0 && !gSystem->AccessPathName( iLibPath.c_str() ) )
+    {
+        if( gSystem->Load( iLibPath.c_str() ) >= 0 )
+        {
+            iLibraryLoaded = true;
+            return true;
+        }
+    }
+
+    if( gSystem->Load( "libVAnaSum.so" ) >= 0 )
+    {
+        iLibraryLoaded = true;
+        return true;
+    }
+
+    cout << "Error: unable to load libVAnaSum.so. "
+         << "Set VERITAS_VANASUM_LIBRARY or EVNDISP." << endl;
+    return false;
+}
+
+/*
+ * Helper for release-test Crab products in the standard results tree.
+ */
+string getCrabAnasumPath( string iVersion,
+                          string iCut,
+                          string iAnalysisType = "AP",
+                          string iAnasumFile = "anasum_releaseTestingV6_SZE_0.5deg.combined.root" )
+{
+    if( iVersion.size() == 0 )
+    {
+        const char* iVersionEnv = gSystem->Getenv( "VERITAS_EVNDISP_VERSION" );
+        if( iVersionEnv )
+        {
+            iVersion = iVersionEnv;
+        }
+    }
+    if( iVersion.size() == 0 )
+    {
+        cout << "Error: release version not set (pass iVersion or set VERITAS_EVNDISP_VERSION)." << endl;
+        return "";
+    }
+
+    string iDataDir = "$VERITAS_USER_DATA_DIR/analysis/Results/";
+    const char* iDataEnv = gSystem->Getenv( "VERITAS_USER_DATA_DIR" );
+    if( iDataEnv )
+    {
+        iDataDir = string( iDataEnv ) + "/analysis/Results/";
+    }
+
+    return iDataDir + iVersion + "/" + iAnalysisType + "/Crab/V6_" + iCut + "/" + iAnasumFile;
+}
+
 class RunParameterData
 {
     public:

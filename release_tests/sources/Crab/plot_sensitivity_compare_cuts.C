@@ -10,22 +10,23 @@
 #include <string>
 #include <vector>
 
-#include "../../utilitities/parameters.C"
-#include "../../utilitities/printutilities.C"
+#include "../../utilities/parameters.C"
+#include "../../utilities/printutilities.C"
 
-R__LOAD_LIBRARY(/afs/ifh.de/group/cta/scratch/maierg/EVNDISP/EVNDISP-400/GITHUB_Eventdisplay/EventDisplay_v491-al9/lib/libVAnaSum.so)
-
-
-
-void plot_sensitivity_compare_one_cuts(double iObsTime=20., double iMinSigma=3., int iMinEvents=5)
+void plot_sensitivity_compare_one_cuts( double iObsTime = 20.,
+                                        double iMinSigma = 3.,
+                                        int iMinEvents = 5,
+                                        string iVersion = "",
+                                        string iReferenceVersion = "" )
 {
+    if( !loadVAnaSumLibrary() ) return;
+
     double dE_log10 = 0.2;
     vector< string > cut;
     cut.push_back( "moderate2tel" );
     cut.push_back( "soft2tel" );
     cut.push_back( "hard2tel" );
     cut.push_back( "hard3tel" );
-    string data_dir = "$VERITAS_USER_DATA_DIR/analysis/Results/";
     string anasum_file = "anasum_releaseTestingV6_SZE_0.5deg.combined.root";
 
     vector< TGraphAsymmErrors* > sens_graph;
@@ -37,30 +38,40 @@ void plot_sensitivity_compare_one_cuts(double iObsTime=20., double iMinSigma=3.,
     TCanvas *c = 0;
     for( unsigned int i = 0; i < cut.size(); i++ )
     {
+        string iCurrentAnasum = getCrabAnasumPath( iVersion, cut[i], "AP", anasum_file );
+        if( iCurrentAnasum.size() == 0 ) return;
+
         int color = VUtilities::color_id(i);
         b->setPlottingStyle(color, 1, 1., 20., 0.75);
         if( i == 0 )
         {
             c = b->plotDifferentialSensitivityvsEnergyFromCrabSpectrum(
                     0,
-                    data_dir + "v491/AP/Crab/V6_" + cut[i] + "/" + anasum_file,
+                    iCurrentAnasum,
                     color, "CU", dE_log10
                     );
         }
         b->plotDifferentialSensitivityvsEnergyFromCrabSpectrum(
                 c,
-                data_dir + "v491/AP/Crab/V6_" + cut[i] + "/" + anasum_file,
+                iCurrentAnasum,
                 color, "CU", dE_log10
                 );
         sens_graph.push_back( b->getSensitivityGraph() );
     }
-    b->setPlottingStyle(VUtilities::color_id(cut.size()), 1, 1., 20., 0.75);
-    b->plotDifferentialSensitivityvsEnergyFromCrabSpectrum(
-        c,
-        "$VERITAS_USER_DATA_DIR/analysis/Results/v490/NN/Crab/V6_supersoftNN2tel/anasum_releaseTestingV6_SZE_0.5deg.combined.root",
-        VUtilities::color_id(cut.size()), "CU", dE_log10
-        );
-    sens_graph.push_back( b->getSensitivityGraph() );
+    if( iReferenceVersion.size() > 0 )
+    {
+        string iReferenceAnasum = getCrabAnasumPath( iReferenceVersion, "supersoftNN2tel", "NN", anasum_file );
+        if( iReferenceAnasum.size() > 0 )
+        {
+            b->setPlottingStyle(VUtilities::color_id(cut.size()), 1, 1., 20., 0.75);
+            b->plotDifferentialSensitivityvsEnergyFromCrabSpectrum(
+                c,
+                iReferenceAnasum,
+                VUtilities::color_id(cut.size()), "CU", dE_log10
+                );
+            sens_graph.push_back( b->getSensitivityGraph() );
+        }
+    }
 
     TFile *fCTA = new TFile("/lustre/fs22/group/cta/users/maierg/analysis/AnalysisData/prod6-LaPalma-20deg-dark-sq230-LL/Phys-g20240826/DESY.g20240826.V3.ID0NIM3LST3MST3SST3SCMST3.prod6-LaPalma-20deg-dark-sq230-LL.N.Am-4LSTs09MSTs.180000s.root");
     TH1F *hCTA = (TH1F*)fCTA->Get("DiffSensCU");
@@ -104,8 +115,15 @@ void plot_sensitivity_compare_one_cuts(double iObsTime=20., double iMinSigma=3.,
     printCanvas(cRel, print_name.str() + "Rel", "./" );
 }
 
-void plot_sensitivity_compare_cuts()
+void plot_sensitivity_compare_cuts( string iVersion = "",
+                                    string iReferenceVersion = "" )
 {
+    if( iVersion.size() == 0 )
+    {
+        const char* iVersionEnv = gSystem->Getenv( "VERITAS_EVNDISP_VERSION" );
+        if( iVersionEnv ) iVersion = iVersionEnv;
+    }
+
     vector< double > obs_time;
     obs_time.push_back( 100. );
     obs_time.push_back( 50. );
@@ -115,7 +133,7 @@ void plot_sensitivity_compare_cuts()
 
     for( unsigned int i = 0; i < obs_time.size(); i++ )
     {
-        plot_sensitivity_compare_one_cuts( obs_time[i], 3., 5 );
-        plot_sensitivity_compare_one_cuts( obs_time[i], 5., 10 );
+        plot_sensitivity_compare_one_cuts( obs_time[i], 3., 5, iVersion, iReferenceVersion );
+        plot_sensitivity_compare_one_cuts( obs_time[i], 5., 10, iVersion, iReferenceVersion );
     }
 }

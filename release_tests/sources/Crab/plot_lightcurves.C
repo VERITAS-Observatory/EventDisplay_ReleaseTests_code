@@ -13,10 +13,8 @@
 #include <string>
 #include <vector>
 
-#include "../../utilitities/parameters.C"
-#include "../../utilitities/printutilities.C"
-
-R__LOAD_LIBRARY(/afs/ifh.de/group/cta/scratch/maierg/EVNDISP/EVNDISP-400/GITHUB_Eventdisplay/EventDisplay_v491-al9/lib/libVAnaSum.so)
+#include "../../utilities/parameters.C"
+#include "../../utilities/printutilities.C"
 
 double getMinMax( vector< double > iMJD, bool bMax )
 {
@@ -105,6 +103,8 @@ void plotAverageFlux( TCanvas *c, TGraphErrors *g, double fA, double fAE, int iC
 
 void plot_lightcurves( string anasumfile, string figureDir, double iEnergy_TeV )
 {
+    if( !loadVAnaSumLibrary() ) return;
+
     gSystem->mkdir( figureDir.c_str(), true );
     if( iEnergy_TeV < 0. )
     {

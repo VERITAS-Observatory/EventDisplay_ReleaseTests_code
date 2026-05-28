@@ -5,18 +5,21 @@
 
 #include <string>
 
-#include "../../utilitities/parameters.C"
-#include "../../utilitities/printutilities.C"
+#include "../../utilities/parameters.C"
+#include "../../utilities/printutilities.C"
 
-R__LOAD_LIBRARY(/afs/ifh.de/group/cta/scratch/maierg/EVNDISP/EVNDISP-400/GITHUB_Eventdisplay/EventDisplay_v491-al9/lib/libVAnaSum.so)
-
-
-void plot_sensitivity()
+void plot_sensitivity( string iVersion = "",
+                                           string iComparisonVersion = "" )
 {
+        if( !loadVAnaSumLibrary() ) return;
 
-    string cut = "moderate2tel";
-    string data_dir = "$VERITAS_USER_DATA_DIR/analysis/Results/";
+        string iCut = "moderate2tel";
     string anasum_file = "anasum_releaseTestingV6_SZE_0.5deg.combined.root";
+        string iCurrentAnasum = getCrabAnasumPath( iVersion, iCut, "AP", anasum_file );
+        if( iCurrentAnasum.size() == 0 )
+        {
+                return;
+        }
 
     VSensitivityCalculator *b = new VSensitivityCalculator();
     b->setFluxRange_CU(1.e-3, 10.);
@@ -24,22 +27,29 @@ void plot_sensitivity()
     b->setPlottingStyle(633);
     TCanvas *c = b->plotDifferentialSensitivityvsEnergyFromCrabSpectrum(
             0,
-            data_dir + "v491/AP/Crab/V6_" + cut + "/" + anasum_file,
+                        iCurrentAnasum,
             633, "CU"
             );
     b->setPlottingStyle(633);
     b->plotDifferentialSensitivityvsEnergyFromCrabSpectrum(
             c,
-            data_dir + "v491/AP/Crab/V6_" + cut + "/" + anasum_file,
+                        iCurrentAnasum,
             633, "CU"
             );
 
-    b->setPlottingStyle(12);
-    b->plotDifferentialSensitivityvsEnergyFromCrabSpectrum(
-            c,
-            data_dir + "v490/AP/Crab/V6_" + cut + "/" + anasum_file,
-            12, "CU"
-            );
+        if( iComparisonVersion.size() > 0 )
+        {
+                string iComparisonAnasum = getCrabAnasumPath( iComparisonVersion, iCut, "AP", anasum_file );
+                if( iComparisonAnasum.size() > 0 )
+                {
+                        b->setPlottingStyle(12);
+                        b->plotDifferentialSensitivityvsEnergyFromCrabSpectrum(
+                                        c,
+                                        iComparisonAnasum,
+                                        12, "CU"
+                                        );
+                }
+        }
 
     TFile *fCTA = new TFile("/lustre/fs22/group/cta/users/maierg/analysis/AnalysisData/prod6-LaPalma-20deg-dark-sq230-LL/Phys-g20240826/DESY.g20240826.V3.ID0NIM3LST3MST3SST3SCMST3.prod6-LaPalma-20deg-dark-sq230-LL.N.Am-4LSTs09MSTs.180000s.root");
     TH1F *hCTA = (TH1F*)fCTA->Get("DiffSensCU");
@@ -47,5 +57,5 @@ void plot_sensitivity()
     hCTA->SetLineColor(418);
     hCTA->Draw("hist same");
 
-    printCanvas(c, "/SensitivityCU_" + cut, "./" );
+        printCanvas(c, "/SensitivityCU_" + iCut, "./" );
 }
