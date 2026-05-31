@@ -32,12 +32,20 @@ MEPOCH=($(grep MAJOREPOCH ${1} | grep "*" | awk '{print $3}'))
 # Source name
 OBJECT=($(grep SOURCE ${1} | grep "*" | awk '{print $3}'))
 CUTS=""
-while IFS= read -r line; do
-    if [[ $line == "* CUT"* ]]; then
-        # Extract the fourth column from the line
-        CUTS="$CUTS $(echo "$line" | awk '{print $4}')"
+# CUT lines contain both a full cut token and a short alias.
+# Always consume the alias in field 4 to avoid mixing naming schemes.
+while IFS= read -r cut_alias; do
+    if [[ -z "$cut_alias" ]]; then
+        echo "Error, malformed '* CUT' line in runparameter file: ${1}"
+        exit 1
     fi
-done < "${1}"
+    CUTS="$CUTS $cut_alias"
+done < <(awk '/^\* CUT[[:space:]]+/ { if (NF < 4) { print ""; next } print $4 }' "${1}")
+
+if [[ -z "$CUTS" ]]; then
+    echo "Error, no CUT aliases (field 4 of '* CUT' lines) found in runparameter file: ${1}"
+    exit 1
+fi
 echo "CUTS $CUTS"
 
 # run lists

@@ -9,9 +9,9 @@ Note that it is impossible to test every single IRF function and every single po
 
 This repository contains code and macros for release testing. Results of release tests are saved in separate repositories:
 
-- [v492](https://github.com/VERITAS-Observatory/EventDisplay_ReleaseTests_v492)
-- [v491](https://github.com/VERITAS-Observatory/EventDisplay_ReleaseTests_v491)
-- [v490](https://github.com/VERITAS-Observatory/EventDisplay_ReleaseTests_v490)
+- [v492](https://github.com/VERITAS-Observatory/EventDisplay_Release_v492)
+- [v491](https://github.com/VERITAS-Observatory/EventDisplay_Release_v491)
+- [v490](https://github.com/VERITAS-Observatory/EventDisplay_Release_v490)
 - [before v490](https://github.com/VERITAS-Observatory/Eventdisplay_ReleaseTests)
 
 Simplified overview of the testing (somewhat outdated):

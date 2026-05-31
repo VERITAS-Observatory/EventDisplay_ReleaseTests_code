@@ -11,13 +11,13 @@
 #include <string>
 #include <vector>
 
-#include "../../utilitities/parameters.C"
-#include "../../utilitities/printutilities.C"
-
-R__LOAD_LIBRARY(/afs/ifh.de/group/cta/scratch/maierg/EVNDISP/EVNDISP-400/GITHUB_Eventdisplay/EventDisplay_v491-al9/lib/libVAnaSum.so)
+#include "../../utilities/parameters.C"
+#include "../../utilities/printutilities.C"
 
 void plot_skymaps( string anasumfile, string figureDir, bool skymaps = false )
 {
+    if( !loadVAnaSumLibrary() ) return;
+
     gSystem->mkdir( figureDir.c_str(), true );
 
     VPlotAnasumHistograms f( anasumfile.c_str() );

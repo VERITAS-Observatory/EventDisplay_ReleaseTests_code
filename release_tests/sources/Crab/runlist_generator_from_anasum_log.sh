@@ -129,7 +129,7 @@ do
    elif [[ $w_offset != 0 ]]; then
        WOBB="$w_offset"
    else
-       WOBBB="0"
+       WOBB="0"
    fi
    echo "${R}: MAJOREPOCH ${MAJOREPOCH} EPOCH ${EPOCH} ELEVATION ${EL} ATM $ATM  WOBBLE $WOBB OBSL $OBSL"
 
