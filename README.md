@@ -1,6 +1,6 @@
 # Eventdisplay Release Tests
 
-# Introduction
+## Introduction
 
 Releases of Eventdisplay are required to pass a list of testing procedures before being tagged for science analysis.
 
