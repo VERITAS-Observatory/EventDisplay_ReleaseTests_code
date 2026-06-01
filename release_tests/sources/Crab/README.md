@@ -43,7 +43,7 @@ for
 Combine files using pre-processed anasum files and run list generated in step before:
 
 ```bash
-./anasum_yearly.sh <runparameter file> <anasum-run-wise directory>
+./anasum_from_runlists.sh <run-parameter file> <anasum-run-wise directory>
 ```
 
 ## Plotting
