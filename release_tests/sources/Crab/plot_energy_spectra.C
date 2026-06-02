@@ -14,8 +14,6 @@
 
 #include "TF1.h"
 
-// Load VAnaSum library - must be before any usage of VEnergySpectrum
-// ROOT expands environment variables in R__LOAD_LIBRARY paths
 R__LOAD_LIBRARY($EVNDISPSYS/lib/libVAnaSum.so)
 
 #include "../../utilities/parameters.C"
