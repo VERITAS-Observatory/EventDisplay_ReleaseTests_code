@@ -34,6 +34,7 @@ bool loadVAnaSumLibrary()
     if( iEnvLib )
     {
         iLibPath = iEnvLib;
+        cout << "DEBUG: Found VERITAS_VANASUM_LIBRARY=" << iLibPath << endl;
     }
     if( iLibPath.size() == 0 )
     {
@@ -41,6 +42,7 @@ bool loadVAnaSumLibrary()
         if( iEvndispSys )
         {
             iLibPath = string( iEvndispSys ) + "/lib/libVAnaSum.so";
+            cout << "DEBUG: Using EVNDISPSYS, iLibPath=" << iLibPath << endl;
         }
     }
     if( iLibPath.size() == 0 )
@@ -49,26 +51,46 @@ bool loadVAnaSumLibrary()
         if( iEvndisp )
         {
             iLibPath = string( iEvndisp ) + "/lib/libVAnaSum.so";
+            cout << "DEBUG: Using EVNDISP, iLibPath=" << iLibPath << endl;
         }
     }
 
-    if( iLibPath.size() > 0 && !gSystem->AccessPathName( iLibPath.c_str() ) )
+    if( iLibPath.size() > 0 )
     {
-        // Use gROOT->ProcessLine to properly load the library and its dictionaries
-        string loadCmd = "R__LOAD_LIBRARY(" + iLibPath + ");";
-        int result = gROOT->ProcessLine( loadCmd.c_str() );
-        if( result >= 0 )
+        cout << "DEBUG: Checking if library exists: " << iLibPath << endl;
+        if( !gSystem->AccessPathName( iLibPath.c_str() ) )
         {
-            iLibraryLoaded = true;
-            return true;
+            cout << "DEBUG: Library file exists, attempting to load with R__LOAD_LIBRARY" << endl;
+            // Use gROOT->ProcessLine to properly load the library and its dictionaries
+            string loadCmd = "R__LOAD_LIBRARY(" + iLibPath + ");";
+            cout << "DEBUG: Executing: " << loadCmd << endl;
+            int result = gROOT->ProcessLine( loadCmd.c_str() );
+            cout << "DEBUG: ProcessLine result: " << result << endl;
+            if( result >= 0 )
+            {
+                iLibraryLoaded = true;
+                cout << "DEBUG: Successfully loaded library from " << iLibPath << endl;
+                return true;
+            }
         }
+        else
+        {
+            cout << "DEBUG: Library file does NOT exist: " << iLibPath << endl;
+        }
+    }
+    else
+    {
+        cout << "DEBUG: No library path determined from environment variables" << endl;
     }
 
     // Try with just the library name
+    cout << "DEBUG: Trying to load libVAnaSum.so from ROOT library path" << endl;
     int result = gROOT->ProcessLine( "R__LOAD_LIBRARY(libVAnaSum.so);" );
+    cout << "DEBUG: ProcessLine result for libVAnaSum.so: " << result << endl;
     if( result >= 0 )
     {
         iLibraryLoaded = true;
+        cout << "DEBUG: Successfully loaded libVAnaSum.so from ROOT library path" << endl;
         return true;
     }
 
