@@ -19,8 +19,6 @@ ODIR="${2}/$CUT"
 echo "Output directory: $ODIR"
 mkdir -p "$ODIR"
 
-PDIR=$(pwd)
-
 # copy anasum log files to release test directory
 for F in $LFIL; do
     TF=$(basename $F .combined.root)

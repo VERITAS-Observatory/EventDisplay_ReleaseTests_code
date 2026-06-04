@@ -99,6 +99,11 @@ do
       echo "Run $R - log file not found: ${ANASUMLOG}"
       exit
    fi
+   # Skip runs without 4-telescope cuts
+   if ! grep -q "VGammaHadronCuts::printCutSummary() (ntel=4" "${ANASUMLOG}"; then
+      echo "RUN $R not a 4-telescope run..skipping"
+      continue
+   fi
    echo "DATADIR ${ANASUMLOG}"
    # read and extract run info from files
    INSTRUMENT_EPOCH=$(grep "Instrument epoch selected" "${ANASUMLOG}" | head -n 1 | awk '{print $NF}')
