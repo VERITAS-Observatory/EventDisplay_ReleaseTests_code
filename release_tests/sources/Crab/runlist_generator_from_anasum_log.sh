@@ -122,7 +122,7 @@ do
        OBSL="stdHV"
    fi
    ELEV=$(grep "mean elevation" "${ANASUMLOG}" | head -n 1 | awk '{print $3}')
-   EL=$(echo $ELEV | awk -v e=$ELEV '{if (e > 50 ) {print "SZE"} else if (e > 40 ) {print "MZE"} else if (e > 30 ) {print "LZE"} else {print "BZE"}}')
+   EL=$(echo $ELEV | awk -v e=$ELEV '{if (e > 60 ) {print "SZE"} else if (e > 45 ) {print "MZE"} else if (e > 35 ) {print "LZE"} else {print "BZE"}}')
    WOBBLESTRING=$(grep "Wobble offsets (currE)" "${ANASUMLOG}")
    n_offset=$(echo "$WOBBLESTRING" | head -n 1 | awk '{print $5}')
    w_offset=$(echo "$WOBBLESTRING" | head -n 1 | awk '{print $7}')
