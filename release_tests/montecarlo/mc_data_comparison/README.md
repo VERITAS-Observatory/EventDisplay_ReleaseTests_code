@@ -1,5 +1,7 @@
 # MC / Data Comparison
 
+**No apptainer usage!**
+
 Scripts and tools to compare Monte Carlo (MC) distributions with observational results from the Crab Nebula.
 
 ## Quick Start
