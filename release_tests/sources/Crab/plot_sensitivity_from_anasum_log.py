@@ -32,7 +32,9 @@ args = parser.parse_args()
 if not os.path.isdir(args.input_dir):
     raise SystemExit(f"Input directory does not exist: {args.input_dir}")
 
-log_files = sorted(glob.glob(os.path.join(args.input_dir, "*anasum*.log")))
+log_files = sorted(
+    glob.glob(os.path.join(args.input_dir, "*anasum*V6_20*ATM*SZE_0.5deg.combined.log"))
+)
 
 if not log_files:
     raise SystemExit(f"No anasum log files found in: {args.input_dir}")
@@ -46,6 +48,7 @@ all_on_rates = []
 all_off_rates = []
 
 for filepath in log_files:
+    print(f"Processing file: {filepath}")
     with open(filepath, "r") as f:
         content = f.read()
 

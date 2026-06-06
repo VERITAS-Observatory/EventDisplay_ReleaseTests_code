@@ -4,13 +4,13 @@
 #
 # requires:
 # - MC files for each minor epoch
-# - Crab results for each minor epoch (read from Crab runlists; used pre-processed data)
+# - Crab results for each minor epoch (read from Crab run lists; used pre-processed data)
 
 set -e
 
 if [[ $# < 2 ]]; then
 echo "
-  ./compareDatawithMC.sh <runparameter file> <SZE/MZE/LZE/WOBBLE>
+  ./compareDatawithMC.sh <run parameter file> <SZE/MZE/LZE/WOBBLE>
   --> choose zenith angle / wobble range
       SZE: small zenith angles (0.5 deg wobble)
       MZE: medium large zenith angles (0.5 deg wobble)
@@ -23,9 +23,9 @@ exit
 fi
 
 ###########################
-# read runparameter file
+# read run parameter file
 if [[ ! -e ${1} ]]; then
-   echo "Error, runparameter file not found: ${1}"
+   echo "Error, run parameter file not found: ${1}"
    exit
 fi
 # Eventdisplay version
@@ -58,10 +58,8 @@ fi
 # Directory for simulations
 SIMDIR=${VERITAS_IRFPRODUCTION_DIR}/${VERSION}/${ANALYSISTYPE}/$SIMTYPE/
 if [[ ! -e ${SIMDIR} ]]; then
-   if [[ ! -e ${SIMDIR} ]]; then
-       echo "Error: simulation directory not found: $SIMDIR"
-       exit
-   fi
+    echo "Error: simulation directory not found: $SIMDIR"
+    exit
 fi
 # Directory for mscw data files
 DDIR="$VERITAS_PREPROCESSED_DATA_DIR/${ANALYSISTYPE}/mscw/"
@@ -123,7 +121,7 @@ do
         ZEMAX="50."
     elif [[ $ELE = "LZE" ]]
     then
-        ZEMIN="50"
+        ZEMIN="50."
         ZEMAX="70."
         simfile="55deg_${MCWOFF}wob_NOISE${NSB}.mscw.root"
     # wobble set (everything not 0.5 deg)
@@ -215,9 +213,6 @@ do
 
         $EVNDISPSCRIPTS/helper_scripts/UTILITY.condorSubmission.sh ${FSCRIPT}.sh 4000M 10G
         condor_submit ${FSCRIPT}.sh.condor
-
-        continue
-
 
     done
 done
