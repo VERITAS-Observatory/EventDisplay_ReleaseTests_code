@@ -76,8 +76,9 @@ if [[ ! -e ${CDIR} ]]; then
 fi
 
 # output directory for MC/Data comparison
-BDIR=$(readlink -f "../../../../EventDisplay_Release_${VERSION}/mc_data_comparison/${ANALYSISTYPE}${DIRRECOTYPE}/${SIMTYPE}/")
+BDIR="../../../../EventDisplay_Release_${VERSION}/mc_data_comparison/${ANALYSISTYPE}${DIRRECOTYPE}/${SIMTYPE}/"
 mkdir -p ${BDIR}
+BDIR=$(readlink -f "../../../../EventDisplay_Release_${VERSION}/mc_data_comparison/${ANALYSISTYPE}${DIRRECOTYPE}/${SIMTYPE}/")
 echo "Results will be written to $BDIR"
 
 PWDIR=$(pwd)
