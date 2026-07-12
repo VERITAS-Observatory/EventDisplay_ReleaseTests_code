@@ -56,7 +56,7 @@ bool loadVAnaSumLibrary()
     {
         // Use gROOT->ProcessLine to properly load the library and its dictionaries
         string loadCmd = "R__LOAD_LIBRARY(" + iLibPath + ");";
-        int result = gROOT->ProcessLine( loadCmd.c_str() );
+        Longptr_t result = gROOT->ProcessLine( loadCmd.c_str() );
         if( result >= 0 )
         {
             iLibraryLoaded = true;
