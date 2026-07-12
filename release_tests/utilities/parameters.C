@@ -65,7 +65,7 @@ bool loadVAnaSumLibrary()
     }
 
     // Try with just the library name
-    int result = gROOT->ProcessLine( "R__LOAD_LIBRARY(libVAnaSum.so);" );
+    Longptr_t result = gROOT->ProcessLine( "R__LOAD_LIBRARY(libVAnaSum.so);" );
     if( result >= 0 )
     {
         iLibraryLoaded = true;
