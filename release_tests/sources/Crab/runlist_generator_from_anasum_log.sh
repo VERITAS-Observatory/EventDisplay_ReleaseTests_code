@@ -101,7 +101,7 @@ do
    fi
    # Skip runs without 4-telescope cuts
    if ! grep -q "VGammaHadronCuts::printCutSummary() (ntel=4" "${ANASUMLOG}"; then
-      echo "RUN $R not a 4-telescope run..skipping"
+      echo "Run $R is not a 4-telescope run; skipping"
       continue
    fi
    echo "DATADIR ${ANASUMLOG}"
