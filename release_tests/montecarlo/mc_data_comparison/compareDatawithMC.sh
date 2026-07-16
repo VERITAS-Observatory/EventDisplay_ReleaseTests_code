@@ -216,6 +216,14 @@ do
                 exit 1
             fi
             ln -s -f "${MSCWFILE}" "$DMSCWDIR"/"$D".mscw.root
+            if [[ ${RECOMETHOD} -eq 2 ]]; then
+                XGBFILE="${MSCWFILE%.mscw.root}.mscw.xgb_stereo.root"
+                if [[ ! -e "${XGBFILE}" ]]; then
+                    echo "Error: XGB stereo file not found for run ${D}: ${XGBFILE}"
+                    exit 1
+                fi
+                ln -s -f "${XGBFILE}" "$DMSCWDIR"/"$D".mscw.xgb_stereo.root
+            fi
         done
         echo "TEMP DIRECTORY (to be deleted by hand): $DMSCWDIR"
 
