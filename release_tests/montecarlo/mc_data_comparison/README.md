@@ -48,12 +48,12 @@ The `<run parameter file>` must contain the following fields (one per line):
 ```text
 * VERSION         <eventdisplay_version>  # e.g., V6
 * SIMTYPE         <simulation_type>       # e.g., CARE, CARE_RedHV
-* ATMOSPHERE      <atmosphere_id>         # e.g., 61*, 62*
-* EPOCH           <epoch_id>              # e.g., V4*, V5*, V6*
+* ATMOSPHERE      <atmosphere_id>         # e.g., 61, 62 (repeat line for multiple values)
+* EPOCH           <epoch_id> [nsb]        # e.g., V6_2019_2020s 0
 * CRAB_NSB        <nsb_level>             # e.g., 0, 1, or NOTSET
 ```
 
-Fields marked with `*` support wildcards for multiple values.
+The leading `*` is part of the parameter-file syntax. To provide multiple atmospheres or epochs, repeat the corresponding line. If `CRAB_NSB` is `NOTSET`, the script reads the per-epoch NSB value from the optional 4th field of each `* EPOCH ...` line.
 
 ### Step 2: Execute Comparison
 
@@ -94,4 +94,4 @@ EventDisplay_Release_<version>/mc_data_comparison/<analysis_type><disp>/<simulat
 
 - **CARE_RedHV simulations**: Handled with modified BDT cut (BDT=0 instead of 1)
 - **Summer vs Winter Atmosphere**: Automatically selected based on epoch suffix ('s' or 'w')
-- **Wobble Mode**: Forces atmosphere 61 (summer) and 1.0° wobble offset
+- **Wobble Mode**: Forces atmosphere 61 and 1.0° wobble offset

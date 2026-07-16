@@ -28,18 +28,19 @@ if [[ ! -e ${1} ]]; then
    echo "Error, run parameter file not found: ${1}"
    exit
 fi
+RUNPAR="${1}"
 # Eventdisplay version
-VERSION=$(grep VERSION ${1} | awk '{print $3}')
+VERSION=$(awk '$1 == "*" && $2 == "VERSION" {print $3; exit}' "${RUNPAR}")
 # Simulation type
-SIMTYPE=$(grep SIMTYPE ${1} | awk '{print $3}')
+SIMTYPE=$(awk '$1 == "*" && $2 == "SIMTYPE" {print $3; exit}' "${RUNPAR}")
 # Atmosphere
-ATMOS=($(grep ATMOSPHERE ${1} | grep "*" | awk '{print $3}'))
+ATMOS=($(awk '$1 == "*" && $2 == "ATMOSPHERE" {print $3}' "${RUNPAR}"))
 # Epochs
-EPOCH=($(grep EPOCH ${1} | grep "*" | grep -v MAJOR | awk '{print $3}'))
+EPOCH=($(awk '$1 == "*" && $2 == "EPOCH" {print $3}' "${RUNPAR}"))
 # Wobble (default observing; WOBBLE mode fixed to 1 deg)
 MCWOFF="0.5"
 # Crab NSB level
-CRABNSB=$(grep CRAB_NSB ${1} | awk '{print $3}')
+CRABNSB=$(awk '$1 == "*" && $2 == "CRAB_NSB" {print $3; exit}' "${RUNPAR}")
 # Analysis type
 ANALYSISTYPE="AP"
 DIRRECOTYPE="_DISP"
@@ -51,10 +52,21 @@ if [[ ! -z  $VERITAS_ANALYSIS_TYPE ]]; then
         DIRRECOTYPE=""
     fi
 fi
+# Stereo reconstruction method
+# (0: dispBDT, 2: XGB)
+RECOMETHOD=0
 ###########################
 
 # elevation range
 [[ "$2" ]] && ELE=$2 || ELE="SZE"
+case "$ELE" in
+    SZE|MZE|LZE|WOBBLE)
+        ;;
+    *)
+        echo "Error: invalid elevation/wobble selection '${ELE}' (expected SZE, MZE, LZE, or WOBBLE)"
+        exit 1
+        ;;
+esac
 # Directory for simulations
 SIMDIR=${VERITAS_IRFPRODUCTION_DIR}/${VERSION}/${ANALYSISTYPE}/$SIMTYPE/
 if [[ ! -e ${SIMDIR} ]]; then
@@ -87,14 +99,27 @@ get_mscw_file()
 {
     data_dir="${1}"
     runn="${2}"
-    if [ ! -e ${data_dir}/$runn.mscw.root ]; then
-        if [[ ${runn} -lt 100000 ]]; then
-            EDIR="${data_dir}/${runn:0:1}/"
-        else
-            EDIR="${data_dir}/${runn:0:2}/"
-        fi
+    local direct_file="${data_dir}/${runn}.mscw.root"
+    local edir=""
+    local nested_file=""
+
+    if [[ -e "${direct_file}" ]]; then
+        echo "${direct_file}"
+        return 0
     fi
-    echo "$EDIR/$runn.mscw.root"
+
+    if [[ ${runn} -lt 100000 ]]; then
+        edir="${data_dir}/${runn:0:1}"
+    else
+        edir="${data_dir}/${runn:0:2}"
+    fi
+    nested_file="${edir}/${runn}.mscw.root"
+    if [[ -e "${nested_file}" ]]; then
+        echo "${nested_file}"
+        return 0
+    fi
+
+    return 1
 }
 
 for I in "${EPOCH[@]}"
@@ -105,11 +130,15 @@ do
     fi
     # Crab NSB level (depends on epoch)
     if [[ $CRABNSB == "NOTSET" ]]; then
-        NSB=$(grep ${I} ${1} | grep -v MAJOR | awk '{print $4}')
+        NSB=$(awk -v epoch="${I}" '$1 == "*" && $2 == "EPOCH" && $3 == epoch {print $4; exit}' "${RUNPAR}")
     else
         NSB=${CRABNSB}
     fi
-    # Simulation file (elevation depedent)
+    if [[ -z "${NSB}" ]]; then
+        echo "Error: no NSB value found for epoch ${I} in ${RUNPAR}"
+        exit 1
+    fi
+    # Simulation file (elevation dependent)
     if [[ $ELE = "SZE" ]]
     then
         simfile="20deg_${MCWOFF}wob_NOISE${NSB}.mscw.root"
@@ -150,6 +179,7 @@ do
         if [[ $SIMTYPE == "CARE_RedHV"* ]]; then
             REDHV="_redHV"
         fi
+        SIMATM="${atm}"
         echo "Processing $I $A ${atm} $REDHV"
 
         # Crab run list
@@ -177,7 +207,11 @@ do
         mkdir -p "$DMSCWDIR"
         DFILES=$(cat $RUNLIST)
         for D in $DFILES; do
-            ln -s -f $(get_mscw_file $DDIR $D) "$DMSCWDIR"/"$D".mscw.root
+            if ! MSCWFILE=$(get_mscw_file "$DDIR" "$D"); then
+                echo "Error: mscw file not found for run ${D} in ${DDIR}"
+                exit 1
+            fi
+            ln -s -f "${MSCWFILE}" "$DMSCWDIR"/"$D".mscw.root
         done
         echo "TEMP DIRECTORY (to be deleted by hand): $DMSCWDIR"
 
@@ -190,14 +224,11 @@ do
         SIMMSCW="MSCW_RECID0${DIRRECOTYPE}"
 
         # write run parameter file
-        if [[ $SIMTYPE == "CARE_RedHV" ]]; then
-            echo "* SIMS $SIMDIR/${I}_ATM61_gamma/${SIMMSCW}/${simfile} 4 ${MCWOFF} 0. 0. 0. ${ZEMIN} ${ZEMAX}" > $ODIR/mcdatacomparison.runparameter
+        if [[ $SIMTYPE == "CARE_RedHV"* ]]; then
+            SIMATM="61"
+            echo "* SIMS $SIMDIR/${I}_ATM${SIMATM}_gamma/${SIMMSCW}/${simfile} 4 ${MCWOFF} 0. 0. 0. ${ZEMIN} ${ZEMAX}" > $ODIR/mcdatacomparison.runparameter
         else
-            if [[ $ELE == "WOBBLE" ]] && [[ ${I: -1} == "s" ]]; then
-                echo "* SIMS $SIMDIR/${I}_ATM62_gamma/${SIMMSCW}/${simfile} 4 ${MCWOFF} 0. 0. 0. ${ZEMIN} ${ZEMAX}" > $ODIR/mcdatacomparison.runparameter
-            else
-                echo "* SIMS $SIMDIR/${I}_ATM${atm}_gamma/${SIMMSCW}/${simfile} 4 ${MCWOFF} 0. 0. 0. ${ZEMIN} ${ZEMAX}" > $ODIR/mcdatacomparison.runparameter
-            fi
+            echo "* SIMS $SIMDIR/${I}_ATM${SIMATM}_gamma/${SIMMSCW}/${simfile} 4 ${MCWOFF} 0. 0. 0. ${ZEMIN} ${ZEMAX}" > $ODIR/mcdatacomparison.runparameter
         fi
         echo "* ON ${DMSCWDIR}/[0-9]*.mscw.root 4 -99. -99. 0. 360. ${ZEMIN} ${ZEMAX}" >> $ODIR/mcdatacomparison.runparameter
         echo "* OFF ${DMSCWDIR}/[0-9]*.mscw.root 4 -99. -99. 0. 360. ${ZEMIN} ${ZEMAX}" >> $ODIR/mcdatacomparison.runparameter
@@ -206,8 +237,9 @@ do
         FSCRIPT="$DMSCWDIR/compareDatawithMC_qsub_${SIMTYPE}_${I}${A}_${ELE}_${MCWOFF}_${NSB}"
         rm -f ${FSCRIPT}.sh
         sed -e "s|OUTDIR|$ODIR|" \
-            -e "s|EEPOCHTM|${I}_ATM${atm}|" \
-            -e "s|CURRENTDIR|$PWDIR|" compareDatawithMC_qsub.sh > ${FSCRIPT}.sh
+            -e "s|EEPOCHTM|${I}_ATM${SIMATM}|" \
+            -e "s|CURRENTDIR|$PWDIR|" \
+            -e "s|METHODRECO|$RECOMETHOD|" compareDatawithMC_qsub.sh > ${FSCRIPT}.sh
 
         echo "Run script: $FSCRIPT"
         chmod u+x $FSCRIPT.sh

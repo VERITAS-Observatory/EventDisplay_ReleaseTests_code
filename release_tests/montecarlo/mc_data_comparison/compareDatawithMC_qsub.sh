@@ -7,6 +7,7 @@ source $EVNDISPSYS/setObservatory.sh VTS
 ODIR=OUTDIR
 CDIR=CURRENTDIR
 EPOCHATM=EEPOCHTM
+RECOMETHOD=METHODRECO
 
 BDT="1"
 if [[ ${ODIR} == *"CARE_RedHV"* ]]; then
@@ -20,7 +21,7 @@ $EVNDISPSYS/bin/compareDatawithMC \
           $ODIR/mcdatacomparison.runparameter \
           -3 \
           $ODIR/mcdatacomparison.root \
-          ${BDT} $EPOCHATM \
+          ${BDT} $EPOCHATM $RECOMETHOD \
           > $ODIR/mcdatacomparison.log
 
 # prepare all plots
