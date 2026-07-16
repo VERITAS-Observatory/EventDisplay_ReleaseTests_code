@@ -55,6 +55,10 @@ fi
 # Stereo reconstruction method
 # (0: dispBDT, 2: XGB)
 RECOMETHOD=0
+STEREOMETHOD=""
+if [[ $RECOMETHOD == 2 ]]; then
+    STEREOMETHOD="_XGB"
+fi
 ###########################
 
 # elevation range
@@ -88,9 +92,9 @@ if [[ ! -e ${CDIR} ]]; then
 fi
 
 # output directory for MC/Data comparison
-BDIR="../../../../EventDisplay_Release_${VERSION}/mc_data_comparison/${ANALYSISTYPE}${DIRRECOTYPE}/${SIMTYPE}/"
+BDIR="../../../../EventDisplay_Release_${VERSION}/mc_data_comparison/${ANALYSISTYPE}${DIRRECOTYPE}${STEREOMETHOD}/${SIMTYPE}/"
 mkdir -p ${BDIR}
-BDIR=$(readlink -f "../../../../EventDisplay_Release_${VERSION}/mc_data_comparison/${ANALYSISTYPE}${DIRRECOTYPE}/${SIMTYPE}/")
+BDIR=$(readlink -f "../../../../EventDisplay_Release_${VERSION}/mc_data_comparison/${ANALYSISTYPE}${DIRRECOTYPE}${STEREOMETHOD}/${SIMTYPE}/")
 echo "Results will be written to $BDIR"
 
 PWDIR=$(pwd)
