@@ -14,14 +14,21 @@ if [[ ${ODIR} == *"CARE_RedHV"* ]]; then
     BDT="0"
 fi
 
+CUT="-3"
+T2="0.035"
+XGBSUFFIX="xgb_stereo"
+MAXZE="20."
+ERECOMETHOD="0"
+
 PP=$(pwd)
 cd ${CDIR}
 
 $EVNDISPSYS/bin/compareDatawithMC \
           $ODIR/mcdatacomparison.runparameter \
-          -3 \
+          $CUT \
           $ODIR/mcdatacomparison.root \
-          ${BDT} $EPOCHATM $RECOMETHOD \
+          ${BDT} $EPOCHATM $ERECOMETHOD \
+          ${XGBSUFFIX} ${MAXZE} ${T2} $RECOMETHOD \
           > $ODIR/mcdatacomparison.log
 
 # prepare all plots
