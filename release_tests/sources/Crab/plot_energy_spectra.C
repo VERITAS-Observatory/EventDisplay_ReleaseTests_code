@@ -14,6 +14,8 @@
 
 #include "TF1.h"
 
+R__LOAD_LIBRARY($EVNDISPSYS/lib/libVAnaSum.so)
+
 #include "../../utilities/parameters.C"
 #include "../../utilities/printutilities.C"
 
