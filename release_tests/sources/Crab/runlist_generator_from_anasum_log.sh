@@ -78,16 +78,19 @@ fill_run()
 
 get_anasum_log_file()
 {
-    data_dir="${1}"
-    runn="${2}"
-    if [ ! -e ${data_dir}/$runn.anasum.log ]; then
-        if [[ ${runn} -lt 100000 ]]; then
-            EDIR="${data_dir}/${runn:0:1}/"
-        else
-            EDIR="${data_dir}/${runn:0:2}/"
-        fi
+    local data_dir="${1}"
+    local runn="${2}"
+    local direct_log="${data_dir}/${runn}.anasum.log"
+
+    # Anasum logs may either be stored directly in data_dir or in a
+    # subdirectory selected from the first one/two run-number digits.
+    if [[ -e "${direct_log}" ]]; then
+        echo "${direct_log}"
+    elif [[ ${runn} -lt 100000 ]]; then
+        echo "${data_dir}/${runn:0:1}/${runn}.anasum.log"
+    else
+        echo "${data_dir}/${runn:0:2}/${runn}.anasum.log"
     fi
-    echo "$EDIR/$runn.anasum.log"
 }
 
 echo "READING anasum files from ${DATADIR}"
