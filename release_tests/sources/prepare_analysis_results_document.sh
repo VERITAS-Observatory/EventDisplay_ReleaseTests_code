@@ -25,11 +25,14 @@ LTARGETS=$(cat TARGETS.dat)
 
 PDOC="AnalysisResults_header.md "
 
+# skip targets without result files (glob that matches nothing is left literal)
+shopt -s nullglob
 for T in ${LTARGETS}; do
-    for F in $(ls ${IDIR}/${T}/results_${T}_*.md); do
+    for F in ${IDIR}/${T}/results_${T}_*.md; do
         PDOC="${PDOC} ${F}"
     done
 done
+shopt -u nullglob
 PDOC="${PDOC} AnalysisResults_footer.md"
 
 # echo "Pandoc command: pandoc -s -o ./AnalysisResults.md ${PDOC}"
