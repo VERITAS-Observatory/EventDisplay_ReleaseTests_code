@@ -20,9 +20,10 @@ Simplified overview of the testing (somewhat outdated):
 
 ## Abbreviations
 
-- SZE = small zenith angles (0-40deg)
-- MZE = medium zenith angles (40-50 deg)
-- LZE = large zenith angles (50-70 deg)
+- SZE = small zenith angles (0-30deg)
+- MZE = medium zenith angles (30-45 deg)
+- LZE = large zenith angles (45-55 deg)
+- BZE = beyond reasonable zenith angles (>55 deg)
 
 ## Directory structure
 
