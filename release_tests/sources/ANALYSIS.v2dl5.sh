@@ -94,7 +94,7 @@ sed -e "s|RRUNLIST|$RLIST|" \
 
 chmod u+x "$FSCRIPT.sh"
 
-"$EVNDISPSCRIPTS/helper_scripts/UTILITY.condorSubmission.sh" "$FSCRIPT.sh" "$h_vmem" "$tmpdir_size"
+"$EVNDISPSCRIPTS/helper_scripts/UTILITY.condorSubmission.sh" "$FSCRIPT.sh" "$h_vmem" "$tmpdir_size" || exit 1
 echo
 echo "-------------------------------------------------------------------------------"
 echo "Job submission using HTCondor - run the following script to submit jobs at once:"
