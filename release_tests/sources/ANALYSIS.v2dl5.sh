@@ -4,19 +4,13 @@
 #
 
 # qsub parameters
-h_cpu=11:59:00; h_vmem=8000M; tmpdir_size=5G
+h_vmem=8000M; tmpdir_size=5G
 
-# EventDisplay version
-EDVERSION=$($EVNDISPSYS/bin/anasum --version | tr -d .)
-# Directory with preprocessed data
-DEFANASUMDIR="$VERITAS_DATA_DIR/processed_data_${EDVERSION}/${VERITAS_ANALYSIS_TYPE:0:2}/anasum/"
-V2DL5="$EVNDISPSYS/../V2DL5/"
-
-if [ $# -lt 4 ]; then
+if [ $# -lt 5 ]; then
 echo "
 Reflected region analysis using gammapy
 
-ANALYSIS.v2dl5.sh <run list> <target> <data/obs store director> <output directory> <configuration template>
+ANALYSIS.v2dl5.sh <run list> <target> <data/obs store directory> <output directory> <configuration template>
 
 required parameters:
 
@@ -24,7 +18,7 @@ required parameters:
 
     <target>                target name (SIMBAD conform)
 
-    <data/obs store directory> directory with data/obs store
+    <data/obs store directory> directory with DL3 observation store
 
     <output directory>      output directory for results
 
@@ -37,20 +31,41 @@ corresponding conda installation (v2dl5)
 "
 exit
 fi
-RLIST=$(readlink -f "$1")
+if [[ -z "${EVNDISPSYS:-}" || -z "${VERITAS_USER_LOG_DIR:-}" ]]; then
+    echo "Error, EVNDISPSYS and VERITAS_USER_LOG_DIR must be set, exiting..."
+    exit 1
+fi
+V2DL5="$EVNDISPSYS/../V2DL5/"
+RLIST=$(cd "$(dirname "$1")" && pwd)/$(basename "$1")
 TARGET="$2"
-DATASTORE=$3
-ODIR=$4
-CONFIG=$5
+DATASTORE="$3"
+ODIR="$4"
+CONFIG="$5"
 
 # Read runlist
 if [ ! -f "$RLIST" ] ; then
     echo "Error, runlist $RLIST not found, exiting..."
     exit 1
 fi
+if [ ! -d "$DATASTORE" ] ; then
+    echo "Error, datastore $DATASTORE not found, exiting..."
+    exit 1
+fi
+if [ ! -f "$CONFIG" ] ; then
+    echo "Error, configuration template $CONFIG not found, exiting..."
+    exit 1
+fi
+if [ ! -f "${V2DL5}/v2dl5/scripts/reflected_region_analysis.py" ] ; then
+    echo "Error, V2DL5 reflected-region script not found below $V2DL5, exiting..."
+    exit 1
+fi
+if [ ! -f "${V2DL5}/data/hip_mag9.fits.gz" ] ; then
+    echo "Error, V2DL5 star catalogue not found below $V2DL5, exiting..."
+    exit 1
+fi
 
 # make output directory if it doesn't exist
-mkdir -p $ODIR
+mkdir -p "$ODIR"
 echo -e "Output files will be written to:\n $ODIR"
 
 # run scripts are written into this directory
@@ -58,29 +73,28 @@ DATE=`date +"%y%m%d"`
 LOGDIR="$VERITAS_USER_LOG_DIR/${DATE}-$(uuidgen)/V2DL5"
 mkdir -p "$LOGDIR"
 echo -e "Log files will be written to:\n $LOGDIR"
-rm -f ${LOGIDR}/x* 2>/dev/null
+rm -f "${LOGDIR}"/x* 2>/dev/null
 
 # Job submission script
 SUBSCRIPT=$( dirname "$0" )"/ANALYSIS.v2dl5_qsub"
-TIMETAG=`date +"%s"`
 
 # Prepare template file
-if [[ -e $CONFIG ]]; then
-    sed -e "s|DATASTORE|$DATASTORE|" \
-        -e "s|TARGET|$TARGET|" $CONFIG > ${LOGDIR}/config.yml
-fi
+sed -e "s|DATASTORE|$DATASTORE|" \
+    -e "s|TARGET|$TARGET|" \
+    -e "s|STAR_FILE|${V2DL5}/data/hip_mag9.fits.gz|" \
+    "$CONFIG" > "${LOGDIR}/config.yml"
 
 
 FSCRIPT="${LOGDIR}/V2DL5"
-rm -f $FSCRIPT.sh
+rm -f "$FSCRIPT.sh"
 
 sed -e "s|RRUNLIST|$RLIST|" \
     -e "s|OODIR|$ODIR|" \
-    -e "s|CCONFIG|${LOGDIR}/config.yml|" $SUBSCRIPT.sh > $FSCRIPT.sh
+    -e "s|CCONFIG|${LOGDIR}/config.yml|" "$SUBSCRIPT.sh" > "$FSCRIPT.sh"
 
-chmod u+x $FSCRIPT.sh
+chmod u+x "$FSCRIPT.sh"
 
-$EVNDISPSCRIPTS/helper_scripts/UTILITY.condorSubmission.sh $FSCRIPT.sh $h_vmem $tmpdir_size
+"$EVNDISPSCRIPTS/helper_scripts/UTILITY.condorSubmission.sh" "$FSCRIPT.sh" "$h_vmem" "$tmpdir_size" || exit 1
 echo
 echo "-------------------------------------------------------------------------------"
 echo "Job submission using HTCondor - run the following script to submit jobs at once:"

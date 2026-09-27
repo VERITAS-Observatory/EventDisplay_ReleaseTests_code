@@ -17,8 +17,9 @@
  * Helper for ROOT macros: load libVAnaSum from environment.
  * Search order:
  *   1) $VERITAS_VANASUM_LIBRARY
- *   2) $EVNDISP/lib/libVAnaSum.so
- *   3) ROOT library path via "libVAnaSum.so"
+ *   2) $EVNDISPSYS/lib/libVAnaSum.so
+ *   3) $EVNDISP/lib/libVAnaSum.so
+ *   4) ROOT library path via "libVAnaSum.so"
  */
 bool loadVAnaSumLibrary()
 {
@@ -36,6 +37,14 @@ bool loadVAnaSumLibrary()
     }
     if( iLibPath.size() == 0 )
     {
+        const char* iEvndispSys = gSystem->Getenv( "EVNDISPSYS" );
+        if( iEvndispSys )
+        {
+            iLibPath = string( iEvndispSys ) + "/lib/libVAnaSum.so";
+        }
+    }
+    if( iLibPath.size() == 0 )
+    {
         const char* iEvndisp = gSystem->Getenv( "EVNDISP" );
         if( iEvndisp )
         {
@@ -45,21 +54,26 @@ bool loadVAnaSumLibrary()
 
     if( iLibPath.size() > 0 && !gSystem->AccessPathName( iLibPath.c_str() ) )
     {
-        if( gSystem->Load( iLibPath.c_str() ) >= 0 )
+        // Use gROOT->ProcessLine to properly load the library and its dictionaries
+        string loadCmd = "R__LOAD_LIBRARY(" + iLibPath + ");";
+        Longptr_t result = gROOT->ProcessLine( loadCmd.c_str() );
+        if( result >= 0 )
         {
             iLibraryLoaded = true;
             return true;
         }
     }
 
-    if( gSystem->Load( "libVAnaSum.so" ) >= 0 )
+    // Try with just the library name
+    Longptr_t result = gROOT->ProcessLine( "R__LOAD_LIBRARY(libVAnaSum.so);" );
+    if( result >= 0 )
     {
         iLibraryLoaded = true;
         return true;
     }
 
     cout << "Error: unable to load libVAnaSum.so. "
-         << "Set VERITAS_VANASUM_LIBRARY or EVNDISP." << endl;
+         << "Set VERITAS_VANASUM_LIBRARY, EVNDISPSYS, or EVNDISP." << endl;
     return false;
 }
 

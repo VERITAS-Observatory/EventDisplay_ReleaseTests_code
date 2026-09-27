@@ -78,16 +78,19 @@ fill_run()
 
 get_anasum_log_file()
 {
-    data_dir="${1}"
-    runn="${2}"
-    if [ ! -e ${data_dir}/$runn.anasum.log ]; then
-        if [[ ${runn} -lt 100000 ]]; then
-            EDIR="${data_dir}/${runn:0:1}/"
-        else
-            EDIR="${data_dir}/${runn:0:2}/"
-        fi
+    local data_dir="${1}"
+    local runn="${2}"
+    local direct_log="${data_dir}/${runn}.anasum.log"
+
+    # Anasum logs may either be stored directly in data_dir or in a
+    # subdirectory selected from the first one/two run-number digits.
+    if [[ -e "${direct_log}" ]]; then
+        echo "${direct_log}"
+    elif [[ ${runn} -lt 100000 ]]; then
+        echo "${data_dir}/${runn:0:1}/${runn}.anasum.log"
+    else
+        echo "${data_dir}/${runn:0:2}/${runn}.anasum.log"
     fi
-    echo "$EDIR/$runn.anasum.log"
 }
 
 echo "READING anasum files from ${DATADIR}"
@@ -98,6 +101,11 @@ do
    if [ ! -e ${ANASUMLOG} ]; then
       echo "Run $R - log file not found: ${ANASUMLOG}"
       exit
+   fi
+   # Skip runs without 4-telescope cuts
+   if ! grep -q "VGammaHadronCuts::printCutSummary() (ntel=4" "${ANASUMLOG}"; then
+      echo "Run $R is not a 4-telescope run; skipping"
+      continue
    fi
    echo "DATADIR ${ANASUMLOG}"
    # read and extract run info from files
@@ -117,7 +125,7 @@ do
        OBSL="stdHV"
    fi
    ELEV=$(grep "mean elevation" "${ANASUMLOG}" | head -n 1 | awk '{print $3}')
-   EL=$(echo $ELEV | awk -v e=$ELEV '{if (e > 50 ) {print "SZE"} else if (e > 40 ) {print "MZE"} else if (e > 30 ) {print "LZE"} else {print "BZE"}}')
+   EL=$(echo $ELEV | awk -v e=$ELEV '{if (e > 60 ) {print "SZE"} else if (e > 45 ) {print "MZE"} else if (e > 35 ) {print "LZE"} else {print "BZE"}}')
    WOBBLESTRING=$(grep "Wobble offsets (currE)" "${ANASUMLOG}")
    n_offset=$(echo "$WOBBLESTRING" | head -n 1 | awk '{print $5}')
    w_offset=$(echo "$WOBBLESTRING" | head -n 1 | awk '{print $7}')

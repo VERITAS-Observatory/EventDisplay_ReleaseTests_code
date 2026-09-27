@@ -2,6 +2,9 @@ name: eventdisplay-release-tests
 channels:
   - conda-forge
 dependencies:
+  - python>=3.8
+  - numpy
+  - matplotlib
   - pandoc
   - pre-commit
   - towncrier
@@ -11,3 +14,4 @@ dependencies:
 # activate: conda activate eventdisplay-release-tests
 # update (conda/mamba): conda env update -f environment.yml --prune
 # update (micromamba): micromamba update -f environment.yml
+# update (micromamba): micromamba update -n eventdisplay-release-tests -f environment.yml

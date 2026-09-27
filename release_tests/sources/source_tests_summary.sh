@@ -4,7 +4,8 @@
 #
 #
 if [[ $# -lt 4 ]]; then
-echo "
+cat <<'EOF'
+
     ./source_tests_summary.sh <data dir with anasum log files> <directory of last version with results> <output directory> <new version>
 
     Extract results from anasum log files and prepare markdown files for each object / epoch / cut type.
@@ -25,7 +26,7 @@ echo "
     ./source_tests_summary.sh $VERITAS_USER_DATA_DIR/analysis/Results/v491/AP/SourceTests ../../../EventDisplay_Release_v490/SourceTests ../../../EventDisplay_Release_v491/SourceTests v491.0
     ```
 
-"
+EOF
 exit
 fi
 
