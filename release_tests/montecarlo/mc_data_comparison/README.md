@@ -24,7 +24,7 @@ NOTE! The zenith angle bins are different compared to those used in the Crab Neb
 ### Input Data Requirements
 
 - MC simulation files for each minor epoch (organized by atmosphere type)
-- Crab Nebula mscw results for each minor epoch
+- Crab Nebula mscw results and matching `*.mscw.xgb_stereo.root` files for each run
 - Run lists for Crab observations (generated separately)
 
 ## Preparation Steps
