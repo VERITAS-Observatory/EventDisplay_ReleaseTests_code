@@ -13,18 +13,14 @@ if [ ! -n "$1" ]; then
    exit
 fi
 
-#### TEMP FIXED VALUES
-CUT="NTel3-PointSource-Hard-TMVA-BDT"
-CUT="NTel2-PointSource-Soft-TMVA-BDT"
-CUT="NTel2-PointSource-Moderate-TMVA-BDT"
-CUT="NTel2-PointSource-Moderate"
-echo "WARNING: CUT is hardwired to $CUT (for now)"
-# Comparison plots - version and simtype hardwired
-COMPAREVERSION="v492"
-COMPARESIMTYPE="CARE_202404"
-COMPARECUT="NTel2-PointSource-ModerateXGB"
-#### (END TEMP FIXED VALUES)
-
+# Optional comparison is explicit in the invocation environment.
+COMPAREVERSION=${COMPAREVERSION:-}
+COMPARESIMTYPE=${COMPARESIMTYPE:-}
+COMPARECUT=${COMPARECUT:-}
+mapfile -t CUTLIST < <(awk '$1 == "*" && $2 == "CUT" {print $3}' "$1")
+((${#CUTLIST[@]})) || { echo "No CUT entries in $1" >&2; exit 1; }
+TESTED=0
+SKIPPED=0
 # Analysis type
 ANATYPE="${VERITAS_ANALYSIS_TYPE:0:2}"
 # Eventdisplay version
@@ -55,11 +51,10 @@ if [[ ! -z  $VERITAS_ANALYSIS_TYPE ]]; then
     fi
 fi
 
-ODIR="../../../../EventDisplay_Release_${VERSION}/irf_plotting/${ANALYSISTYPE}${DIRRECOTYPE}/${SIMTYPE}/${CUT}_ATM${ATMO}"
-mkdir -p ${ODIR}
+DDIR="$VERITAS_IRFPRODUCTION_DIR/${VERSION}/${ANALYSISTYPE}/${SIMTYPE}"
 
-DDIR="$VERITAS_IRFPRODUCTION_DIR/${VERSION}/${ANATYPE}/${SIMTYPE}"
-
+for CUT in "${CUTLIST[@]}"; do
+PLOT_BASE_DIR="${RELEASE_OUTPUT_DIR:-../../../../EventDisplay_Release_${VERSION}/irf_plotting}/${ANALYSISTYPE}${DIRRECOTYPE}/${SIMTYPE}/${CUT}"
 for Z in "${MCZE[@]}"
 do
     for W in "${MCWOFF[@]}"
@@ -73,12 +68,23 @@ do
                 fi
                 for A in "${ATMO[@]}"
                 do
-                    if [[ ${E} == "V6_2016_2017" ]] && [[ ${A} == "61" ]]; then
+                    ODIR="$PLOT_BASE_DIR/${E}_ATM${A}"
+                    mkdir -p "$ODIR"
+                    if true; then
                         IRFDIR="${DDIR}/${E}_ATM${A}_gamma/EffectiveAreas_Cut-${CUT}_DISP"
                         IRFFILE="EffArea-${SIMTYPE}-${E}-ID0-Ze${Z}deg-${W}wob-${N}-Cut-${CUT}"
                         echo "IRFDIR $IRFDIR"
                         echo "IRFFILE $IRFFILE"
+                        if [[ ! -s "$IRFDIR/$IRFFILE.root" ]]; then
+                            echo "SKIPPED missing $E ATM$A $CUT Ze$Z Woff$W NSB$N: $IRFDIR/$IRFFILE.root"
+                            SKIPPED=$((SKIPPED+1))
+                            continue
+                        fi
+                        echo "TESTED $E ATM$A $CUT Ze$Z Woff$W NSB$N"
+                        TESTED=$((TESTED+1))
                         if [[ -n $COMPAREVERSION ]]; then
+                            COMPARESIMTYPE=${COMPARESIMTYPE:-$SIMTYPE}
+                            COMPARECUT=${COMPARECUT:-$CUT}
                             COMP_IRFDIR=${IRFDIR//"$VERSION"/"$COMPAREVERSION"}
                             COMP_IRFDIR=${COMP_IRFDIR//"$SIMTYPE"/"$COMPARESIMTYPE"}
                             COMP_IRFFILE=${IRFFILE//"$SIMTYPE"/"$COMPARESIMTYPE"}
@@ -97,3 +103,7 @@ do
         done
     done
 done
+
+done
+echo "IRF coverage: $TESTED tested; $SKIPPED missing combinations skipped"
+((TESTED > 0)) || exit 1
