@@ -84,13 +84,13 @@ do
                         TESTED=$((TESTED+1))
                         if [[ -n $COMPAREVERSION ]]; then
                             COMPARESIMTYPE=${COMPARESIMTYPE:-$SIMTYPE}
-                            COMPARECUT=${COMPARECUT:-$CUT}
+                            COMPARE_CUT_FOR_CASE=${COMPARECUT:-$CUT}
                             COMP_IRFDIR=${IRFDIR//"$VERSION"/"$COMPAREVERSION"}
                             COMP_IRFDIR=${COMP_IRFDIR//"$SIMTYPE"/"$COMPARESIMTYPE"}
                             COMP_IRFFILE=${IRFFILE//"$SIMTYPE"/"$COMPARESIMTYPE"}
                             # compare TMVA with XGB file
-                            COMP_IRFDIR=${COMP_IRFDIR//"$CUT"/"$COMPARECUT"}
-                            COMP_IRFFILE=${COMP_IRFFILE//"$CUT"/"$COMPARECUT"}
+                            COMP_IRFDIR=${COMP_IRFDIR//"$CUT"/"$COMPARE_CUT_FOR_CASE"}
+                            COMP_IRFFILE=${COMP_IRFFILE//"$CUT"/"$COMPARE_CUT_FOR_CASE"}
                             echo "COMPIRFDIR (comparison): $COMP_IRFDIR"
                             echo "COMPIRFFILE (comparison): $COMP_IRFFILE"
                             root -l -q -b "plot_irf.C(\"${IRFDIR}\",\"${IRFFILE}\",\"${E}\",\"${A}\",\"${CUT}\",\"${Z}\",\"${W}\",\"${N}\",\"${MCAZ}\",\"${ODIR}\", \"${COMP_IRFDIR}\",\"${COMP_IRFFILE}\")"

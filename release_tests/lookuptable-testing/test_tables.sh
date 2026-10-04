@@ -1,7 +1,7 @@
 #!/bin/bash
 # Supply a reference observation matched to the tables under test.
 VERSION=$(cat "$VERITAS_EVNDISP_AUX_DIR/IRFVERSION") || exit 1
-TESTFILE=${1:-${TESTFILE:-}}
+TESTFILE=${1:-${TESTFILE:-$VERITAS_USER_DATA_DIR/analysis/Results/${VERSION}/Crab/evndisp/64080.root}}
 [[ -s $TESTFILE ]] || { echo "Usage: $0 <reference evndisp ROOT file> (or set TESTFILE)" >&2; exit 1; }
 ODIR="$VERITAS_USER_DATA_DIR/analysis/Results/$VERSION/table-tests"
 mkdir -p "$ODIR" || exit 1
