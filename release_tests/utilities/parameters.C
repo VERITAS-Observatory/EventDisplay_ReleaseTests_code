@@ -12,6 +12,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include "TInterpreter.h"
 
 /*
  * Helper for ROOT macros: load libVAnaSum from environment.
@@ -56,8 +57,9 @@ bool loadVAnaSumLibrary()
     {
         // Use gROOT->ProcessLine to properly load the library and its dictionaries
         string loadCmd = "R__LOAD_LIBRARY(" + iLibPath + ");";
-        Longptr_t result = gROOT->ProcessLine( loadCmd.c_str() );
-        if( result >= 0 )
+        TInterpreter::EErrorCode error = TInterpreter::kNoError;
+        Longptr_t result = gROOT->ProcessLine( loadCmd.c_str(), &error );
+        if( error == TInterpreter::kNoError && result >= 0 )
         {
             iLibraryLoaded = true;
             return true;
@@ -65,8 +67,9 @@ bool loadVAnaSumLibrary()
     }
 
     // Try with just the library name
-    Longptr_t result = gROOT->ProcessLine( "R__LOAD_LIBRARY(libVAnaSum.so);" );
-    if( result >= 0 )
+    Int_t error = TInterpreter::kNoError;
+    Longptr_t result = gROOT->ProcessLine( "R__LOAD_LIBRARY(libVAnaSum.so);", &error );
+    if( error == TInterpreter::kNoError && result >= 0 )
     {
         iLibraryLoaded = true;
         return true;
