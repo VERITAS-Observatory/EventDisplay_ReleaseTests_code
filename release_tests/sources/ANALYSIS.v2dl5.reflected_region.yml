@@ -22,7 +22,7 @@ datasets:
         magnitude_B: 7
         star_exclusion_radius: 0.30 deg
         fov: 3.5 deg
-        star_file: "$EVNDISPSYS/../V2DL5/data/hip_mag9.fits.gz"
+        star_file: "STAR_FILE"
     containment_correction: false
     safe_mask:
         methods: ['aeff-max']

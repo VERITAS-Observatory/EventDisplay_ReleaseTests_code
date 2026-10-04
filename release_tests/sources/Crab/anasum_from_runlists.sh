@@ -66,6 +66,10 @@ for CUT in $CUTS; do
     #########################
     # Directory for data files
     DDIR="$VERITAS_USER_DATA_DIR/analysis/Results/${VERSION}/${ANALYSISTYPE}/${OBJECT}/${MEPOCH}_${CUT}"
+    if [[ ! -d "$INDIR" ]]; then
+        echo "Error, input directory not found: $INDIR"
+        exit 1
+    fi
     mkdir -p "$DDIR"
     echo $DDIR
     for R in $RLISTS; do

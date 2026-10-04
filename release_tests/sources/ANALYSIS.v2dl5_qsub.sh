@@ -40,7 +40,7 @@ check_conda_installation()
 
 check_conda_installation
 
-source activate base
+source "$(conda info --base)/etc/profile.d/conda.sh"
 conda activate v2dl5
 export PYTHONPATH=\$PYTHONPATH:${V2DL5}
 
