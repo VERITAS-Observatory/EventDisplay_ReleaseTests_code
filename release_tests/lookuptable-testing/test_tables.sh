@@ -1,32 +1,29 @@
 #!/bin/bash
-# testing lookup tables by analysis
-# a run and see if the table tests are
-# survived at the start of the run
-# (look at the log files for the lines after
-# " lookup table file sanity check"
-#
-
-VERSION=$(cat $VERITAS_EVNDISP_AUX_DIR/IRFVERSION)
-
-TFV6=$(find $VERITAS_EVNDISP_AUX_DIR/Tables/ -name "*.root")
-
-TESTFILE="$VERITAS_USER_DATA_DIR/analysis/Results/${VERSION}/Crab/evndisp/64080.root"
-
-for T in ${TFV6}
-do
-     echo "Running mscw analysis for $T"
-     TB=$(basename $T .root)
-
-     ODIR="$VERITAS_USER_DATA_DIR/analysis/Results/${VERSION}/table-tests/"
-     mkdir -p ${ODIR}
-     OFIL="test.$TB.mscw"
-
-     echo $TB $OFIL $ODIR
-
-     rm -f ${ODIR}/${OFIL}.log
-     ${EVNDISPSYS}/bin/mscw_energy -tablesfile ${T} -noshorttree -maxnevents=10  -arrayrecid=0 \
-                       -inputfile ${TESTFILE} \
-                       -writeReconstructedEventsOnly=1 -outputfile ${ODIR}/${OFIL}.root > ${ODIR}/${OFIL}.log
-     # (not interested in the root file with events)
-     rm -f ${ODIR}/${OFIL}.root
+# Supply a reference observation matched to the tables under test.
+VERSION=$(cat "$VERITAS_EVNDISP_AUX_DIR/IRFVERSION") || exit 1
+TESTFILE=${1:-${TESTFILE:-}}
+[[ -s $TESTFILE ]] || { echo "Usage: $0 <reference evndisp ROOT file> (or set TESTFILE)" >&2; exit 1; }
+ODIR="$VERITAS_USER_DATA_DIR/analysis/Results/$VERSION/table-tests"
+mkdir -p "$ODIR" || exit 1
+mapfile -t TABLES < <(find "$VERITAS_EVNDISP_AUX_DIR/Tables" -type f -name "${TABLE_PATTERN:-*.root}")
+((${#TABLES[@]})) || { echo "No lookup tables found" >&2; exit 1; }
+failed=0
+for T in "${TABLES[@]}"; do
+    TB=$(basename "$T" .root)
+    OFIL="$ODIR/test.$TB.mscw"
+    echo "TEST reference=$TESTFILE table=$T"
+    rm -f "$OFIL.root"
+    if ! "$EVNDISPSYS/bin/mscw_energy" -tablesfile "$T" -noshorttree -maxnevents=10 -arrayrecid=0 \
+        -inputfile "$TESTFILE" -writeReconstructedEventsOnly=1 -outputfile "$OFIL.root" > "$OFIL.log" 2>&1; then
+        echo "FAILED executable: $T" >&2
+        failed=$((failed+1))
+    elif [[ ! -s $OFIL.root ]] || ! grep -q 'survived test of table file!' "$OFIL.log"; then
+        echo "FAILED missing output/sanity marker: $T" >&2
+        failed=$((failed+1))
+    else
+        echo "PASSED table sanity: $T"
+        rm -f "$OFIL.root"
+    fi
 done
+echo "Lookup coverage: ${#TABLES[@]} tested; $failed failed"
+((failed == 0))
