@@ -57,7 +57,7 @@ bool loadVAnaSumLibrary()
     {
         // Use gROOT->ProcessLine to properly load the library and its dictionaries
         string loadCmd = "R__LOAD_LIBRARY(" + iLibPath + ");";
-        Int_t error = TInterpreter::kNoError;
+        TInterpreter::EErrorCode error = TInterpreter::kNoError;
         Longptr_t result = gROOT->ProcessLine( loadCmd.c_str(), &error );
         if( error == TInterpreter::kNoError && result >= 0 )
         {
