@@ -1,0 +1,197 @@
+coordinate_reference: Eventdisplay_AnalysisFiles_VTS/AstroData/Catalogues/VERITASDB_sources_selected.dat
+  (ICRS degrees; frozen local catalogue positions)
+sources:
+  1ES0414p009:
+    hypothesis: point source at fixed catalogue position
+    target: 1ES 0414+009
+    frame: icrs
+    lon: 64.2208 deg
+    lat: 1.08169 deg
+  1ES1028p511:
+    hypothesis: point source at fixed catalogue position
+    target: 1ES1028+511
+    frame: icrs
+    lon: 157.827 deg
+    lat: 50.8956 deg
+  1ES1118p424:
+    hypothesis: point source at fixed catalogue position
+    target: 1ES1118+424
+    frame: icrs
+    lon: 170.198 deg
+    lat: 42.2047 deg
+  1ES1218p304:
+    hypothesis: point source at fixed catalogue position
+    target: 1ES1218+304
+    frame: icrs
+    lon: 185.341 deg
+    lat: 30.1769 deg
+  1ES1959p650:
+    hypothesis: point source at fixed catalogue position
+    target: 1ES1959+650
+    frame: icrs
+    lon: 299.999 deg
+    lat: 65.1486 deg
+  1ES2344p514:
+    hypothesis: point source at fixed catalogue position
+    target: 1ES2344+514
+    frame: icrs
+    lon: 356.77 deg
+    lat: 51.705 deg
+  3C273:
+    hypothesis: point source at fixed catalogue position
+    target: 3C273
+    frame: icrs
+    lon: 187.278 deg
+    lat: 2.05251 deg
+  B20912p029:
+    hypothesis: point source at fixed catalogue position
+    target: B2 0912+29
+    frame: icrs
+    lon: 138.968 deg
+    lat: 29.5567 deg
+  BLLac:
+    hypothesis: point source at fixed catalogue position
+    target: BL Lac
+    frame: icrs
+    lon: 330.68 deg
+    lat: 42.2778 deg
+  Crab:
+    hypothesis: point source at fixed catalogue position
+    target: Crab
+    frame: icrs
+    lon: 83.6333 deg
+    lat: 22.0145 deg
+  H1426p428:
+    hypothesis: point source at fixed catalogue position
+    target: H1426+428
+    frame: icrs
+    lon: 217.136 deg
+    lat: 42.6747 deg
+  HESSJ0632p057:
+    hypothesis: point source at fixed catalogue position
+    target: HESS J0632 +057
+    frame: icrs
+    lon: 98.2429 deg
+    lat: 5.80555 deg
+  IC310:
+    hypothesis: point source at fixed catalogue position
+    target: IC 310
+    frame: icrs
+    lon: 49.1793 deg
+    lat: 41.3248 deg
+  LHAASO_J2108p5157:
+    hypothesis: point source at fixed catalogue position
+    blocked: Supply reviewed coordinates and field exclusions before analysis
+  LS5039:
+    hypothesis: point source at fixed catalogue position
+    target: LS 5039
+    frame: icrs
+    lon: 276.563 deg
+    lat: -14.8484 deg
+  LSIp61303:
+    hypothesis: point source at fixed catalogue position
+    target: LS I +61 303
+    frame: icrs
+    lon: 40.1321 deg
+    lat: 61.2294 deg
+  LSVp4417:
+    hypothesis: point source at fixed catalogue position
+    target: LS V +4417
+    frame: icrs
+    lon: 70.2471 deg
+    lat: 44.5303 deg
+  M82:
+    hypothesis: point source at fixed catalogue position
+    target: M82
+    frame: icrs
+    lon: 148.967 deg
+    lat: 69.6803 deg
+  M87:
+    hypothesis: point source at fixed catalogue position
+    target: M87
+    frame: icrs
+    lon: 187.706 deg
+    lat: 12.3911 deg
+  MS1221.8p2452:
+    hypothesis: point source at fixed catalogue position
+    target: MS 1221.8+2452
+    frame: icrs
+    lon: 186.101 deg
+    lat: 24.6065 deg
+  Mrk501:
+    hypothesis: point source at fixed catalogue position
+    target: Mrk501
+    frame: icrs
+    lon: 253.467 deg
+    lat: 39.7603 deg
+  Mrk501short:
+    hypothesis: point source at fixed catalogue position
+    target: Mrk501
+    frame: icrs
+    lon: 253.467 deg
+    lat: 39.7603 deg
+    parent_source: Mrk501
+  PG1553+113:
+    hypothesis: point source at fixed catalogue position
+    target: PG1553+113
+    frame: icrs
+    lon: 238.929 deg
+    lat: 11.19 deg
+  PKS1424p240:
+    hypothesis: point source at fixed catalogue position
+    target: PKS 1424+240
+    frame: icrs
+    lon: 216.752 deg
+    lat: 23.8 deg
+  RBS0413:
+    hypothesis: point source at fixed catalogue position
+    target: RBS 0413
+    frame: icrs
+    lon: 49.9658 deg
+    lat: 18.7597 deg
+  RBS1366:
+    hypothesis: point source at fixed catalogue position
+    target: RBS 1366
+    frame: icrs
+    lon: 214.486 deg
+    lat: 25.7237 deg
+  RGBJ0710:
+    hypothesis: point source at fixed catalogue position
+    target: RGBJ0710+591
+    frame: icrs
+    lon: 107.625 deg
+    lat: 59.1392 deg
+  RGBJ1243p364:
+    hypothesis: point source at fixed catalogue position
+    target: RGB J1243+364
+    frame: icrs
+    lon: 190.803 deg
+    lat: 36.4622 deg
+  RGBJ1310p323:
+    hypothesis: point source at fixed catalogue position
+    blocked: Supply reviewed coordinates and field exclusions before analysis
+  SS433:
+    hypothesis: point source at fixed catalogue position
+    blocked: Supply reviewed coordinates and field exclusions before analysis
+  TXS1452p516:
+    hypothesis: point source at fixed catalogue position
+    blocked: Supply reviewed coordinates and field exclusions before analysis
+  Tycho:
+    hypothesis: point source at catalogue centre; not an extended-source total flux
+    target: Tycho
+    frame: icrs
+    lon: 6.28374 deg
+    lat: 64.1655 deg
+    blocked: Review field exclusions for point source test of this extended target
+  UMA2:
+    hypothesis: point source at catalogue centre; not an extended-source total flux
+    target: Ursa Major II
+    frame: icrs
+    lon: 132.875 deg
+    lat: 63.13 deg
+  VERJ0521p211:
+    hypothesis: point source at fixed catalogue position
+    target: VER J0521+211
+    frame: icrs
+    lon: 80.4417 deg
+    lat: 21.2143 deg
