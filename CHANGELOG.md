@@ -1,7 +1,3 @@
-## Unreleased
-
-- Add explicit Gammapy source campaigns with normalized selections, frozen positions, batch jobs and complete reports; correct the DL5 template and installed-package worker.
-
 ## [v492.0](https://github.com/VERITAS-Observatory/EventDisplay_ReleaseTests_code/releases/tag/v492.0) - 2026-05-17
 
 ### New Features
