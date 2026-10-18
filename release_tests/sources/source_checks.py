@@ -17,8 +17,6 @@ from pathlib import Path
 
 import yaml
 from astropy.table import Table
-from gammapy.data import DataStore
-from v2dl5.configuration import configuration
 
 SOURCES = Path(__file__).resolve().parent
 
@@ -44,9 +42,69 @@ def normalize(path):
     return runs, duplicates
 
 
+def available_cuts(dl3_base):
+    """List cut stores present under a DL3 release and analysis directory."""
+    prefix = "dl3_pointlike_"
+    return sorted(
+        path.name.removeprefix(prefix)
+        for path in Path(dl3_base).glob(f"{prefix}*")
+        if path.is_dir()
+    )
+
+
+def make_index_store(dl3_path, index_path, indexer):
+    """Build campaign-local Gammapy indexes for an existing V2DL3 store."""
+    index_path.mkdir(parents=True, exist_ok=True)
+    command = [
+        indexer,
+        "--folder_location",
+        str(dl3_path),
+        "--index_file_dir",
+        str(index_path),
+    ]
+    try:
+        result = subprocess.run(command, capture_output=True, text=True, check=False)
+    except OSError as exc:
+        raise ValueError(f"Cannot run V2DL3 indexer {indexer!r}: {exc}") from exc
+    if result.returncode:
+        detail = (result.stderr or result.stdout).strip()
+        raise ValueError(f"V2DL3 index generation failed for {dl3_path}: {detail}")
+    missing = [
+        name
+        for name in ("hdu-index.fits.gz", "obs-index.fits.gz")
+        if not (index_path / name).is_file()
+    ]
+    if missing:
+        detail = (result.stderr or result.stdout).strip()
+        message = f"V2DL3 indexer did not create {', '.join(missing)} for {dl3_path}"
+        if detail:
+            message += f": {detail}"
+        raise ValueError(message)
+
+
+def load_data_store(path):
+    """Load a generated campaign index with Gammapy."""
+    from gammapy.data import DataStore
+
+    return DataStore.from_dir(path)
+
+
+def validate_configuration(args):
+    """Validate a generated job configuration with V2DL5."""
+    from v2dl5.configuration import configuration
+
+    return configuration(args)
+
+
 def prepare(args):
     """Freeze normalized selections, numeric positions and eligible jobs."""
     output = Path(args.output).resolve()
+    if output.exists():
+        raise FileExistsError(output)
+    dl3_base = Path(args.dl3_base).resolve()
+    cuts = args.cuts or available_cuts(dl3_base)
+    if not cuts:
+        raise ValueError(f"No dl3_pointlike_* cut stores found under {dl3_base}")
     output.mkdir(parents=True, exist_ok=False)
     registry_path = Path(args.registry).resolve()
     registry = yaml.safe_load(registry_path.read_text())
@@ -63,22 +121,26 @@ def prepare(args):
     reference = None
     if args.reference:
         reference = json.loads((Path(args.reference) / "manifest.json").read_text())
-    stores = {}
-    for cut in args.cuts:
-        path = Path(args.dl3_base).resolve() / f"dl3_pointlike_{cut}"
+    stores, indexed_stores = {}, {}
+    for cut in cuts:
+        dl3_path = dl3_base / f"dl3_pointlike_{cut}"
+        index_path = output / "datastores" / f"dl3_pointlike_{cut}"
         try:
-            store = DataStore.from_dir(path)
+            make_index_store(dl3_path, index_path, args.indexer)
+            store = load_data_store(index_path)
             available = set(map(int, store.obs_table["OBS_ID"]))
             for hdu_type in ("events", "gti", "aeff", "edisp"):
                 matching = store.hdu_table[store.hdu_table["HDU_TYPE"] == hdu_type]
                 available &= {
                     int(row["OBS_ID"])
                     for row in matching
-                    if (path / str(row["FILE_DIR"]) / str(row["FILE_NAME"])).is_file()
+                    if (index_path / str(row["FILE_DIR"]) / str(row["FILE_NAME"])).is_file()
                 }
-            stores[cut] = (path, available, "")
+            stores[cut] = (index_path, available, "")
+            indexed_stores[cut] = str(index_path)
         except (OSError, ValueError, KeyError, IndexError) as exc:
-            stores[cut] = (path, set(), str(exc))
+            stores[cut] = (index_path, set(), str(exc))
+            indexed_stores[cut] = str(index_path)
     jobs, selections = [], []
     for source in targets:
         if args.source and source not in args.source:
@@ -163,7 +225,7 @@ def prepare(args):
                 result = directory / "result"
                 if not reason:
                     try:
-                        configuration(
+                        validate_configuration(
                             Namespace(
                                 config=str(config_path),
                                 run_list=str(normalized),
@@ -221,6 +283,8 @@ def prepare(args):
         "reference": args.reference,
         "release": args.release,
         "analysis_type": args.analysis_type,
+        "cuts": cuts,
+        "datastores": indexed_stores,
         "registry": registry,
         "registry_sha256": digest(registry_path),
         "template_sha256": digest(template),
@@ -383,7 +447,16 @@ def main():
     prep.add_argument("--dl3-base", required=True)
     prep.add_argument("--release", required=True)
     prep.add_argument("--analysis-type", choices=["AP", "NN"], required=True)
-    prep.add_argument("--cuts", nargs="+", required=True)
+    prep.add_argument(
+        "--cuts",
+        nargs="+",
+        help="Cut names to prepare (default: discover every dl3_pointlike_* store)",
+    )
+    prep.add_argument(
+        "--indexer",
+        default="v2dl3-generate-index-file",
+        help="V2DL3 index generation executable",
+    )
     prep.add_argument("--source", action="append", help="Optional pilot source (repeatable)")
     prep.add_argument("--registry", default=str(SOURCES / "source_checks.yml"))
     prep.add_argument("--config", default=str(SOURCES / "ANALYSIS.v2dl5.reflected_region.yml"))

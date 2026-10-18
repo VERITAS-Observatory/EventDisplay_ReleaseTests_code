@@ -1,8 +1,10 @@
 # Gammapy point source campaign
 
-Install `V2DL5-Binary-Analysis` in the `v2dl5` environment (`pip install -e .`
-in that repository). Use indexed DL3 stores for the intended release, AP/NN and
-cuts. This workflow does not create DL3 data. Run from `release_tests/sources`:
+Install `V2DL5-Binary-Analysis` in the `v2dl5` environment. If
+`v2dl3-generate-index-file` is not already on `PATH`, install V2DL3 there once
+with `pip install -e /path/to/V2DL3`. The campaign command uses that V2DL3 tool
+to index existing converted DL3 FITS files; it does not create DL3 data. Run
+from `release_tests/sources`:
 
 ```bash
 conda activate v2dl5
@@ -10,16 +12,26 @@ python source_checks.py prepare \
     --output /absolute/path/to/new-campaign \
     --dl3-base /absolute/path/to/processed_data_<minor>/AP \
     --release v492 --analysis-type AP \
-    --cuts moderate2tel soft2tel hard3tel \
     --cache /absolute/path/to/reduction-cache
 ```
 
-Start with `--source Crab` (repeatable). For NN specify
-`--analysis-type NN --cuts supersoftNN2tel`. Declare moderate2tel as the primary
-AP result; other cuts share events and are diagnostics. The output directory
-must be new. Preparation does not submit jobs. It writes `manifest.json`,
-normalized run lists, per-job configurations and eligible `run.sh`/`job.sub`
-files. Review `report.md` and the manifest before running.
+By default, this single preparation command discovers every `dl3_pointlike_*`
+directory under `--dl3-base`, builds campaign-local `hdu-index.fits.gz` and
+`obs-index.fits.gz` for each cut from its DL3 FITS files, then prepares every
+source and science selection in `TARGETS.dat`. The
+`v2dl3-generate-index-file` command must be on
+`PATH`; override it with `--indexer /path/to/v2dl3-generate-index-file` if
+needed. To select cuts explicitly, pass `--cuts moderate2tel soft2tel`.
+For NN use `--analysis-type NN`; the available NN cuts are discovered the same
+way. Use `--source Crab` only for an optional pilot.
+
+Index files live in the new campaign directory, so preparation does not rewrite
+the release's DL3 store. The output directory must be new. Preparation does not
+submit or run analyses. It writes `manifest.json`, normalized run lists,
+campaign-local indexes, per-job configurations and eligible `run.sh`/`job.sub`
+files. Review `report.md` and the manifest before running. A cut with no
+converted DL3 FITS files or a failed index generation is marked blocked with
+the indexer's error.
 
 Original lists stay intact. Duplicate IDs are recorded and removed from generated
 selections, overlaps are recorded, and the annotated Crab `runs_with_problems`
