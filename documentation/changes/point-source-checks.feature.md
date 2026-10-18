@@ -1,0 +1,1 @@
+Add a reproducible Gammapy point-source campaign for checking DL5 releases. Campaigns normalize run selections, record missing data and failures, and report fluxes, test statistics, and one-sided upper limits for each source, selection, and cut.
