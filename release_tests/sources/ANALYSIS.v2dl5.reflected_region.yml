@@ -13,10 +13,11 @@ on_region:
 
 datasets:
     type: 1d
-    stack: false
+    # Fit the stacked ON/OFF spectrum: joint WStat fits over many sparse runs are unstable.
+    stack: true
     geom:
         axes:
-            energy: {min: 0.1 TeV, max: 100 TeV, nbins: 30}
+            energy: {min: 0.057 TeV, max: 100 TeV, nbins: 30}
             energy_true: {min: 0.05 TeV, max: 100 TeV, nbins: 40}
     exclusion_region:
         on_radius: 0.5 deg
@@ -31,19 +32,17 @@ datasets:
     background:
         method: reflected
 fit:
-    fit_range: {min: 0.1 TeV, max: 20 TeV}
+    fit_range: {min: 0.057 TeV, max: 100 TeV}
     model: pl
 
 flux_points:
-    energy: {min: 0.1 TeV, max: 20 TeV, nbins: 10}
+    energy: {min: 0.057 TeV, max: 100 TeV, nbins: 10}
 
 light_curve:
     enabled: false
     energy: {min: 1. TeV, max: 20 TeV}
     time_zone: -7
 
-# Fixed-index normalization-only test and one-sided 95% upper limit.
-integral_flux:
-    energy: {min: 1 TeV, max: 20 TeV}
-    index: 2.5
-    n_sigma_ul: 1.6448536269514722
+# The campaign uses the all-event significance and the power-law fit.
+# Skip the optional fixed-index integral-flux estimator.
+integral_flux: null

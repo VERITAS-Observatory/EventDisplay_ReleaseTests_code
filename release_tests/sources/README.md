@@ -23,8 +23,8 @@ macros remain in `Crab/`.
 
 Use `source_checks.py` to prepare explicit source selections, run local or Condor
 jobs and collect Gammapy results, including missing/failed cases. See the
-[point source runbook](DL5_POINT_SOURCE_CHECKS.md) for installation, source
-registry, commands and validation. One `prepare` command covers every source
+[point source runbook](DL5_POINT_SOURCE_CHECKS.md) for installation,
+target names, commands and validation. One `prepare` command covers every source
 and discovers and indexes every available cut. DL5 products are independent of
 the anasum-only summary workflow below. The legacy `ANALYSIS.v2dl5*.sh` wrappers
 remain available for individual jobs with an installed V2DL5 package.
