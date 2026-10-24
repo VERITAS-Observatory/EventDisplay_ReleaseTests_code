@@ -13,8 +13,8 @@ import shlex
 import subprocess
 import sys
 import time
-from concurrent.futures import ThreadPoolExecutor, as_completed
 from argparse import Namespace
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
 import yaml
@@ -257,8 +257,11 @@ def prepare(args):
                 directory.mkdir(parents=True)
                 # Runs missing from the store are skipped by v2dl5 and reported, not blocking.
                 missing = sorted(set(runs) - available)
-                reason = error or store_error or ("" if set(runs) - set(missing) else
-                                                  "No requested run in DL3 store")
+                reason = (
+                    error
+                    or store_error
+                    or ("" if set(runs) - set(missing) else "No requested run in DL3 store")
+                )
                 config = copy.deepcopy(base_config)
                 config["observations"]["datastore"] = str(store_path)
                 if getattr(args, "cache", None):
@@ -356,8 +359,16 @@ def prepare(args):
 
 DETECTION_THRESHOLD = 5.0
 COLUMNS = (
-    "ontime_h", "n_on", "n_off", "alpha", "excess", "significance",
-    "index", "index_err", "amplitude", "amplitude_err",
+    "ontime_h",
+    "n_on",
+    "n_off",
+    "alpha",
+    "excess",
+    "significance",
+    "index",
+    "index_err",
+    "amplitude",
+    "amplitude_err",
 )
 
 
@@ -416,8 +427,18 @@ def collect(output):
     table = Table(
         rows=rows,
         names=(
-            "source", "selection", "cut", "release", "analysis_type", "status",
-            "requested", "accepted", "reason", "result", "fit_success", "detected",
+            "source",
+            "selection",
+            "cut",
+            "release",
+            "analysis_type",
+            "status",
+            "requested",
+            "accepted",
+            "reason",
+            "result",
+            "fit_success",
+            "detected",
             *COLUMNS,
         ),
     )
@@ -433,7 +454,8 @@ def collect(output):
         "",
         "Spectrum: power law dN/dE = N0 (E / 1 TeV)^-index, forward-folded fit of the stacked runs",
         "in the safe energy range (effective area > 10% of maximum). Listed for detections only",
-        f"(significance >= {DETECTION_THRESHOLD:g} and successful fit). N0 in 1e-12 TeV^-1 cm^-2 s^-1.",
+        f"(significance >= {DETECTION_THRESHOLD:g} and successful fit). "
+        "N0 in 1e-12 TeV^-1 cm^-2 s^-1.",
         "",
         "Selections and cuts share events; do not combine their significances.",
         "",
@@ -527,7 +549,10 @@ def main():
     commands = parser.add_subparsers(dest="action", required=True)
     prep = commands.add_parser("prepare")
     prep.add_argument(
-        "--workers", "-j", type=int, default=2,
+        "--workers",
+        "-j",
+        type=int,
+        default=2,
         help="Maximum concurrent cut indexing or target preparation tasks (default: 2)",
     )
     prep.add_argument("--output", required=True, help="New campaign directory")
@@ -595,17 +620,13 @@ def main():
             else:
                 ready.append((number, job))
         with ThreadPoolExecutor(max_workers=args.workers) as executor:
-            futures = [
-                executor.submit(run_job, number, total, job)
-                for number, job in ready
-            ]
+            futures = [executor.submit(run_job, number, total, job) for number, job in ready]
             for future in as_completed(futures):
                 number, label, elapsed, returncode, message = future.result()
                 if returncode:
                     failed = True
                     print(
-                        f"[{number}/{total}] FAILED {label}; {message}; "
-                        f"after {elapsed:.1f} s",
+                        f"[{number}/{total}] FAILED {label}; {message}; " f"after {elapsed:.1f} s",
                         flush=True,
                     )
                 else:

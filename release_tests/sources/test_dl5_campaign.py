@@ -4,8 +4,8 @@ import json
 import os
 from argparse import Namespace
 from pathlib import Path
-from types import SimpleNamespace
 from threading import Barrier
+from types import SimpleNamespace
 
 import pytest
 import source_checks
@@ -204,23 +204,56 @@ def test_prepare_rejects_invalid_workers_before_creating_output(tmp_path, worker
     assert not output.exists()
 
 
-@pytest.mark.parametrize("significance,fit_success,detected", [
-    (7.5, True, True),
-    (1.2, False, False),
-])
+@pytest.mark.parametrize(
+    "significance,fit_success,detected",
+    [
+        (7.5, True, True),
+        (1.2, False, False),
+    ],
+)
 def test_collect_reads_significance_and_power_law(tmp_path, significance, fit_success, detected):
     result = tmp_path / "result"
     (result / "data").mkdir(parents=True)
     (result / "status.json").write_text(json.dumps({"status": "complete", "accepted": 1}))
-    (result / "data/significance.yaml").write_text(yaml.safe_dump(
-        {"ontime_s": 3600.0, "n_on": 30, "n_off": 100, "alpha": 0.1, "excess": 20.0,
-         "significance": significance}))
+    (result / "data/significance.yaml").write_text(
+        yaml.safe_dump(
+            {
+                "ontime_s": 3600.0,
+                "n_on": 30,
+                "n_off": 100,
+                "alpha": 0.1,
+                "excess": 20.0,
+                "significance": significance,
+            }
+        )
+    )
     (result / "data/fit.yaml").write_text(yaml.safe_dump({"success": fit_success}))
-    (result / "data/models.yaml").write_text(yaml.safe_dump({"components": [{"spectral": {
-        "parameters": [{"name": "index", "value": 2.5, "error": 0.1},
-                       {"name": "amplitude", "value": 3e-11, "error": 1e-12}]}}]}))
-    job = dict(source="Crab", selection="runs", cut="moderate", release="v491",
-               analysis_type="AP", requested=1, result=str(result), status="ready")
+    (result / "data/models.yaml").write_text(
+        yaml.safe_dump(
+            {
+                "components": [
+                    {
+                        "spectral": {
+                            "parameters": [
+                                {"name": "index", "value": 2.5, "error": 0.1},
+                                {"name": "amplitude", "value": 3e-11, "error": 1e-12},
+                            ]
+                        }
+                    }
+                ]
+            }
+        )
+    )
+    job = dict(
+        source="Crab",
+        selection="runs",
+        cut="moderate",
+        release="v491",
+        analysis_type="AP",
+        requested=1,
+        result=str(result),
+        status="ready",
+    )
     (tmp_path / "manifest.json").write_text(json.dumps({"jobs": [job]}))
     row = source_checks.collect(tmp_path)[0]
     assert row["status"] == "complete"
@@ -233,8 +266,16 @@ def test_collect_reads_significance_and_power_law(tmp_path, significance, fit_su
 
 
 def test_collect_reports_absent_result_as_not_run(tmp_path):
-    job = dict(source="Crab", selection="runs", cut="moderate", release="v491",
-               analysis_type="AP", requested=1, result=str(tmp_path / "none"), status="ready")
+    job = dict(
+        source="Crab",
+        selection="runs",
+        cut="moderate",
+        release="v491",
+        analysis_type="AP",
+        requested=1,
+        result=str(tmp_path / "none"),
+        status="ready",
+    )
     (tmp_path / "manifest.json").write_text(json.dumps({"jobs": [job]}))
     row = source_checks.collect(tmp_path)[0]
     assert row["status"] == "not_run"
