@@ -13,8 +13,9 @@ from pathlib import Path
 from astropy.table import Table
 
 LINE1 = re.compile(
-    r"^(?P<version>v[\d.]+\w*): (?P<runs>\d+) runs .*?, (?P<minutes>[\d.]+) min, "
-    r"Non: (?P<non>\d+), Noff: (?P<noff_scaled>[\d.]+) \(\s*(?P<noff>\d+), norm (?P<norm>[\d.]+)\)"
+    r"^(?P<version>v[\d.]+\w*):\s+(?P<runs>\d+) runs .*?,\s+(?P<minutes>[\d.]+) min, "
+    r"Non:\s+(?P<non>\d+), Noff:\s+(?P<noff_scaled>[\d.]+) "
+    r"\(\s*(?P<noff>\d+), norm\s+(?P<norm>[\d.]+)\)"
 )
 LINE2 = re.compile(
     r"^(?P<version>v[\d.]+\w*): (?P<sigma>-?[\d.]+) sigma, Rates:\s+(?P<rate>-?[\d.]+) \+/-\s+"
