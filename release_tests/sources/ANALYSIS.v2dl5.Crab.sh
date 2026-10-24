@@ -35,6 +35,7 @@ for CUT in ${CUTS}; do
         continue
     fi
     for RLIST in "${RUNLISTS[@]}"; do
+        [[ "${RLIST}" == *runs_with_problems* ]] && continue
         [[ -s "${RLIST}" ]] || { echo "Skipping empty run list: ${RLIST}" >&2; status=1; continue; }
         EPOCH=$(basename "${RLIST}" .dat)
         EPOCH=${EPOCH#runlist_releaseTesting_}

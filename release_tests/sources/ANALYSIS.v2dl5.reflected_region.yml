@@ -8,21 +8,23 @@ observations:
     obs_cone_radius: 1.5 deg
     required_irf: ['aeff', 'edisp']
 
+on_region:
+    target: TARGET
+
 datasets:
     type: 1d
-    stack: false
+    # Fit the stacked ON/OFF spectrum: joint WStat fits over many sparse runs are unstable.
+    stack: true
     geom:
         axes:
-            energy: {min: 0.1 TeV, max: 100 TeV, nbins: 30}
+            energy: {min: 0.057 TeV, max: 100 TeV, nbins: 30}
             energy_true: {min: 0.05 TeV, max: 100 TeV, nbins: 40}
-    on_region:
-        target: TARGET
     exclusion_region:
         on_radius: 0.5 deg
         magnitude_B: 7
         star_exclusion_radius: 0.30 deg
         fov: 3.5 deg
-        star_file: "STAR_FILE"
+        star_file: hip_mag9.fits.gz
     containment_correction: false
     safe_mask:
         methods: ['aeff-max']
@@ -30,12 +32,17 @@ datasets:
     background:
         method: reflected
 fit:
-    fit_range: {min: 0.1 TeV, max: 20 TeV}
+    fit_range: {min: 0.057 TeV, max: 100 TeV}
     model: pl
 
 flux_points:
-    energy: {min: 0.1 TeV, max: 20 TeV, nbins: 10}
+    energy: {min: 0.057 TeV, max: 100 TeV, nbins: 10}
 
 light_curve:
-    energy: {min: 1. TeV, max: 100 TeV}
+    enabled: false
+    energy: {min: 1. TeV, max: 20 TeV}
     time_zone: -7
+
+# The campaign uses the all-event significance and the power-law fit.
+# Skip the optional fixed-index integral-flux estimator.
+integral_flux: null
