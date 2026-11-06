@@ -29,13 +29,13 @@ Expect installation of V2DL5 (https://github.com/VERITAS-Observatory/V2DL5) and
 corresponding conda installation (v2dl5)
 
 "
-exit
+exit 1
 fi
 if [[ -z "${EVNDISPSYS:-}" || -z "${VERITAS_USER_LOG_DIR:-}" ]]; then
     echo "Error, EVNDISPSYS and VERITAS_USER_LOG_DIR must be set, exiting..."
     exit 1
 fi
-V2DL5="$EVNDISPSYS/../V2DL5/"
+
 RLIST=$(cd "$(dirname "$1")" && pwd)/$(basename "$1")
 TARGET="$2"
 DATASTORE="$3"
@@ -55,15 +55,6 @@ if [ ! -f "$CONFIG" ] ; then
     echo "Error, configuration template $CONFIG not found, exiting..."
     exit 1
 fi
-if [ ! -f "${V2DL5}/v2dl5/scripts/reflected_region_analysis.py" ] ; then
-    echo "Error, V2DL5 reflected-region script not found below $V2DL5, exiting..."
-    exit 1
-fi
-if [ ! -f "${V2DL5}/data/hip_mag9.fits.gz" ] ; then
-    echo "Error, V2DL5 star catalogue not found below $V2DL5, exiting..."
-    exit 1
-fi
-
 # make output directory if it doesn't exist
 mkdir -p "$ODIR"
 echo -e "Output files will be written to:\n $ODIR"
@@ -81,7 +72,6 @@ SUBSCRIPT=$( dirname "$0" )"/ANALYSIS.v2dl5_qsub"
 # Prepare template file
 sed -e "s|DATASTORE|$DATASTORE|" \
     -e "s|TARGET|$TARGET|" \
-    -e "s|STAR_FILE|${V2DL5}/data/hip_mag9.fits.gz|" \
     "$CONFIG" > "${LOGDIR}/config.yml"
 
 
