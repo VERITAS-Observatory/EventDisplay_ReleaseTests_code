@@ -32,18 +32,18 @@ MEPOCH=($(grep MAJOREPOCH ${1} | grep "*" | awk '{print $3}'))
 # Source name
 OBJECT=($(grep SOURCE ${1} | grep "*" | awk '{print $3}'))
 CUTS=""
-# CUT lines contain both a full cut token and a short alias.
-# Always consume the alias in field 4 to avoid mixing naming schemes.
-while IFS= read -r cut_alias; do
-    if [[ -z "$cut_alias" ]]; then
-        echo "Error, malformed '* CUT' line in runparameter file: ${1}"
+# CUT lines have the format "* CUT <cut name> <e1> <e2>" (exactly five fields).
+# The old format with a second (alias) name is not supported.
+while IFS= read -r cut_name; do
+    if [[ -z "$cut_name" ]]; then
+        echo "Error, malformed '* CUT' line in runparameter file (expected '* CUT <cut name> <e1> <e2>'): ${1}"
         exit 1
     fi
-    CUTS="$CUTS $cut_alias"
-done < <(awk '/^\* CUT[[:space:]]+/ { if (NF < 4) { print ""; next } print $4 }' "${1}")
+    CUTS="$CUTS $cut_name"
+done < <(awk '/^\* CUT[[:space:]]+/ { if (NF != 5 || $4 !~ /^[0-9.]+$/ || $5 !~ /^[0-9.]+$/) { print ""; next } print $3 }' "${1}")
 
 if [[ -z "$CUTS" ]]; then
-    echo "Error, no CUT aliases (field 4 of '* CUT' lines) found in runparameter file: ${1}"
+    echo "Error, no '* CUT <cut name> <e1> <e2>' lines found in runparameter file: ${1}"
     exit 1
 fi
 echo "CUTS $CUTS"
