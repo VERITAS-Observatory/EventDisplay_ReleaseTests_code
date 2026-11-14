@@ -76,7 +76,7 @@ case "$ELE" in
         ;;
 esac
 # Directory for simulations
-SIMDIR=${VERITAS_IRFPRODUCTION_DIR}/${VERSION}_fs25/${ANALYSISTYPE}/$SIMTYPE/
+SIMDIR=${VERITAS_IRFPRODUCTION_DIR}/${VERSION}/${ANALYSISTYPE}/$SIMTYPE/
 if [[ ! -e ${SIMDIR} ]]; then
     echo "Error: simulation directory not found: $SIMDIR"
     exit
