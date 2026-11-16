@@ -260,17 +260,21 @@ do
                 SIMATM="61"
             fi
             CONFIGDIR="${BDIR}/${I}_MC-ATM${SIMATM}_${ELE}_wobble${MCWOFF}_NSB${NSB}/${DATASET}"
-        mkdir -p "$CONFIGDIR"
-        ODIR=$(mktemp -d "$CONFIGDIR/$(date +%Y%m%d_%H%M%S)-XXXXXXXX")
+        ODIR="$CONFIGDIR"
+        mkdir -p "$ODIR"
         PLOTLABEL="comparison_${RECONSTRUCTION}_${DATASET}"
         echo "Comparison output: $ODIR"
+        mkdir -p "$ODIR/tmp"
         cp "$RUNLIST" "$ODIR/crab-runlist.dat"
         printf 'Reconstruction: %s\nCrab runlist: %s\nMC file: %s\n' \
             "$RECONSTRUCTION" "$RUNLIST" "$simfile" > "$ODIR/comparison-settings.txt"
 
         # tmp mscw file in output directory
+        # Use one staging directory per dataset and replace its input links on
+        # each submission. Do not remove the directory: Condor logs live here.
         DMSCWDIR=${ODIR}/tmp
         mkdir -p "$DMSCWDIR"
+        find "$DMSCWDIR" -maxdepth 1 -type l -delete
         DFILES=$(cat $RUNLIST)
         for D in $DFILES; do
             if ! MSCWFILE=$(get_mscw_file "$DDIR" "$D"); then

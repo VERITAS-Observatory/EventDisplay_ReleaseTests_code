@@ -4,9 +4,6 @@
 
 #include "TCanvas.h"
 #include "TFile.h"
-#include "TF1.h"
-#include "TFitResult.h"
-#include "TFitResultPtr.h"
 #include "TGraphErrors.h"
 #include "TH1D.h"
 #include "TH2D.h"
@@ -22,47 +19,46 @@
 
 namespace
 {
-double containmentRadius( double fraction, double scale1, double scale2 )
+// Direct 68% quantile from the existing linear theta2 histogram. This does not extrapolate
+// beyond the comparison theta2 selection. For ON-OFF excess,
+// retain signed bins and reject profiles that are not monotonically cumulative.
+bool countR68( TH1D* h, double& r68, double& error )
 {
-    double low = 0.;
-    double high = 50. * std::max( scale1, scale2 );
-    for( int i = 0; i < 100; i++ )
+    if( !h || h->Integral( 1, h->GetNbinsX() ) <= 0. ) return false;
+    const double theta2Cut = 0.035;
+    double total = 0.;
+    for( int bin = 1; bin <= h->GetNbinsX(); bin++ )
     {
-        double mid = 0.5 * ( low + high );
-        if( fraction * exp( -mid / scale1 ) + ( 1. - fraction ) * exp( -mid / scale2 ) > 0.32 ) low = mid;
-        else high = mid;
+        double theta2Low = h->GetXaxis()->GetBinLowEdge( bin );
+        double theta2High = h->GetXaxis()->GetBinUpEdge( bin );
+        if( theta2Low >= theta2Cut ) continue;
+        double fractionInside = ( std::min( theta2High, theta2Cut ) - theta2Low ) / ( theta2High - theta2Low );
+        total += h->GetBinContent( bin ) * fractionInside;
     }
-    return sqrt( 0.5 * ( low + high ) );
-}
-
-bool fitR68( TH1D* h, double& r68, double& error )
-{
-    if( !h || h->Integral() <= 0. ) return false;
-    TF1 model( Form( "containment_model_%s", h->GetName() ), "[0]*([1]/[2]*exp(-x/[2])+(1-[1])/[3]*exp(-x/[3]))", 0., 0.03 );
-    model.SetParameters( h->Integral() * h->GetBinWidth( 1 ), 0.7, 0.005, 0.025 );
-    model.SetParLimits( 0, 1.e-9, h->Integral() * h->GetBinWidth( 1 ) * 100. );
-    model.SetParLimits( 1, 0.01, 0.99 );
-    model.SetParLimits( 2, 0.00005, 0.3 );
-    model.SetParLimits( 3, 0.00005, 0.3 );
-    TFitResultPtr fit = h->Fit( &model, "QSNRI" );
-    if( int( fit ) || !fit.Get() || fit->CovMatrixStatus() != 3 || fit->Ndf() <= 0 || fit->Chi2() / fit->Ndf() > 5. ) return false;
-    double p[3] = {fit->Parameter( 1 ), fit->Parameter( 2 ), fit->Parameter( 3 )};
-    if( p[0] < 0.02 || p[0] > 0.98 || p[1] < 0.0001 || p[2] < 0.0001 || p[1] > 0.29 || p[2] > 0.29 ) return false;
-    r68 = containmentRadius( p[0], p[1], p[2] );
-    if( r68 * r68 >= 0.03 ) return false;
-    double grad[3];
-    for( int i = 0; i < 3; i++ )
+    if( total <= 0. ) return false;
+    double target = 0.68 * total;
+    double cumulative = 0.;
+    for( int bin = 1; bin <= h->GetNbinsX(); bin++ )
     {
-        double step = p[i] * 1.e-4, saved = p[i];
-        p[i] = saved + step; double up = containmentRadius( p[0], p[1], p[2] );
-        p[i] = saved - step; double down = containmentRadius( p[0], p[1], p[2] );
-        p[i] = saved; grad[i] = ( up - down ) / ( 2. * step );
+        double theta2Low = h->GetXaxis()->GetBinLowEdge( bin );
+        double theta2High = h->GetXaxis()->GetBinUpEdge( bin );
+        if( theta2Low >= theta2Cut ) break;
+        double usedTheta2High = std::min( theta2High, theta2Cut );
+        double fractionInside = ( usedTheta2High - theta2Low ) / ( theta2High - theta2Low );
+        double content = h->GetBinContent( bin ) * fractionInside;
+        if( content < 0. ) return false;
+        double next = cumulative + content;
+        if( next >= target && content > 0. )
+        {
+            double fraction = ( target - cumulative ) / content;
+            double theta2 = theta2Low + fraction * ( usedTheta2High - theta2Low );
+            r68 = sqrt( theta2 );
+            error = ( usedTheta2High - theta2Low ) / ( 2. * sqrt( theta2 ) * sqrt( 12. * content ) );
+            return std::isfinite( r68 ) && r68 > 0.;
+        }
+        cumulative = next;
     }
-    double variance = 0.;
-    for( int i = 0; i < 3; i++ ) for( int j = 0; j < 3; j++ ) variance += grad[i] * fit->CovMatrix( i + 1, j + 1 ) * grad[j];
-    if( !std::isfinite( variance ) || variance <= 0. ) return false;
-    error = sqrt( variance );
-    return error < 0.5 * r68;
+    return false;
 }
 
 struct Sample
@@ -80,13 +76,15 @@ bool fillGraph( TH2D* h, TGraphErrors* graph, const char* label )
     {
         TH1D* projection = h->ProjectionY( Form( "proj_%s_%d", label, bin ), bin, bin );
         double r = 0., e = 0.;
-        if( fitR68( projection, r, e ) )
+        if( countR68( projection, r, e ) )
         {
             int point = graph->GetN();
             graph->SetPoint( point, h->GetXaxis()->GetBinCenter( bin ), r );
             graph->SetPointError( point, 0., e );
+            std::cout << label << ": energy bin " << bin << " log10(E/TeV)="
+                      << h->GetXaxis()->GetBinCenter( bin ) << " r68=" << r << " +/- " << e << " deg\n";
         }
-        else std::cout << label << ": omitted energy bin " << bin << " (fit failed quality checks)\n";
+        else std::cout << label << ": omitted energy bin " << bin << " (invalid signed cumulative profile or no 68% crossing)\n";
         delete projection;
     }
     return true;
@@ -111,12 +109,12 @@ void compare_containment( const char* nominalPath, const char* smearPath, const 
 
     samples[0].mc->SetMarkerStyle( 20 ); samples[0].mc->SetMarkerColor( kRed + 1 ); samples[0].mc->SetLineColor( kRed + 1 );
     samples[1].mc->SetMarkerStyle( 21 ); samples[1].mc->SetMarkerColor( kBlue + 1 ); samples[1].mc->SetLineColor( kBlue + 1 );
-    samples[0].data->SetMarkerStyle( 24 ); samples[0].data->SetMarkerColor( kRed + 1 ); samples[0].data->SetLineColor( kRed + 1 );
-    samples[1].data->SetMarkerStyle( 25 ); samples[1].data->SetMarkerColor( kBlue + 1 ); samples[1].data->SetLineColor( kBlue + 1 );
+    samples[0].data->SetMarkerStyle( 25 ); samples[0].data->SetMarkerColor( kRed + 1 ); samples[0].data->SetLineColor( kRed + 1 );
+    samples[1].data->SetMarkerStyle( 21 ); samples[1].data->SetMarkerColor( kBlue + 1 ); samples[1].data->SetLineColor( kBlue + 1 );
 
     TCanvas canvas( "containment_comparison", "MC containment comparison", 900, 650 );
     canvas.SetGrid(); canvas.SetBottomMargin( 0.19 );
-    TH1F* frame = canvas.DrawFrame( -2., 0., 1.5, 0.4 );
+    TH1F* frame = canvas.DrawFrame( -2., 0., 1.5, 0.2 );
     frame->SetTitle( "68% angular containment versus reconstructed energy;log_{10}(E_{rec}/TeV);r_{68} [deg]" );
     samples[0].mc->Draw( "P SAME" ); samples[1].mc->Draw( "P SAME" );
     // Both data histograms should be identical. Draw one data series once so
@@ -128,6 +126,6 @@ void compare_containment( const char* nominalPath, const char* smearPath, const 
     legend.AddEntry( samples[0].data, "Crab ON - #alpha OFF (same data)", "p" );
     legend.Draw();
     TLatex note; note.SetNDC(); note.SetTextSize( 0.026 );
-    note.DrawLatex( 0.12, 0.09, "Two-Gaussian extrapolation from #theta^{2} < 0.03 deg^{2}; statistical fit errors; exploratory" );
+    note.DrawLatex( 0.12, 0.09, "Counted 68% radius within selected #theta^{2} profile; no tail extrapolation" );
     canvas.SaveAs( outputPdf );
 }

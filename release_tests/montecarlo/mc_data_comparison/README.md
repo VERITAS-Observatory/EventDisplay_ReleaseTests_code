@@ -119,8 +119,8 @@ For example, DispBDT results are written to:
 ```text
 mc_data_comparison/AP_DISP/CARE_202404/DispBDT/
 └── V6_2023_2024w_MC-ATM61_SZE_wobble0.5_NSB400/
-    ├── data-ATM61/<date-time>-<unique-id>/comparison_DispBDT_data-ATM61.pdf
-    └── data-generic-runlist/<date-time>-<unique-id>/comparison_DispBDT_data-generic-runlist.pdf
+    ├── data-ATM61/comparison_DispBDT_data-ATM61.pdf
+    └── data-generic-runlist/comparison_DispBDT_data-generic-runlist.pdf
 ```
 
 For XGB, `DispBDT/` is replaced by `XGB/MC-<MC suffix>/DATA-<data suffix>/`,
@@ -130,10 +130,10 @@ selected `crab-runlist.dat`, `comparison-settings.txt` and `tmp/`.
 The `data-ATM61` and `data-generic-runlist` directories represent different
 Crab runlists; the generic list is not necessarily restricted to that atmosphere.
 
-Each submission reserves a new dated directory, so repeat submissions preserve
-earlier results and can run concurrently. The script prints each output path.
-Re-executing the same generated worker script still writes to its original
-directory and can overwrite that job's files. Existing results in the previous
+The path is stable: rerunning the same method, MC variant, conditions and data
+runlist replaces that comparison's ROOT file, log and PDF. Other methods,
+variants and runlists have separate paths. Do not submit the same configuration
+twice while its job is still running. Existing results in the previous dated
 directory layout are left in place.
 
 The PDF includes an exploratory r68 versus reconstructed-energy page for MC
