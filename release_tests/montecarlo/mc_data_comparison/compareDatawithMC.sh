@@ -58,7 +58,7 @@ if [[ ! -z  $VERITAS_ANALYSIS_TYPE ]]; then
 fi
 # Stereo reconstruction method
 # (0: dispBDT, 2: XGB)
-RECOMETHOD=2
+RECOMETHOD=0
 MC_XGB_SUFFIX=${MC_XGB_SUFFIX:-xgb_stereo}
 DATA_XGB_SUFFIX=${DATA_XGB_SUFFIX:-xgb_stereo}
 for suffix in "$MC_XGB_SUFFIX" "$DATA_XGB_SUFFIX"; do
@@ -252,12 +252,14 @@ do
                 continue
             fi
 
-            # output directory
-            ODIR=${BDIR}/${I}${A}${RUNLISTTAG}_${ELE}_${MCWOFF}_${NSB}
-        mkdir -p ${ODIR}
+            # Reserve a fresh output directory for each submitted comparison.
+            CONFIGDIR=${BDIR}/${I}${A}${RUNLISTTAG}_${ELE}_${MCWOFF}_${NSB}
+        mkdir -p "$CONFIGDIR"
+        ODIR=$(mktemp -d "$CONFIGDIR/run-XXXXXXXX")
+        echo "Comparison output: $ODIR"
 
         # tmp mscw file in output directory
-        DMSCWDIR=${ODIR}/tmp/$(uuidgen)
+        DMSCWDIR=${ODIR}/tmp
         mkdir -p "$DMSCWDIR"
         DFILES=$(cat $RUNLIST)
         for D in $DFILES; do

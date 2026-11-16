@@ -86,7 +86,7 @@ This will:
 ### Step 3: Monitor Progress
 
 - Condor jobs are submitted with resource requests: 4000MB RAM, 10GB disk
-- Temporary symbolic links are created in: `{output_dir}/tmp/{uuid}/`
+- Temporary symbolic links are created in: `{output_dir}/tmp/`
 - **Note**: Temporary directories must be cleaned up manually after completion
 
 ## Output Structure
@@ -94,18 +94,21 @@ This will:
 Results are written to:
 
 ```text
-EventDisplay_Release_<version>/mc_data_comparison/<analysis_type><disp>/<simulation_type>/MC-<MC suffix>/DATA-<data suffix>/
+EventDisplay_Release_<version>/mc_data_comparison/<analysis_type><disp>/<simulation_type>/[MC-<MC suffix>/DATA-<data suffix>/]
 ├── <epoch>_ATM<atm>_<ELE>_<wobble>_<nsb>/
-│   ├── mcdatacomparison.runparameter
-│   ├── mcdatacomparison.root
-│   ├── mcdatacomparison.log
-│   ├── *.pdf                    # Comparison plots
-│   └── tmp/<uuid>/              # Job input and symlinks (manual cleanup required)
+│   └── run-<unique-id>/
+│       ├── mcdatacomparison.runparameter
+│       ├── mcdatacomparison.root
+│       ├── mcdatacomparison.log
+│       ├── *.pdf                # Comparison plots
+│       └── tmp/                 # Job input and symlinks (manual cleanup required)
 ```
 
-Different suffix pairs use separate result directories. Repeating the same
-configuration overwrites its run-parameter copy, ROOT file, log and PDFs; do
-not run two jobs for the same output directory at the same time.
+The suffix directories apply to XGB comparisons. Each submission reserves a
+new `run-<unique-id>` directory, including for the DispBDT baseline, so repeat
+submissions preserve earlier results and can run concurrently. The script prints
+each output path. Re-executing the same generated worker script still writes to
+its original directory and can overwrite that job's files.
 
 The PDF includes an exploratory r68 versus reconstructed-energy page for MC
 and ON−OFF excess. It fits a two-Gaussian radial profile inside
