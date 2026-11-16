@@ -62,6 +62,19 @@ cd release_tests/montecarlo/mc_data_comparison/
 ./compareDatawithMC.sh <path/to/run\ parameter\ file> SZE
 ```
 
+For an MC smearing variant with nominal Crab reconstruction, use the EventDisplay
+version supporting separate suffixes and run:
+
+```console
+MC_XGB_SUFFIX=xgb_stereo_smear05 DATA_XGB_SUFFIX=xgb_stereo \
+  ./compareDatawithMC.sh <path/to/runparameter> SZE
+```
+
+Both suffixes default to `xgb_stereo`. They identify the corresponding friend
+files, for example `*.mscw.xgb_stereo_smear05.root` for MC and
+`*.mscw.xgb_stereo.root` for Crab. Suffixes can contain letters, digits,
+underscores and hyphens.
+
 This will:
 
 1. Parse the run parameter file
@@ -81,14 +94,27 @@ This will:
 Results are written to:
 
 ```text
-EventDisplay_Release_<version>/mc_data_comparison/<analysis_type><disp>/<simulation_type>/
+EventDisplay_Release_<version>/mc_data_comparison/<analysis_type><disp>/<simulation_type>/MC-<MC suffix>/DATA-<data suffix>/
 ├── <epoch>_ATM<atm>_<ELE>_<wobble>_<nsb>/
 │   ├── mcdatacomparison.runparameter
 │   ├── mcdatacomparison.root
 │   ├── mcdatacomparison.log
-│   └── *.pdf                    # Comparison plots
-└── tmp/                         # Temporary symlinks (manual cleanup required)
+│   ├── *.pdf                    # Comparison plots
+│   └── tmp/<uuid>/              # Job input and symlinks (manual cleanup required)
 ```
+
+Different suffix pairs use separate result directories. Repeating the same
+configuration overwrites its run-parameter copy, ROOT file, log and PDFs; do
+not run two jobs for the same output directory at the same time.
+
+The PDF includes an exploratory r68 versus reconstructed-energy page for MC
+and ON−OFF excess. It fits a two-Gaussian radial profile inside
+`theta2 < 0.03 deg2` and extrapolates the fitted profile; error bars are
+statistical fit errors. Unstable fits are omitted. The estimate depends on the
+tail model and reflected-region background, and is not a substitute for the
+project's run-bootstrap and closure validation. Input files must have been
+produced with the updated EventDisplay executable, `cut=-3`, and a recorded
+theta2 cut between 0.03 and 0.035 deg2; older files display an explanatory page.
 
 ## Special Cases
 

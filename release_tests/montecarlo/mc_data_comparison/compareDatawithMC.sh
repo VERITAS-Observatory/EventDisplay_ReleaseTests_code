@@ -59,6 +59,14 @@ fi
 # Stereo reconstruction method
 # (0: dispBDT, 2: XGB)
 RECOMETHOD=2
+MC_XGB_SUFFIX=${MC_XGB_SUFFIX:-xgb_stereo}
+DATA_XGB_SUFFIX=${DATA_XGB_SUFFIX:-xgb_stereo}
+for suffix in "$MC_XGB_SUFFIX" "$DATA_XGB_SUFFIX"; do
+    if [[ ! $suffix =~ ^[a-zA-Z0-9_-]+$ ]]; then
+        echo "Error: XGB suffix must contain only letters, numbers, underscores or hyphens: $suffix" >&2
+        exit 1
+    fi
+done
 STEREOMETHOD=""
 if [[ $RECOMETHOD == 2 ]]; then
     STEREOMETHOD="_XGB"
@@ -97,8 +105,11 @@ fi
 
 # output directory for MC/Data comparison
 BDIR="../../../../EventDisplay_Release_${VERSION}/mc_data_comparison/${ANALYSISTYPE}${DIRRECOTYPE}${STEREOMETHOD}/${SIMTYPE}/"
-mkdir -p ${BDIR}
-BDIR=$(readlink -f "../../../../EventDisplay_Release_${VERSION}/mc_data_comparison/${ANALYSISTYPE}${DIRRECOTYPE}${STEREOMETHOD}/${SIMTYPE}/")
+if [[ $RECOMETHOD == 2 ]]; then
+    BDIR="${BDIR}/MC-${MC_XGB_SUFFIX}/DATA-${DATA_XGB_SUFFIX}"
+fi
+mkdir -p "$BDIR"
+BDIR=$(readlink -f "$BDIR")
 echo "Results will be written to $BDIR"
 
 PWDIR=$(pwd)
@@ -256,40 +267,39 @@ do
             fi
             ln -s -f "${MSCWFILE}" "$DMSCWDIR"/"$D".mscw.root
             if [[ ${RECOMETHOD} -eq 2 ]]; then
-                XGBFILE="${MSCWFILE%.mscw.root}.mscw.xgb_stereo.root"
+                XGBFILE="${MSCWFILE%.mscw.root}.mscw.${DATA_XGB_SUFFIX}.root"
                 if [[ ! -e "${XGBFILE}" ]]; then
                     echo "Error: XGB stereo file not found for run ${D}: ${XGBFILE}"
                     exit 1
                 fi
-                ln -s -f "${XGBFILE}" "$DMSCWDIR"/"$D".mscw.xgb_stereo.root
+                ln -s -f "${XGBFILE}" "$DMSCWDIR"/"$D".mscw."${DATA_XGB_SUFFIX}".root
             fi
         done
         echo "TEMP DIRECTORY (to be deleted by hand): $DMSCWDIR"
 
         # runparameter file
-        if [[ -e $ODIR/mcdatacomparison.runparameter ]]
-        then
-            rm -f $ODIR/mcdatacomparison.runparameter
-        fi
-        echo "Runparameter file $ODIR/mcdatacomparison.runparameter"
+        RUNPARAMETER="$DMSCWDIR/mcdatacomparison.runparameter"
+        echo "Runparameter file $RUNPARAMETER"
         SIMMSCW="MSCW_RECID0${DIRRECOTYPE}"
 
         # write run parameter file
         if [[ $SIMTYPE == "CARE_RedHV"* ]]; then
             SIMATM="61"
-            echo "* SIMS $SIMDIR/${MC_EPOCH}_ATM${SIMATM}_gamma/${SIMMSCW}/${simfile} 4 ${MCWOFF} 0. 0. 0. ${ZEMIN} ${ZEMAX}" > $ODIR/mcdatacomparison.runparameter
+            echo "* SIMS $SIMDIR/${MC_EPOCH}_ATM${SIMATM}_gamma/${SIMMSCW}/${simfile} 4 ${MCWOFF} 0. 0. 0. ${ZEMIN} ${ZEMAX}" > "$RUNPARAMETER"
         else
-            echo "* SIMS $SIMDIR/${MC_EPOCH}_ATM${SIMATM}_gamma/${SIMMSCW}/${simfile} 4 ${MCWOFF} 0. 0. 0. ${ZEMIN} ${ZEMAX}" > $ODIR/mcdatacomparison.runparameter
+            echo "* SIMS $SIMDIR/${MC_EPOCH}_ATM${SIMATM}_gamma/${SIMMSCW}/${simfile} 4 ${MCWOFF} 0. 0. 0. ${ZEMIN} ${ZEMAX}" > "$RUNPARAMETER"
         fi
-        echo "* ON ${DMSCWDIR}/[0-9]*.mscw.root 4 -99. -99. 0. 360. ${ZEMIN} ${ZEMAX}" >> $ODIR/mcdatacomparison.runparameter
-        echo "* OFF ${DMSCWDIR}/[0-9]*.mscw.root 4 -99. -99. 0. 360. ${ZEMIN} ${ZEMAX}" >> $ODIR/mcdatacomparison.runparameter
-        echo "   run parameter file: $ODIR/mcdatacomparison.runparameter"
+        echo "* ON ${DMSCWDIR}/[0-9]*.mscw.root 4 -99. -99. 0. 360. ${ZEMIN} ${ZEMAX}" >> "$RUNPARAMETER"
+        echo "* OFF ${DMSCWDIR}/[0-9]*.mscw.root 4 -99. -99. 0. 360. ${ZEMIN} ${ZEMAX}" >> "$RUNPARAMETER"
 
         FSCRIPT="$DMSCWDIR/compareDatawithMC_qsub_${SIMTYPE}_${I}${A}${RUNLISTTAG}_${ELE}_${MCWOFF}_${NSB}"
         rm -f ${FSCRIPT}.sh
         sed -e "s|OUTDIR|$ODIR|" \
             -e "s|EEPOCHTM|${MC_EPOCH}_ATM${SIMATM}|" \
             -e "s|CURRENTDIR|$PWDIR|" \
+            -e "s|RUNPARAMETERFILE|$RUNPARAMETER|" \
+            -e "s|MCXGBSUFFIX|$MC_XGB_SUFFIX|" \
+            -e "s|DATAXGBSUFFIX|$DATA_XGB_SUFFIX|" \
             -e "s|METHODRECO|$RECOMETHOD|" compareDatawithMC_qsub.sh > ${FSCRIPT}.sh
 
         echo "Run script: $FSCRIPT"
