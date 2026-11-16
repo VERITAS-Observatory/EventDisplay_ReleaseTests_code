@@ -24,7 +24,8 @@ NOTE! The zenith angle bins are different compared to those used in the Crab Neb
 ### Input Data Requirements
 
 - MC simulation files for each minor epoch (organized by atmosphere type)
-- Crab Nebula mscw results and matching `*.mscw.xgb_stereo.root` files for each run
+- Crab Nebula mscw results; XGB comparisons also need matching MC and Crab
+  stereo friend files for the chosen suffixes
 - Run lists for Crab observations (generated separately)
 
 ## Preparation Steps
@@ -57,23 +58,45 @@ The leading `*` is part of the parameter-file syntax. To provide multiple atmosp
 
 ### Step 2: Execute Comparison
 
+Run the examples below from `release_tests/montecarlo/mc_data_comparison/`.
+`RECOMETHOD` is set **inside `compareDatawithMC.sh`**; edit it before running
+the desired reconstruction. It is not selected by the suffix environment
+variables. The worker uses energy reconstruction method 0 for all three examples.
+
+**DispBDT direction and energy:** set `RECOMETHOD=0` in the script, then run:
+
 ```console
-cd release_tests/montecarlo/mc_data_comparison/
-./compareDatawithMC.sh <path/to/run\ parameter\ file> SZE
+./compareDatawithMC.sh ../../../../EventDisplay_Release_v492/runparameter/V6.AP.runparameter.precuts.dat SZE
 ```
 
-For an MC smearing variant with nominal Crab reconstruction, use the EventDisplay
-version supporting separate suffixes and run:
+This mode does not read XGB stereo friends. The direction-reconstruction
+DispBDT is separate from any BDT used for gamma/hadron selection.
+
+**Nominal XGB direction:** set `RECOMETHOD=2` in the script, then run:
+
+```console
+MC_XGB_SUFFIX=xgb_stereo DATA_XGB_SUFFIX=xgb_stereo \
+  ./compareDatawithMC.sh ../../../../EventDisplay_Release_v492/runparameter/V6.AP.runparameter.precuts.dat SZE
+```
+
+**Smeared XGB MC and nominal Crab XGB direction:** keep `RECOMETHOD=2`, then run:
 
 ```console
 MC_XGB_SUFFIX=xgb_stereo_smear05 DATA_XGB_SUFFIX=xgb_stereo \
-  ./compareDatawithMC.sh <path/to/runparameter> SZE
+  ./compareDatawithMC.sh ../../../../EventDisplay_Release_v492/runparameter/V6.AP.runparameter.precuts.dat SZE
 ```
 
-Both suffixes default to `xgb_stereo`. They identify the corresponding friend
-files, for example `*.mscw.xgb_stereo_smear05.root` for MC and
-`*.mscw.xgb_stereo.root` for Crab. Suffixes can contain letters, digits,
-underscores and hyphens.
+Switch between the two XGB cases by changing `MC_XGB_SUFFIX` on the command
+line. These inline environment assignments apply only to that invocation. If
+the variables are unset, both suffixes default to `xgb_stereo`; explicitly
+setting them as above also avoids surprises from previously exported values.
+They identify existing friend files, for example
+`*.mscw.xgb_stereo_smear05.root` for MC and `*.mscw.xgb_stereo.root` for
+Crab. Every selected MC file needs the requested friend. The wrapper does not
+run XGB inference or create friends; inspect the inference log or frozen YAML
+to establish the smearing configuration. Separate MC/data suffixes require the
+updated, rebuilt `compareDatawithMC` executable. Suffixes can contain letters,
+digits, underscores and hyphens.
 
 This will:
 
@@ -91,24 +114,27 @@ This will:
 
 ## Output Structure
 
-Results are written to:
+For example, DispBDT results are written to:
 
 ```text
-EventDisplay_Release_<version>/mc_data_comparison/<analysis_type><disp>/<simulation_type>/[MC-<MC suffix>/DATA-<data suffix>/]
-├── <epoch>_ATM<atm>_<ELE>_<wobble>_<nsb>/
-│   └── run-<unique-id>/
-│       ├── mcdatacomparison.runparameter
-│       ├── mcdatacomparison.root
-│       ├── mcdatacomparison.log
-│       ├── *.pdf                # Comparison plots
-│       └── tmp/                 # Job input and symlinks (manual cleanup required)
+mc_data_comparison/AP_DISP/CARE_202404/DispBDT/
+└── V6_2023_2024w_MC-ATM61_SZE_wobble0.5_NSB400/
+    ├── data-ATM61/<date-time>-<unique-id>/comparison_DispBDT_data-ATM61.pdf
+    └── data-generic-runlist/<date-time>-<unique-id>/comparison_DispBDT_data-generic-runlist.pdf
 ```
 
-The suffix directories apply to XGB comparisons. Each submission reserves a
-new `run-<unique-id>` directory, including for the DispBDT baseline, so repeat
-submissions preserve earlier results and can run concurrently. The script prints
-each output path. Re-executing the same generated worker script still writes to
-its original directory and can overwrite that job's files.
+For XGB, `DispBDT/` is replaced by `XGB/MC-<MC suffix>/DATA-<data suffix>/`,
+and the PDF name includes both suffixes. Each dated directory also contains
+`mcdatacomparison.root`, `mcdatacomparison.log`, a run-parameter copy, the
+selected `crab-runlist.dat`, `comparison-settings.txt` and `tmp/`.
+The `data-ATM61` and `data-generic-runlist` directories represent different
+Crab runlists; the generic list is not necessarily restricted to that atmosphere.
+
+Each submission reserves a new dated directory, so repeat submissions preserve
+earlier results and can run concurrently. The script prints each output path.
+Re-executing the same generated worker script still writes to its original
+directory and can overwrite that job's files. Existing results in the previous
+directory layout are left in place.
 
 The PDF includes an exploratory r68 versus reconstructed-energy page for MC
 and ON−OFF excess. It fits a two-Gaussian radial profile inside
@@ -121,6 +147,7 @@ theta2 cut between 0.03 and 0.035 deg2; older files display an explanatory page.
 
 ## Special Cases
 
-- **CARE_RedHV simulations**: Handled with modified BDT cut (BDT=0 instead of 1)
+- **Gamma/hadron BDT**: The current worker script sets `BDT=0`; inspect its
+  `BDT` setting when choosing gamma/hadron cuts independently of direction reconstruction.
 - **Summer vs Winter Atmosphere**: Automatically selected based on epoch suffix ('s' or 'w')
 - **Wobble Mode**: Forces atmosphere 61 and 1.0° wobble offset

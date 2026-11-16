@@ -58,7 +58,7 @@ if [[ ! -z  $VERITAS_ANALYSIS_TYPE ]]; then
 fi
 # Stereo reconstruction method
 # (0: dispBDT, 2: XGB)
-RECOMETHOD=0
+RECOMETHOD=2
 MC_XGB_SUFFIX=${MC_XGB_SUFFIX:-xgb_stereo}
 DATA_XGB_SUFFIX=${DATA_XGB_SUFFIX:-xgb_stereo}
 for suffix in "$MC_XGB_SUFFIX" "$DATA_XGB_SUFFIX"; do
@@ -67,9 +67,11 @@ for suffix in "$MC_XGB_SUFFIX" "$DATA_XGB_SUFFIX"; do
         exit 1
     fi
 done
-STEREOMETHOD=""
+RECONSTRUCTION="DispBDT"
+RECONSTRUCTION_DIR="$RECONSTRUCTION"
 if [[ $RECOMETHOD == 2 ]]; then
-    STEREOMETHOD="_XGB"
+    RECONSTRUCTION="XGB_MC-${MC_XGB_SUFFIX}_DATA-${DATA_XGB_SUFFIX}"
+    RECONSTRUCTION_DIR="XGB/MC-${MC_XGB_SUFFIX}/DATA-${DATA_XGB_SUFFIX}"
 fi
 ###########################
 
@@ -104,10 +106,7 @@ if [[ ! -e ${CDIR} ]]; then
 fi
 
 # output directory for MC/Data comparison
-BDIR="../../../../EventDisplay_Release_${VERSION}/mc_data_comparison/${ANALYSISTYPE}${DIRRECOTYPE}${STEREOMETHOD}/${SIMTYPE}/"
-if [[ $RECOMETHOD == 2 ]]; then
-    BDIR="${BDIR}/MC-${MC_XGB_SUFFIX}/DATA-${DATA_XGB_SUFFIX}"
-fi
+BDIR="../../../../EventDisplay_Release_${VERSION}/mc_data_comparison/${ANALYSISTYPE}${DIRRECOTYPE}/${SIMTYPE}/${RECONSTRUCTION_DIR}"
 mkdir -p "$BDIR"
 BDIR=$(readlink -f "$BDIR")
 echo "Results will be written to $BDIR"
@@ -252,11 +251,22 @@ do
                 continue
             fi
 
-            # Reserve a fresh output directory for each submitted comparison.
-            CONFIGDIR=${BDIR}/${I}${A}${RUNLISTTAG}_${ELE}_${MCWOFF}_${NSB}
+            # Name MC conditions and the selected Crab runlist separately.
+            DATASET="data-generic-runlist"
+            if [[ "$RUNLIST" == *"_ATM${atm}_"* ]]; then
+                DATASET="data-ATM${atm}"
+            fi
+            if [[ $SIMTYPE == "CARE_RedHV"* ]]; then
+                SIMATM="61"
+            fi
+            CONFIGDIR="${BDIR}/${I}_MC-ATM${SIMATM}_${ELE}_wobble${MCWOFF}_NSB${NSB}/${DATASET}"
         mkdir -p "$CONFIGDIR"
-        ODIR=$(mktemp -d "$CONFIGDIR/run-XXXXXXXX")
+        ODIR=$(mktemp -d "$CONFIGDIR/$(date +%Y%m%d_%H%M%S)-XXXXXXXX")
+        PLOTLABEL="comparison_${RECONSTRUCTION}_${DATASET}"
         echo "Comparison output: $ODIR"
+        cp "$RUNLIST" "$ODIR/crab-runlist.dat"
+        printf 'Reconstruction: %s\nCrab runlist: %s\nMC file: %s\n' \
+            "$RECONSTRUCTION" "$RUNLIST" "$simfile" > "$ODIR/comparison-settings.txt"
 
         # tmp mscw file in output directory
         DMSCWDIR=${ODIR}/tmp
@@ -300,6 +310,7 @@ do
             -e "s|EEPOCHTM|${MC_EPOCH}_ATM${SIMATM}|" \
             -e "s|CURRENTDIR|$PWDIR|" \
             -e "s|RUNPARAMETERFILE|$RUNPARAMETER|" \
+            -e "s|PLOTLABEL|$PLOTLABEL|" \
             -e "s|MCXGBSUFFIX|$MC_XGB_SUFFIX|" \
             -e "s|DATAXGBSUFFIX|$DATA_XGB_SUFFIX|" \
             -e "s|METHODRECO|$RECOMETHOD|" compareDatawithMC_qsub.sh > ${FSCRIPT}.sh

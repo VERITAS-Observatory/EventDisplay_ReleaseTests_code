@@ -43,7 +43,7 @@ cp "$RUNPARAMETER" "$ODIR/mcdatacomparison.runparameter"
           > "$ODIR/mcdatacomparison.log"
 
 # prepare all plots
-root -l -q -b "plot_compare.C(\"$ODIR\")"
+root -l -q -b "plot_compare.C(\"$ODIR\",\"PLOTLABEL\")"
 # remove results root file
 # rm -f -v $ODIR/mcdatacomparison.root
 cd "$PP"

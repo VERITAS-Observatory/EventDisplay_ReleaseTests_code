@@ -7,7 +7,7 @@
 
 R__LOAD_LIBRARY($EVNDISPSYS/lib/libVAnaSum.so);
 
-void plot_compare( string oDir )
+void plot_compare( string oDir, string outputName = "mcdatacomparison" )
 {
     string i_name = oDir + "/mcdatacomparison";
 
@@ -15,6 +15,6 @@ void plot_compare( string oDir )
     VPlotCompareDataWithMC a( i_name + ".root" );
     if( !a.isZombie() )
     {
-        a.plot( i_name );
+        a.plot( oDir + "/" + outputName );
     }
 }
