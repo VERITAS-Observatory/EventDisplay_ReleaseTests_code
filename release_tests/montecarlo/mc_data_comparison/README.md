@@ -7,7 +7,7 @@ Scripts and tools to compare Monte Carlo (MC) distributions with observational r
 ## Quick Start
 
 ```console
-./compareDatawithMC.sh <runparameter file> <SZE|MZE|LZE|WOBBLE>
+./compareDatawithMC.sh <runparameter file> <SZE|MZE|LZE|WOBBLE> <comparison config>
 ```
 
 Where `<SZE|MZE|LZE|WOBBLE>` specifies the observation conditions:
@@ -58,45 +58,44 @@ The leading `*` is part of the parameter-file syntax. To provide multiple atmosp
 
 ### Step 2: Execute Comparison
 
-Run the examples below from `release_tests/montecarlo/mc_data_comparison/`.
-`RECOMETHOD` is set **inside `compareDatawithMC.sh`**; edit it before running
-the desired reconstruction. It is not selected by the suffix environment
-variables. The worker uses energy reconstruction method 0 for all three examples.
-
-**DispBDT direction and energy:** set `RECOMETHOD=0` in the script, then run:
+Choose a comparison configuration from `configs/`. For example, from this
+folder run the mscw-smeared XGB comparison with:
 
 ```console
-./compareDatawithMC.sh ../../../../EventDisplay_Release_v492/runparameter/V6.AP.runparameter.precuts.dat SZE
+./compareDatawithMC.sh ../../../../EventDisplay_Release_v492/runparameter/V6.AP.runparameter.precuts.dat SZE configs/mscw-smear-v1-xgb.conf
 ```
 
-This mode does not read XGB stereo friends. The direction-reconstruction
-DispBDT is separate from any BDT used for gamma/hadron selection.
+The provided cases are:
 
-**Nominal XGB direction:** set `RECOMETHOD=2` in the script, then run:
+| Configuration | MC mscw | Reconstruction |
+| --- | --- | --- |
+| `configs/nominal-dispbdt.conf` | Nominal | DispBDT |
+| `configs/nominal-xgb.conf` | Nominal | XGB without ML smearing |
+| `configs/ml-smear05-xgb.conf` | Nominal | XGB with ML-level smear05 |
+| `configs/mscw-smear-v1-dispbdt.conf` | mscw-smear v1 | DispBDT |
+| `configs/mscw-smear-v1-xgb.conf` | mscw-smear v1 | XGB from the smeared mscw |
 
-```console
-MC_XGB_SUFFIX=xgb_stereo DATA_XGB_SUFFIX=xgb_stereo \
-  ./compareDatawithMC.sh ../../../../EventDisplay_Release_v492/runparameter/V6.AP.runparameter.precuts.dat SZE
+A configuration is a plain text file, for example:
+
+```text
+variant = mscwsmear_v1
+mscw_directory = MSCW_RECID0_DISP_mscwsmear_v1
+reconstruction = XGB
+mc_xgb_suffix = xgb_stereo
+data_xgb_suffix = xgb_stereo
 ```
 
-**Smeared XGB MC and nominal Crab XGB direction:** keep `RECOMETHOD=2`, then run:
+Copy and edit a configuration for another case. `variant` labels the output;
+`mscw_directory` is the actual directory under each
+`<epoch>_ATM<atmosphere>_gamma`. Both use letters, numbers, underscores or
+hyphens. `reconstruction` is `XGB` or `DispBDT`. The suffixes identify MC and
+Crab friend files; both default to `xgb_stereo` and are unused for DispBDT.
+The same mscw directory name must exist for each selected epoch and atmosphere.
+Separate MC/data suffixes require the updated `compareDatawithMC` executable.
 
-```console
-MC_XGB_SUFFIX=xgb_stereo_smear05 DATA_XGB_SUFFIX=xgb_stereo \
-  ./compareDatawithMC.sh ../../../../EventDisplay_Release_v492/runparameter/V6.AP.runparameter.precuts.dat SZE
-```
-
-Switch between the two XGB cases by changing `MC_XGB_SUFFIX` on the command
-line. These inline environment assignments apply only to that invocation. If
-the variables are unset, both suffixes default to `xgb_stereo`; explicitly
-setting them as above also avoids surprises from previously exported values.
-They identify existing friend files, for example
-`*.mscw.xgb_stereo_smear05.root` for MC and `*.mscw.xgb_stereo.root` for
-Crab. Every selected MC file needs the requested friend. The wrapper does not
-run XGB inference or create friends; inspect the inference log or frozen YAML
-to establish the smearing configuration. Separate MC/data suffixes require the
-updated, rebuilt `compareDatawithMC` executable. Suffixes can contain letters,
-digits, underscores and hyphens.
+A label does not verify the smearing recipe. Inspect the production logs and
+settings and ensure each MC friend was generated from its adjacent mscw file.
+The wrapper does not run inference. The worker uses energy method 0.
 
 This will:
 
@@ -114,36 +113,49 @@ This will:
 
 ## Output Structure
 
-For example, DispBDT results are written to:
+Each result is stored directly in its runlist directory, for example:
 
 ```text
-mc_data_comparison/AP_DISP/CARE_202404/DispBDT/
-└── V6_2023_2024w_MC-ATM61_SZE_wobble0.5_NSB400/
-    ├── data-ATM61/comparison_DispBDT_data-ATM61.pdf
-    └── data-generic-runlist/comparison_DispBDT_data-generic-runlist.pdf
+mc_data_comparison/AP_DISP/CARE_202404/
+└── MC-nominal/XGB/MC-xgb_stereo/DATA-xgb_stereo/
+    └── V6_2023_2024w_MC-ATM61_SZE_wobble0.5_NSB400/
+        └── data-ATM61/
+            ├── comparison.conf
+            ├── comparison-settings.txt
+            ├── input-runparameter.dat
+            ├── crab-runlist.dat
+            ├── mcdatacomparison.runparameter
+            ├── mcdatacomparison.root
+            ├── mcdatacomparison.log
+            └── tmp/  # includes the generated worker and Condor logs
 ```
 
-For XGB, `DispBDT/` is replaced by `XGB/MC-<MC suffix>/DATA-<data suffix>/`,
-and the PDF name includes both suffixes. Each dated directory also contains
-`mcdatacomparison.root`, `mcdatacomparison.log`, a run-parameter copy, the
-selected `crab-runlist.dat`, `comparison-settings.txt` and `tmp/`.
-The `data-ATM61` and `data-generic-runlist` directories represent different
-Crab runlists; the generic list is not necessarily restricted to that atmosphere.
-
-The path is stable: rerunning the same method, MC variant, conditions and data
-runlist replaces that comparison's ROOT file, log and PDF. Other methods,
-variants and runlists have separate paths. Do not submit the same configuration
-twice while its job is still running. Existing results in the previous dated
-directory layout are left in place.
+`MC-mscwsmear_v1` separates the mscw-smeared input, while the XGB suffix
+separates ML-only variants. Each submission records resolved MC and data paths,
+friend paths, and input settings; inspect the saved worker script for its exact
+cut and reconstruction parameters. Preserve the production logs and smearing
+configuration separately: a name alone does not establish provenance. A repeated submission to an existing result directory is rejected; move or remove the existing directory before submitting again. Previous outputs are not moved or relabeled. The
+`data-ATM61` and `data-generic-runlist` directories represent different Crab
+runlists; the generic list is not necessarily restricted to that atmosphere.
 
 The PDF includes an exploratory r68 versus reconstructed-energy page for MC
-and ON−OFF excess. It fits a two-Gaussian radial profile inside
-`theta2 < 0.03 deg2` and extrapolates the fitted profile; error bars are
-statistical fit errors. Unstable fits are omitted. The estimate depends on the
-tail model and reflected-region background, and is not a substitute for the
-project's run-bootstrap and closure validation. Input files must have been
-produced with the updated EventDisplay executable, `cut=-3`, and a recorded
-theta2 cut between 0.03 and 0.035 deg2; older files display an explanatory page.
+and ON−OFF excess. It counts the 68% quantile in the existing linear-theta²
+histograms and does not extrapolate the tail. It is therefore the containment
+inside the selected theta² cut, not an estimate of the untruncated PSF. The standalone ROOT macro compares two saved configurations:
+
+```console
+root -l -b -q 'compare_containment.C("configs/nominal-xgb.conf","configs/ml-smear05-xgb.conf")'
+```
+
+It searches `../../../../EventDisplay_Release_v492/mc_data_comparison` for
+completed results with matching saved configurations. Optional third and fourth
+arguments set the search directory and output PDF. Each configuration must
+match exactly one result; ambiguous matches are listed. The MC curves and the
+Crab excess from the first result are plotted. Check that the selected results
+use comparable Crab runlists and observing conditions. Older outputs without
+saved configurations cannot be found. All inputs must have matching
+`angularTheta2Cut` metadata. The within-bin error estimate is not a statistical
+containment uncertainty; use run bootstrapping for that.
 
 ## Special Cases
 
