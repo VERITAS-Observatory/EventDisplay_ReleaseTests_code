@@ -8,9 +8,9 @@
 
 set -e
 
-if [[ $# < 2 ]]; then
+if [[ $# != 3 ]]; then
 echo "
-  ./compareDatawithMC.sh <run parameter file> <SZE/MZE/LZE/WOBBLE>
+  ./compareDatawithMC.sh <run parameter file> <SZE/MZE/LZE/WOBBLE> <comparison config>
   --> choose zenith angle / wobble range
       SZE: small zenith angles (0.5 deg wobble)
       MZE: medium large zenith angles (0.5 deg wobble)
@@ -19,14 +19,14 @@ echo "
 
   Input are MC and Crab mscw files.
 "
-exit
+exit 1
 fi
 
 ###########################
 # read run parameter file
 if [[ ! -e ${1} ]]; then
    echo "Error, run parameter file not found: ${1}"
-   exit
+   exit 1
 fi
 RUNPAR="${1}"
 # Eventdisplay version
@@ -56,12 +56,59 @@ if [[ ! -z  $VERITAS_ANALYSIS_TYPE ]]; then
         DIRRECOTYPE=""
     fi
 fi
-# Stereo reconstruction method
-# (0: dispBDT, 2: XGB)
-RECOMETHOD=2
-STEREOMETHOD=""
+# Read configuration as data, never as shell code. Do not inherit case settings
+# from the environment, so the saved file describes the actual comparison.
+CONFIG=$3
+if [[ ! -f $CONFIG ]]; then
+    echo "Error: comparison config not found: $CONFIG" >&2
+    exit 1
+fi
+MC_VARIANT= MC_MSCW_DIR= RECOMETHOD= MC_XGB_SUFFIX=xgb_stereo DATA_XGB_SUFFIX=xgb_stereo
+declare -A seen
+while IFS= read -r line || [[ -n $line ]]; do
+    [[ $line =~ ^[[:space:]]*(#|$) ]] && continue
+    if [[ ! $line =~ ^[[:space:]]*([a-z_]+)[[:space:]]*=[[:space:]]*([a-zA-Z0-9_-]+)[[:space:]]*$ ]]; then
+        echo "Error: invalid comparison config line: $line" >&2
+        exit 1
+    fi
+    key=${BASH_REMATCH[1]}; value=${BASH_REMATCH[2]}
+    if [[ ${seen[$key]+yes} ]]; then
+        echo "Error: duplicate comparison setting: $key" >&2
+        exit 1
+    fi
+    seen[$key]=1
+    case $key in
+        variant) MC_VARIANT=$value ;;
+        mscw_directory) MC_MSCW_DIR=$value ;;
+        reconstruction) case $value in
+            DispBDT) RECOMETHOD=0 ;;
+            XGB) RECOMETHOD=2 ;;
+            *) echo "Error: reconstruction must be DispBDT or XGB" >&2; exit 1 ;;
+        esac ;;
+        mc_xgb_suffix) MC_XGB_SUFFIX=$value ;;
+        data_xgb_suffix) DATA_XGB_SUFFIX=$value ;;
+        *) echo "Error: unknown comparison setting: $key" >&2; exit 1 ;;
+    esac
+done < "$CONFIG"
+if [[ ! ${MC_VARIANT:-} =~ ^[a-zA-Z0-9_-]+$ || ! ${MC_MSCW_DIR:-} =~ ^[a-zA-Z0-9_-]+$ ]]; then
+    echo "Error: comparison config requires variant and mscw_directory" >&2
+    exit 1
+fi
+if [[ -z $RECOMETHOD ]]; then
+    echo "Error: comparison config requires reconstruction" >&2
+    exit 1
+fi
+for suffix in "$MC_XGB_SUFFIX" "$DATA_XGB_SUFFIX"; do
+    if [[ ! $suffix =~ ^[a-zA-Z0-9_-]+$ ]]; then
+        echo "Error: XGB suffix must contain only letters, numbers, underscores or hyphens: $suffix" >&2
+        exit 1
+    fi
+done
+RECONSTRUCTION="DispBDT"
+RECONSTRUCTION_DIR="$RECONSTRUCTION"
 if [[ $RECOMETHOD == 2 ]]; then
-    STEREOMETHOD="_XGB"
+    RECONSTRUCTION="XGB_MC-${MC_XGB_SUFFIX}_DATA-${DATA_XGB_SUFFIX}"
+    RECONSTRUCTION_DIR="XGB/MC-${MC_XGB_SUFFIX}/DATA-${DATA_XGB_SUFFIX}"
 fi
 ###########################
 
@@ -76,29 +123,29 @@ case "$ELE" in
         ;;
 esac
 # Directory for simulations
-SIMDIR=${VERITAS_IRFPRODUCTION_DIR}/${VERSION}_fs25/${ANALYSISTYPE}/$SIMTYPE/
+SIMDIR=${VERITAS_IRFPRODUCTION_DIR}/${VERSION}/${ANALYSISTYPE}/$SIMTYPE/
 if [[ ! -e ${SIMDIR} ]]; then
     echo "Error: simulation directory not found: $SIMDIR"
-    exit
+    exit 1
 fi
 # Directory for mscw data files
 DDIR="$VERITAS_PREPROCESSED_DATA_DIR/${ANALYSISTYPE}/mscw/"
 if [[ ! -e ${DDIR} ]]; then
    echo "Error: data directory not found: $DDIR"
-   exit
+   exit 1
 fi
 
 # Directory with Crab run lists
 CDIR="../../../../EventDisplay_Release_${VERSION}/Crab/runlists"
 if [[ ! -e ${CDIR} ]]; then
    echo "Error: directory with Crab run lists not found: $CDIR"
-   exit
+   exit 1
 fi
 
 # output directory for MC/Data comparison
-BDIR="../../../../EventDisplay_Release_${VERSION}/mc_data_comparison/${ANALYSISTYPE}${DIRRECOTYPE}${STEREOMETHOD}/${SIMTYPE}/"
-mkdir -p ${BDIR}
-BDIR=$(readlink -f "../../../../EventDisplay_Release_${VERSION}/mc_data_comparison/${ANALYSISTYPE}${DIRRECOTYPE}${STEREOMETHOD}/${SIMTYPE}/")
+BDIR="../../../../EventDisplay_Release_${VERSION}/mc_data_comparison/${ANALYSISTYPE}${DIRRECOTYPE}/${SIMTYPE}/MC-${MC_VARIANT}/${RECONSTRUCTION_DIR}"
+mkdir -p "$BDIR"
+BDIR=$(readlink -f "$BDIR")
 echo "Results will be written to $BDIR"
 
 PWDIR=$(pwd)
@@ -241,55 +288,85 @@ do
                 continue
             fi
 
-            # output directory
-            ODIR=${BDIR}/${I}${A}${RUNLISTTAG}_${ELE}_${MCWOFF}_${NSB}
-        mkdir -p ${ODIR}
+            # Name MC conditions and the selected Crab runlist separately.
+            DATASET="data-generic-runlist"
+            if [[ "$RUNLIST" == *"_ATM${atm}_"* ]]; then
+                DATASET="data-ATM${atm}"
+            fi
+            if [[ $SIMTYPE == "CARE_RedHV"* ]]; then
+                SIMATM="61"
+            fi
+            CONFIGDIR="${BDIR}/${I}_MC-ATM${SIMATM}_${ELE}_wobble${MCWOFF}_NSB${NSB}/${DATASET}"
+        SIMMSCW="$MC_MSCW_DIR"
+        MCFILE="$SIMDIR/${MC_EPOCH}_ATM${SIMATM}_gamma/${SIMMSCW}/${simfile}"
+        if [[ ! -f "$MCFILE" ]]; then
+            echo "Error: MC mscw file not found: $MCFILE" >&2
+            exit 1
+        fi
+        MCFILE=$(readlink -f "$MCFILE")
+        MCFRIEND="${MCFILE%.mscw.root}.mscw.${MC_XGB_SUFFIX}.root"
+        if [[ $RECOMETHOD == 2 && ! -f "$MCFRIEND" ]]; then
+            echo "Error: MC XGB stereo file not found: $MCFRIEND" >&2
+            exit 1
+        fi
+        mkdir -p "$(dirname "$CONFIGDIR")"
+        if ! mkdir "$CONFIGDIR" 2>/dev/null; then
+            echo "Error: output directory already exists: $CONFIGDIR (move or remove it before resubmitting)" >&2
+            exit 1
+        fi
+        ODIR="$CONFIGDIR"
+        PLOTLABEL="comparison_MC-${MC_VARIANT}_${RECONSTRUCTION}_${DATASET}"
+        echo "Comparison output: $ODIR"
+        mkdir -p "$ODIR/tmp"
+        cp "$RUNLIST" "$ODIR/crab-runlist.dat"
+        printf 'MC variant: %s\nMC directory: %s\nMC file: %s\nMC XGB friend: %s\nData XGB suffix: %s\nReconstruction: %s\nCrab runlist: %s\n' \
+            "$MC_VARIANT" "$SIMMSCW" "$MCFILE" "$([[ $RECOMETHOD == 2 ]] && printf '%s' "$MCFRIEND" || printf 'not used')" "$DATA_XGB_SUFFIX" "$RECONSTRUCTION" "$(readlink -f "$RUNLIST")" > "$ODIR/comparison-settings.txt"
+        cp "$RUNPAR" "$ODIR/input-runparameter.dat"
+        cp "$CONFIG" "$ODIR/comparison.conf"
 
         # tmp mscw file in output directory
-        DMSCWDIR=${ODIR}/tmp/$(uuidgen)
+        # Each result has its own staging directory and Condor logs.
+        DMSCWDIR=${ODIR}/tmp
         mkdir -p "$DMSCWDIR"
-        DFILES=$(cat $RUNLIST)
+        DFILES=$(cat "$RUNLIST")
         for D in $DFILES; do
             if ! MSCWFILE=$(get_mscw_file "$DDIR" "$D"); then
                 echo "Error: mscw file not found for run ${D} in ${DDIR}"
                 exit 1
             fi
             ln -s -f "${MSCWFILE}" "$DMSCWDIR"/"$D".mscw.root
+            printf 'Data mscw: %s\n' "$(readlink -f "$MSCWFILE")" >> "$ODIR/comparison-settings.txt"
             if [[ ${RECOMETHOD} -eq 2 ]]; then
-                XGBFILE="${MSCWFILE%.mscw.root}.mscw.xgb_stereo.root"
+                XGBFILE="${MSCWFILE%.mscw.root}.mscw.${DATA_XGB_SUFFIX}.root"
                 if [[ ! -e "${XGBFILE}" ]]; then
                     echo "Error: XGB stereo file not found for run ${D}: ${XGBFILE}"
                     exit 1
                 fi
-                ln -s -f "${XGBFILE}" "$DMSCWDIR"/"$D".mscw.xgb_stereo.root
+                ln -s -f "${XGBFILE}" "$DMSCWDIR"/"$D".mscw."${DATA_XGB_SUFFIX}".root
+                printf 'Data XGB friend: %s\n' "$(readlink -f "$XGBFILE")" >> "$ODIR/comparison-settings.txt"
             fi
         done
         echo "TEMP DIRECTORY (to be deleted by hand): $DMSCWDIR"
 
         # runparameter file
-        if [[ -e $ODIR/mcdatacomparison.runparameter ]]
-        then
-            rm -f $ODIR/mcdatacomparison.runparameter
-        fi
-        echo "Runparameter file $ODIR/mcdatacomparison.runparameter"
-        SIMMSCW="MSCW_RECID0${DIRRECOTYPE}"
+        RUNPARAMETER="$DMSCWDIR/mcdatacomparison.runparameter"
+        echo "Runparameter file $RUNPARAMETER"
 
         # write run parameter file
-        if [[ $SIMTYPE == "CARE_RedHV"* ]]; then
-            SIMATM="61"
-            echo "* SIMS $SIMDIR/${MC_EPOCH}_ATM${SIMATM}_gamma/${SIMMSCW}/${simfile} 4 ${MCWOFF} 0. 0. 0. ${ZEMIN} ${ZEMAX}" > $ODIR/mcdatacomparison.runparameter
-        else
-            echo "* SIMS $SIMDIR/${MC_EPOCH}_ATM${SIMATM}_gamma/${SIMMSCW}/${simfile} 4 ${MCWOFF} 0. 0. 0. ${ZEMIN} ${ZEMAX}" > $ODIR/mcdatacomparison.runparameter
-        fi
-        echo "* ON ${DMSCWDIR}/[0-9]*.mscw.root 4 -99. -99. 0. 360. ${ZEMIN} ${ZEMAX}" >> $ODIR/mcdatacomparison.runparameter
-        echo "* OFF ${DMSCWDIR}/[0-9]*.mscw.root 4 -99. -99. 0. 360. ${ZEMIN} ${ZEMAX}" >> $ODIR/mcdatacomparison.runparameter
-        echo "   run parameter file: $ODIR/mcdatacomparison.runparameter"
+        echo "* SIMS $MCFILE 4 ${MCWOFF} 0. 0. 0. ${ZEMIN} ${ZEMAX}" > "$RUNPARAMETER"
+        echo "* ON ${DMSCWDIR}/[0-9]*.mscw.root 4 -99. -99. 0. 360. ${ZEMIN} ${ZEMAX}" >> "$RUNPARAMETER"
+        echo "* OFF ${DMSCWDIR}/[0-9]*.mscw.root 4 -99. -99. 0. 360. ${ZEMIN} ${ZEMAX}" >> "$RUNPARAMETER"
 
+        cp "$RUNPARAMETER" "$ODIR/mcdatacomparison.runparameter"
         FSCRIPT="$DMSCWDIR/compareDatawithMC_qsub_${SIMTYPE}_${I}${A}${RUNLISTTAG}_${ELE}_${MCWOFF}_${NSB}"
         rm -f ${FSCRIPT}.sh
         sed -e "s|OUTDIR|$ODIR|" \
             -e "s|EEPOCHTM|${MC_EPOCH}_ATM${SIMATM}|" \
             -e "s|CURRENTDIR|$PWDIR|" \
+            -e "s|RUNPARAMETERFILE|$RUNPARAMETER|" \
+            -e "s|PLOTLABEL|$PLOTLABEL|" \
+            -e "s|MCXGBSUFFIX|$MC_XGB_SUFFIX|" \
+            -e "s|DATAXGBSUFFIX|$DATA_XGB_SUFFIX|" \
             -e "s|METHODRECO|$RECOMETHOD|" compareDatawithMC_qsub.sh > ${FSCRIPT}.sh
 
         echo "Run script: $FSCRIPT"
