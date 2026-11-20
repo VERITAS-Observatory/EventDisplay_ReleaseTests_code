@@ -202,12 +202,16 @@ void compare_containment( const char* firstConfig, const char* secondConfig, con
     if( !firstFound || !secondFound ) return;
     if( std::filesystem::path( firstConfig ).extension() == ".root" ) series[0].label = "nominal";
     if( std::filesystem::path( secondConfig ).extension() == ".root" ) series[1].label = "comparison";
-    Series data = series[0]; data.type = "DATA"; data.label = "Crab"; series.push_back( data );
+    Series firstData = series[0]; firstData.type = "DATA"; firstData.label = "Crab: " + firstData.label;
+    Series secondData = series[1]; secondData.type = "DATA"; secondData.label = "Crab: " + secondData.label;
+    series[0].label = "MC: " + series[0].label;
+    series[1].label = "MC: " + series[1].label;
+    series.push_back( firstData ); series.push_back( secondData );
 
     double theta2Cut = -1.;
     double xMin = 1.e9, xMax = -1.e9, yMax = 0.;
-    const int colors[] = {kRed + 1, kBlue + 1, kGreen + 2, kMagenta + 1, kOrange + 7, kCyan + 2, kViolet + 1, kBlack};
-    const int markers[] = {20, 21, 22, 23, 33, 34, 29, 30};
+    const int colors[] = {kRed + 1, kBlue + 1, kRed + 1, kBlue + 1};
+    const int markers[] = {20, 21, 24, 25};
 
     for( Series& item : series )
     {
@@ -259,7 +263,7 @@ void compare_containment( const char* firstConfig, const char* secondConfig, con
     canvas.SetGrid(); canvas.SetBottomMargin( 0.18 );
     TH1F* frame = canvas.DrawFrame( xMin - xPadding, 0., xMax + xPadding, yMax * 1.25 );
     frame->SetTitle( "68% angular containment versus reconstructed energy;log_{10}(E_{rec}/TeV);r_{68} [deg]" );
-    TLegend legend( 0.58, 0.68, 0.88, 0.88 );
+    TLegend legend( 0.48, 0.66, 0.89, 0.89 );
     for( Series& item : series )
     {
         item.graph->Draw( "P SAME" );

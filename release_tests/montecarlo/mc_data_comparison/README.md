@@ -151,7 +151,8 @@ It searches `../../../../EventDisplay_Release_v492/mc_data_comparison` for
 completed results with matching saved configurations. Optional third and fourth
 arguments set the search directory and output PDF. Each configuration must
 match exactly one result; ambiguous matches are listed. The MC curves and the
-Crab excess from the first result are plotted. Check that the selected results
+Crab excess from each result are plotted. MC points use filled markers and
+Crab points use open markers in the matching color. Check that the selected results
 use comparable Crab runlists and observing conditions. Older outputs without
 saved configurations cannot be found. All inputs must have matching
 `angularTheta2Cut` metadata. The within-bin error estimate is not a statistical
